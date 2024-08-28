@@ -6,6 +6,7 @@ module.exports = {
             const userAdded = await userModel.create({ name: name, email: email, age: age,});
             res.status(201).json({ message: "User created successfully", data: userAdded });
         } catch (err) {
+            console.log(err)
             res.status(400).json({ err: err.message });
         }
     },
