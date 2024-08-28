@@ -35,6 +35,7 @@ module.exports = {
             const updatedData = await userModel.findByIdAndUpdate(id, details, {new: true});
             res.status(200).json({ message: "User updated successfully", data: updatedData });
         } catch (err) {
+            console.log (err);
             res.status(500).json({ err: err.message });
         }
     },
