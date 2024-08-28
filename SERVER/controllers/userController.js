@@ -25,6 +25,7 @@ module.exports = {
             const userData = await userModel.findById({ _id: id });
             res.status(200).json({ data: userData });
         } catch (error) {
+            console.log(err);
             res.status(400).json({ err: err.message });
         }
     },
