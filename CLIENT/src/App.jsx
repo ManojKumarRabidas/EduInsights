@@ -1,10 +1,8 @@
 import './App.css'
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import Create from './components/Create';
-import Update from './components/Update';
-import Read from './components/Read';
 import Home from './components/Home';
+import Department from './components/Department';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -22,12 +20,10 @@ export default function App() {
             {/* Sidebar Component */}
             <Sidebar />
             {/* Main Content Area */}
-            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main className="col-md-9 col-lg-10 main-section">
               <Routes>
                 <Route exact path='/' element={<Home />} />
-                <Route exact path='/create' element={<Create />} />
-                <Route exact path='/userlist' element={<Read />} />
-                <Route exact path='/update/:id' element={<Update />} />
+                <Route exact path='/departments/*' element={<Department />} />
               </Routes>
             </main>
           </div>

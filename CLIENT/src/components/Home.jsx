@@ -8,17 +8,20 @@ function Home() {
               <div className="col-xxl-8">
                 <div className="text-center my-5">
                   <h2 className="display-5 fw-bolder">
-                    <span className="text-gradient d-inline">About Me</span>
+                    <span className="text-gradient d-inline">EduInsights</span>
                   </h2>
                   <p className="lead fw-light mb-4">
-                    My name is MERN CRUD and I Create, Read, Update, & Delete.
+                    A Teacher and Student Review System.
                   </p>
                   <p className="text-muted">
-                    MERN CRUD is a full-stack web application built using the
-                    MERN (MongoDB, Express.js, React.js, Node.js) stack,
-                    following the MVC (Model-View-Controller) architectural
-                    pattern. It provides a comprehensive solution for performing
-                    CRUD (Create, Read, Update, Delete) operations on users.
+                  The EduInsights System involves a verification process where college verify teachers and students using unique IDs, minimizing proxy users. Once verified, teachers and students gain full profiles. Teachers are rated by their college students on parameters like teaching ability and behavior, with additional fields like suggestions and comments. Ratings occur monthly, and the data generates graphical dashboards showing teacher performance trends, aiding college in evaluating teacher potential.
+                  <br />
+                  <br />
+                  To encourage honest feedback, student anonymity is ensured, reducing fear of retaliation. Teachers can also rate students, helping institutions assess student potential for placements and other opportunities on semester basis.
+                  <br />
+                  <br />
+                  In future development, the system will integrate AI/ML technologies to analyze textual feedback, providing deeper insights into teacher and student performance with minimal effort.
+
                   </p>
                   <div className="d-flex justify-content-center fs-2 gap-4">
                     <a className="text-gradient" href="#!">

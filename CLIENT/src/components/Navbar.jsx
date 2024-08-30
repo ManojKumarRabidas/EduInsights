@@ -7,21 +7,11 @@ function Navbar() {
       <div className="container-fluid">
         {/* Navbar Brand */}
         <div className="navbar-brand" href="#">
-          <Link className="nav-link active" to="/">
-            EduInsights
-          </Link>
+          <Link className="nav-link active" to="/">EduInsights</Link>
         </div>
 
         {/* Toggle button for mobile view */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
 
@@ -30,35 +20,20 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               {/* Dropdown Toggle */}
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                User Name
-              </a>
+              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">User Name</a>
               {/* Dropdown Menu */}
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Settings
-                  </a>
+                  <a className="dropdown-item" href="#">Settings</a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Profile
-                  </a>
+                  <a className="dropdown-item" href="#">Profile</a>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Sign Out
-                  </a>
+                  <a className="dropdown-item" href="#">Sign Out</a>
                 </li>
               </ul>
             </li>
