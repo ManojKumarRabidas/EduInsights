@@ -1,102 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// const HOST = import.meta.env.VITE_HOST
-// const PORT = import.meta.env.VITE_PORT
-
-// function List() {
-//   const [data, setData] = useState();
-//   const [error, setError] = useState("");
-//   const [response, setResponse] = useState("");
-
-//   async function getData() {
-//     const response = await fetch(`${HOST}:${PORT}/server/dept-list`, {
-//       method: "GET",
-//     });
-
-//     if (response){
-//       const result = await response.json();
-//       if (response.ok){
-//         setData(result.docs);
-//         setError("");
-//       } else{
-//         setError(result.error);
-//       }
-//     } else{
-//       setError("We are unable to process now. Please try again later.")
-//     }
-//   }
-
-//   useEffect(() => {
-//     getData();
-//   }, []);
-
-//   const handleDelete = async (id) => {
-//     const response = await fetch(
-//       `${HOST}:${PORT}/server/dept-delete/${id}`,
-//       {method: "DELETE"}
-//     );
-
-//     if (response){
-//       const result = await response.json();
-//       if (response.ok){
-//         setResponse("Department deleted successfully");
-//         setTimeout(() => {
-//           getData();
-//         }, 2000);
-//       } else{
-//         setError(result.error);
-//       }
-//     } else{
-//       setError("We are unable to process now. Please try again later.")
-//     }
-//     setTimeout(() => {
-//       setResponse("");
-//       setError("");
-//     }, 9000);
-//   };
-
-
-//   return (
-//     <div className="container my-2">
-//       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-//       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-
-//       <table className="table">
-//         <thead>
-//           <tr>
-//             <th scope="col">Sl No</th>
-//             <th scope="col">Department Id</th>
-//             <th scope="col">Department Name</th>
-//             <th scope="col">Active</th>
-//             <th scope="col" style={{ textAlign: 'center' }}>Action</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//         {data && data.length > 0 ? (
-//           data?.map((item, index) => (
-//             <tr key={item._id}>
-//               <td>{index+1}</td>
-//               <td>{item?.dept_id}</td>
-//               <td>{item?.name}</td>
-//               <td>{item?.active}</td>
-//               <td style={{ textAlign: 'center' }}>
-//                 <button type="button" class="btn btn-outline-light m-1"><Link to={`/departments/dept-update/${item?._id}`} className="card-link m-2">Edit</Link></button>
-//                 <button type="button" class="btn btn-outline-light m-1"><a href="" className="card-link m-2" onClick={() => handleDelete(item?._id)}>Delete</a></button>
-//                 {/* <Link to={`/departments/dept-update/${item?._id}`} className="card-link m-2">Edit</Link>
-//                 <a href="" className="card-link m-2" onClick={() => handleDelete(item?._id)}>Delete</a> */}
-//               </td>
-//             </tr>
-//           ))):(
-//             <tr><td colSpan="5" className="text-center">No data available</td></tr>
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-// export default List;
-
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -203,12 +104,7 @@ function List() {
       {error && <div className="alert alert-danger">{error}</div>}
       {response && <div className="alert alert-success">{response}</div>}
 
-      <input
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="Search..."
-        className="form-control mb-3"
-      />
+      <input value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." className="form-control mb-3"/>
 
       <table className="table table-striped">
         <thead>
@@ -241,9 +137,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="5" className="text-center">
-                No data available
-              </td>
+              <td colSpan="5" className="text-center"> No data available</td>
             </tr>
           )}
         </tbody>
