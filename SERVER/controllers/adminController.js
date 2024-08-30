@@ -16,7 +16,6 @@ module.exports = {
                 return;
             }
             const doc = await deptModel.create({ name: body.name, dept_id: body.dept_id, active: body.active,});
-            console.log(doc);  
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
