@@ -45,39 +45,28 @@ function Create() {
   };
 
   return (
-    <div className="container my-5 py-5">
+    <div className="container my-2">
       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Department Id</label>
+          <label className="form-label">Department Id <span className="ei-col-red">*</span></label>
           <input name="dept_id" type="text" className="form-control" aria-describedby="emailHelp" value={dept_id} onChange={(e) => setDeptId(e.target.value)}/>
         </div>
         <div className="mb-3">
-          <label className="form-label">Department Name</label>
+          <label className="form-label">Department Name <span className="ei-col-red">*</span></label>
           <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
         </div>
-        {/* <div className="mb-3">
-          <label className="form-label">Active</label>
-          <input name="active" type="number" className="form-control" value={active} onChange={(e) => setActive(e.target.value)} />
-        </div> */}
-        <div className="mb-3 form-switch">
-          <label className="form-label"></label>
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            id="activeSwitch"
-            checked={active}
-            onChange={(e) => setActive(e.target.checked)}
-          />
-          <label className="form-check-label" htmlFor="activeSwitch">
-            {active ? "Yes" : "No"}
-          </label>
+        <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
+          <label className="form-label">Active <span className="ei-col-red">*</span></label>
+          <div>
+            <input className="form-check-input cursor-pointer" style={{ marginLeft: "0" }} type="checkbox" role="switch" id="activeSwitch" checked={active} onChange={(e) => setActive(e.target.checked)}/>
+            <label className="form-check-label mx-3" htmlFor="activeSwitch">{active ? "On" : "Off"}</label>
+          </div>
         </div>
 
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary">Create</button>
       </form>
     </div>
   );

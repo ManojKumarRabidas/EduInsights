@@ -146,6 +146,20 @@ module.exports = {
             res.status(400).json({ msg: err.message });
         }
     },
+    strengthUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await strengthModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
     
     subjectList: async(req, res)=>{
         try {
@@ -211,5 +225,19 @@ module.exports = {
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
-    }
+    },
+    subjectUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await subjectModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
 }

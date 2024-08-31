@@ -209,7 +209,7 @@ function List() {
     setTimeout(() => {
       setResponse("");
       setError("");
-    }, 5000);
+    }, 3000);
   };
 
   const handleActiveChange = async (id, isActive) => {
@@ -252,7 +252,7 @@ function List() {
         cell: ({ row }) => (
           <div className="form-switch">
             <input
-              className="form-check-input"
+              className="form-check-input cursor-pointer"
               type="checkbox"
               role="switch"
               id={`activeSwitch-${row.id}`}
@@ -267,7 +267,7 @@ function List() {
       {
         header: "Action",
         id: "action",
-        className: "ei-text-center-imp",
+        headerClassName: "ei-text-center-imp",
         cell: ({ row }) => (
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1">
@@ -281,6 +281,7 @@ function List() {
             <button
               type="button"
               className="btn btn-outline-light m-1"
+              style={{ color: "blue" }}
               onClick={() => handleDelete(row.original._id)}
             >
               Delete
@@ -321,7 +322,7 @@ function List() {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className={header.column.columnDef.headerClassName}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext()
