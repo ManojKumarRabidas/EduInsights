@@ -47,7 +47,10 @@ function Update() {
   const handleEdit = async (event) => {
     event.preventDefault();
     const updateDept = { dept_id, name, active: active ? 1 : 0 };
-
+    if ((updateDept.name=="") || (updateDept.dept_id=="")){
+      setError("Please enter all the required values.");
+      return;
+    }
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-update/${id}`, {
         method: "PATCH",
