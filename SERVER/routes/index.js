@@ -16,4 +16,11 @@ router.get("/strength-details/:id", adminController.strengthDetails);
 router.patch("/strength-update/:id", adminController.strengthUpdate);
 router.delete("/strength-delete/:id", adminController.strengthDelete);
 
+router.get("/subject-list", adminController.subjectList);
+router.post("/subject-create", adminController.subjectCreate);
+router.get("/subject-details/:id", adminController.subjectDetails);
+router.patch("/subject-update/:id", adminController.subjectUpdate);
+router.delete("/subject-delete/:id", adminController.subjectDelete);
+
+
 module.exports = router;

@@ -1,5 +1,7 @@
 const deptModel = require("../models/department");
 const strengthModel = require("../models/strength");
+const subjectModel = require("../models/subject");
+
 module.exports = {
     deptList: async(req, res)=>{
         try {
@@ -66,7 +68,6 @@ module.exports = {
             res.status(400).json({ msg: err.message });
         }
     },
-
     deptUpdateActive: async(req, res)=>{
         try {
             const params = req.params;
@@ -81,6 +82,7 @@ module.exports = {
             res.status(500).json({ msg: err.message });
         }
     },
+
     strengthList: async(req, res)=>{
         try {
             const docs = await strengthModel.find();
@@ -101,9 +103,7 @@ module.exports = {
         } catch (err) {
             if(err.code==11000){
                 res.status(500).json({ status: false, msg: "Strength must be unique." });
-                return
             }
-            res.status(500).json({ status: false, msg: err.message });
         }
     },
     strengthDetails: async(req, res)=>{
@@ -145,6 +145,71 @@ module.exports = {
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
+    },
+    
+    subjectList: async(req, res)=>{
+        try {
+            const docs = await subjectModel.find();
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    subjectCreate: async(req, res)=>{
+        try {
+            const body = req.body;
+            if (!body.subject_code || !body.name || !body.department || !body.active){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await subjectModel.create({ subject_code: body.subject_code, name: body.name, department: body.department, active: body.active,});
+            res.status(201).json({ status: true, msg: "Subject created successfully.", doc: doc });
+        } catch (err) {
+            if(err.code==11000){
+                res.status(500).json({ status: false, msg: "Subject Code must be unique." });
+                return
+            }
+            res.status(500).json({ status: false, msg: err.message });
+        }
+    },
+    subjectDetails: async(req, res)=>{
+        try {
+            const params = req.params
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await subjectModel.findById({ _id: params.id });
+            res.status(200).json({ doc: doc });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    subjectUpdate: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await subjectModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Subject updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+    subjectDelete: async(req, res)=>{
+        try {
+            const params = req.params;
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            await subjectModel.findByIdAndDelete({ _id: params.id });
+            res.status(200).json({ message: "Subject deleted successfully" });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
     }
-
 }
