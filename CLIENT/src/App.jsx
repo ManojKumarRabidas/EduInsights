@@ -3,6 +3,8 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import Department from './components/Department';
+import Strength from './components/Strength';
+import Subject from './components/Subject';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -24,6 +26,9 @@ export default function App() {
               <Routes>
                 <Route exact path='/' element={<Home />} />
                 <Route exact path='/departments/*' element={<Department />} />
+                <Route exact path='/strengths/*' element={<Strength />} />
+                <Route exact path='/subjects/*' element={<Subject />} />
+
               </Routes>
             </main>
           </div>
