@@ -6,14 +6,15 @@ const PORT = import.meta.env.VITE_PORT
 function Create() {
   const [dept_id, setDeptId] = useState("");
   const [name, setName] = useState("");
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState(false);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const deptData = { name, dept_id, active };
-    if ((deptData.name=="") || (deptData.dept_id=="") || (deptData.active=="")){
+    // const deptData = { name, dept_id, active };
+    const deptData = { name, dept_id, active: active ? "1" : "0" };
+    if ((deptData.name=="") || (deptData.dept_id=="")){
       setError("Please enter all the required values.");
       return;
     }
@@ -29,7 +30,7 @@ function Create() {
         setError("");
         setDeptId("");
         setName("");
-        setActive("");
+        setActive(false);
         navigate("/departments/dept-list");
       } else{
         setError(result.msg);
@@ -44,25 +45,28 @@ function Create() {
   };
 
   return (
-    <div className="container my-5 py-5">
+    <div className="container my-2">
       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Department Id</label>
+          <label className="form-label">Department Id <span className="ei-col-red">*</span></label>
           <input name="dept_id" type="text" className="form-control" aria-describedby="emailHelp" value={dept_id} onChange={(e) => setDeptId(e.target.value)}/>
         </div>
         <div className="mb-3">
-          <label className="form-label">Department Name</label>
+          <label className="form-label">Department Name <span className="ei-col-red">*</span></label>
           <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Active</label>
-          <input name="active" type="number" className="form-control" value={active} onChange={(e) => setActive(e.target.value)} />
+        <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
+          <label className="form-label">Active <span className="ei-col-red">*</span></label>
+          <div>
+            <input className="form-check-input cursor-pointer" style={{ marginLeft: "0" }} type="checkbox" role="switch" id="activeSwitch" checked={active} onChange={(e) => setActive(e.target.checked)}/>
+            <label className="form-check-label mx-3" htmlFor="activeSwitch">{active ? "On" : "Off"}</label>
+          </div>
         </div>
 
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary">Create</button>
       </form>
     </div>
   );

@@ -64,5 +64,19 @@ module.exports = {
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
-    }
+    },
+    deptUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await deptModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
 }

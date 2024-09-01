@@ -20,7 +20,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               {/* Dropdown Toggle */}
-              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">User Name</a>
+              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Aditya Roy</a>
               {/* Dropdown Menu */}
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
