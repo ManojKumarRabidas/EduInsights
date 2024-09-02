@@ -104,6 +104,12 @@ function List() {
         enableSorting: true,
       },
       {
+        header: "Name",
+        accessorKey: "name",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
         header: "Department Name",
         accessorKey: "department",
         sortingFn: "alphanumeric",
