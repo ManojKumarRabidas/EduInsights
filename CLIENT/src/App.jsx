@@ -7,6 +7,7 @@ import Home from './components/Home';
 import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
+import AreaOfImprovement from './components/AreaOfImprovement';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
@@ -71,6 +72,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/home' element={<Home />} />
               <Route path='/departments/*' element={<Department />} />
               <Route path='/strengths/*' element={<Strength />} />
+              <Route path='/areas-of-improvement/*' element={<AreaOfImprovement />} />
               <Route path='/subjects/*' element={<Subject />} />
             </Routes>
           </main>

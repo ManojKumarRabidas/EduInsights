@@ -1,6 +1,8 @@
+const {ObjectId} = require('mongodb')
 const deptModel = require("../models/department");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
+const areaOfImprovementModel = require("../models/areaofimprovement");
 
 module.exports = {
     deptList: async(req, res)=>{
@@ -161,14 +163,34 @@ module.exports = {
             res.status(500).json({ msg: err.message });
         }
     },
-    
+   
     subjectList: async(req, res)=>{
         try {
-            const docs = await subjectModel.find();
+            const docs = await subjectModel.aggregate([
+                {$lookup: {from: "departments",
+                        localField: "department",
+                        foreignField: "_id",
+                        as: "department"}},
+                {$unwind: "$department"},
+                {$project: { _id: 1,
+                        subject_code: 1,
+                        name: 1,
+                        department: "$department.name",
+                        active: 1}}
+            ]);
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
+    },
+    getDepartments: async(req, res)=>{
+        try {
+            const departments = await deptModel.find();
+            // res.json({ departments });
+            res.status(200).json({ departments: departments });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve departments" });
+          }
     },
     subjectCreate: async(req, res)=>{
         try {
@@ -177,7 +199,8 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await subjectModel.create({ subject_code: body.subject_code, name: body.name, department: body.department, active: body.active,});
+            body.department = new ObjectId(body.department);
+            const doc = await subjectModel.create(body);
             res.status(201).json({ status: true, msg: "Subject created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
@@ -194,7 +217,22 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await subjectModel.findById({ _id: params.id });
+            console.log(req.params);
+            // const doc = await subjectModel.findById({ _id: params.id });
+            const doc = await subjectModel.aggregate([
+                {$match: {_id: new ObjectId(params.id)}},
+                {$lookup: {from: "departments",
+                        let: {departmentId: "$department"},
+                        pipeline: [{$match: {$expr: {$eq: ["$_id", "$$departmentId"]}}},
+                        {$project: {_id: 1, name: 1}}],
+                        as: "department"}},
+                {$unwind: "$department"},
+                {$project: { _id: 1,
+                        subject_code: 1,
+                        name: 1,
+                        department:1,
+                        active: 1}}
+            ]);
             res.status(200).json({ doc: doc });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -241,4 +279,88 @@ module.exports = {
             res.status(500).json({ msg: err.message });
         }
     },
+
+    areaOfImprovementList: async(req, res)=>{
+        try {
+            const docs = await areaOfImprovementModel.find();
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    areaOfImprovementCreate: async(req, res)=>{
+        try {
+            const body = req.body;
+            if (!body.area_for || !body.name || !body.active){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
+            res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
+        } catch (err) {
+            if(err.code==11000){
+                res.status(500).json({ status: false, msg: "Combination of 'Area For' and 'Name' must be unique." });
+                return
+            }
+            res.status(500).json({ status: false, msg: err.message });
+        }
+    },
+    areaOfImprovementDetails: async(req, res)=>{
+        try {
+            const params = req.params
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await areaOfImprovementModel.findById({ _id: params.id });
+            res.status(200).json({ doc: doc });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    areaOfImprovementUpdate: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await areaOfImprovementModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            if(err.code==11000){
+                res.status(500).json({ status: false, msg: "Combination of 'Area For' and 'Name' must be unique." });
+                return
+            }
+            res.status(500).json({ status: false, msg: err.message });
+        }
+    },
+    areaOfImprovementDelete: async(req, res)=>{
+        try {
+            const params = req.params;
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            await areaOfImprovementModel.findByIdAndDelete({ _id: params.id });
+            res.status(200).json({ message: "Area of improvement deleted successfully" });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    areaOfImprovementUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await areaOfImprovementModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    }
 }

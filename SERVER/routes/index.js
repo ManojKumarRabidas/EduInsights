@@ -19,12 +19,24 @@ router.post("/strength-create", adminController.strengthCreate);
 router.get("/strength-details/:id", adminController.strengthDetails);
 router.patch("/strength-update/:id", adminController.strengthUpdate);
 router.delete("/strength-delete/:id", adminController.strengthDelete);
+router.put("/strength-update-active/:id", adminController.strengthUpdateActive);
+
 
 router.get("/subject-list", adminController.subjectList);
+router.get("/get-departments", adminController.getDepartments);
 router.post("/subject-create", adminController.subjectCreate);
 router.get("/subject-details/:id", adminController.subjectDetails);
 router.patch("/subject-update/:id", adminController.subjectUpdate);
 router.delete("/subject-delete/:id", adminController.subjectDelete);
+router.put("/subject-update-active/:id", adminController.subjectUpdateActive);
+
+
+router.get("/area-of-improvement-list", adminController.areaOfImprovementList);
+router.post("/area-of-improvement-create", adminController.areaOfImprovementCreate);
+router.get("/area-of-improvement-details/:id", adminController.areaOfImprovementDetails);
+router.patch("/area-of-improvement-update/:id", adminController.areaOfImprovementUpdate);
+router.delete("/area-of-improvement-delete/:id", adminController.areaOfImprovementDelete);
+router.put("/area-of-improvement-update-active/:id", adminController.areaOfImprovementUpdateActive);
 
 
 module.exports = router;
