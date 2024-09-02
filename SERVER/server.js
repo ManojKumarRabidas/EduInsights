@@ -1,8 +1,8 @@
 const express = require('express');
+const session = require('express-session');
 const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
-const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const route = require('./routes/index');
 const connectDB = require('./config/mongoDB');
@@ -33,8 +33,8 @@ app.use(
   })
 );
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+// Use routes after session middleware
 app.use('/server', route);
 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

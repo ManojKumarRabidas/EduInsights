@@ -13,12 +13,12 @@ module.exports = {
     },
     deptCreate: async(req, res)=>{
         try {
+            console.log("req.session admin", req.session);
             const body = req.body;
             if (!body.dept_id || !body.name || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            console.log(req.session);
             const doc = await deptModel.create({ name: body.name, dept_id: body.dept_id, active: body.active,});
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {

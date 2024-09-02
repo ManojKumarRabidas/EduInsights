@@ -23,6 +23,10 @@ const authenticationSchema = new mongoose.Schema({
   last_log_in: {
     type: Date,
     default: null,
+  },
+  user_type: {
+    type: String,
+    default: null,
   }
 });
 
