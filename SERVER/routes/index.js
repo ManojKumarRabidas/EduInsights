@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const userController = require("../controllers/userController");
 
+router.post("/user-create", userController.userCreate);
+router.post('/login', userController.userLogin);
+router.post('/logout', userController.userLogout);
 
 router.get("/dept-list", adminController.deptList);
 router.post("/dept-create", adminController.deptCreate);
