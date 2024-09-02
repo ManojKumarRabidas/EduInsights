@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
+import Improvement from './components/Improvement';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -28,6 +29,7 @@ export default function App() {
                 <Route exact path='/departments/*' element={<Department />} />
                 <Route exact path='/strengths/*' element={<Strength />} />
                 <Route exact path='/subjects/*' element={<Subject />} />
+                <Route exact path='/improvements/*' element={<Improvement />} />
 
               </Routes>
             </main>
