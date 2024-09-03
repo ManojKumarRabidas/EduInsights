@@ -101,12 +101,15 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await strengthModel.create({ name: body.name, strength_for: body.strength_for, active: body.active,});
+            // const doc = await strengthModel.create({ name: body.name, strength_for: body.strength_for, active: body.active,});
+            const doc = await strengthModel.create(body);
             res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
-                res.status(500).json({ status: false, msg: "Strength must be unique." });
+                res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
+                return
             }
+            res.status(500).json({ status: false, msg: err.message });
         }
     },
     strengthDetails: async(req, res)=>{
@@ -185,7 +188,7 @@ module.exports = {
     },
     getDepartments: async(req, res)=>{
         try {
-            const departments = await deptModel.find();
+            const departments = await deptModel.find({active: 1}).sort({name: 1});
             // res.json({ departments });
             res.status(200).json({ departments: departments });
           } catch (error) {
@@ -295,7 +298,8 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
+            // const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
+            const doc = await areaOfImprovementModel.create(body);
             res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){

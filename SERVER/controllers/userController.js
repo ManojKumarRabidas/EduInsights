@@ -86,15 +86,23 @@ module.exports = {
 
       console.log("authuser", authUser);
       
-      // Store user data in session
-      req.session.user = {
-        _id: authUser.user_id,
-        name: authUser.name,
-        // user_type: await userModel.findById(authUser.user_id).select('user_type'), // Fetch user_type from users collection
-        user_type: authUser.user_type
-      };
-      console.log("req.session user", req.session)
-      res.json({ msg: 'Login successful', user: req.session.user });
+      // // Store user data in session
+      // req.session.user = {
+      //   _id: authUser.user_id,
+      //   name: authUser.name,
+      //   user_type: authUser.user_type
+      // };
+      // res.json({ user: req.session.user, msg: 'You are now logged in!' });
+      req.session.save(() => {
+        req.session.logged_in = true;
+        req.session.user = {
+          _id: authUser.user_id,
+          name: authUser.name,
+          user_type: authUser.user_type
+        };
+        console.log("Session after login:", req.session);
+        res.json({ user: req.session.user, msg: 'You are now logged in!' });
+      });
     } catch (err) {
       res.status(500).json({ msg: 'Server error', error: err.message });
     }

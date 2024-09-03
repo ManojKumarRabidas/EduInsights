@@ -30,7 +30,7 @@ app.use(
       secure: false, // Set to true if using https
       httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
     },
-  })
+  }, app)
 );
 
 // Use routes after session middleware
