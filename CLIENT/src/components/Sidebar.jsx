@@ -8,6 +8,7 @@ function Sidebar() {
         <NavLink to="/departments" className={({ isActive }) => (isActive ? 'active' : '')}>Departments</NavLink>
         <NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strength</NavLink>
         <NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>
+        <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher_feedback</NavLink>
     </div>
   );
 }

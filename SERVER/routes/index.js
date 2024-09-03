@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
+const teacherController = require ("../controllers/teacherController")
 
 router.post("/user-create", userController.userCreate);
 router.post('/login', userController.userLogin);
@@ -25,6 +26,9 @@ router.post("/subject-create", adminController.subjectCreate);
 router.get("/subject-details/:id", adminController.subjectDetails);
 router.patch("/subject-update/:id", adminController.subjectUpdate);
 router.delete("/subject-delete/:id", adminController.subjectDelete);
+
+
+router.post("/teacher-feedback", teacherController.teacherFeedback);
 
 
 module.exports = router;
