@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
+const teacherController = require ("../controllers/teacherController")
 
 router.post("/user-create", userController.userCreate);
 router.post('/login', userController.userLogin);
@@ -37,6 +38,9 @@ router.get("/area-of-improvement-details/:id", adminController.areaOfImprovement
 router.patch("/area-of-improvement-update/:id", adminController.areaOfImprovementUpdate);
 router.delete("/area-of-improvement-delete/:id", adminController.areaOfImprovementDelete);
 router.put("/area-of-improvement-update-active/:id", adminController.areaOfImprovementUpdateActive);
+
+
+router.post("/teacher-feedback", teacherController.teacherFeedback);
 
 
 module.exports = router;
