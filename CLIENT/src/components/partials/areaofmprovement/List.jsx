@@ -1,93 +1,93 @@
-import React, { useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
-    useReactTable,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getSortedRowModel,
-    flexRender
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  flexRender,
 } from "@tanstack/react-table";
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
 function List() {
-    const [data, setData] = useState([]);
-    const [error, setError] = useState("");
-    const [response, setResponse] = useState("");
-    const [globalFilter, setGlobalFilter] = useState("");
-    const [pageIndex, setPageIndex] = useState(0);
-    const [pageSize, setPageSize] = useState(6);
-    const [sorting, setSorting] = useState([]);
-  
-    const handleActiveChange = async (id, isActive) => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-update-active/${id}`, {
-          method: "PUT",
-          body: JSON.stringify({ active: isActive ? "1" : "0" }),
-          headers: { "Content-Type": "application/json" },
-        });
-  
-        const result = await response.json();
-        if (response.ok) {
-          setResponse("Strength status updated successfully");
-          getData();
-        } else {
-          setError(result.error);
-        }
-      } catch (err) {
-        setError("We are unable to process now. Please try again later.");
-      }
-      setTimeout(() => {
-        setResponse("");
-        setError("");
-      }, 5000);
-    };
+  const [data, setData] = useState([]);
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(6);
+  const [sorting, setSorting] = useState([]); // State to manage sorting
 
-    async function getData() {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-list`, {
-          method: "GET",
-        });
-  
-        const result = await response.json();
-        if (response.ok) {
-          setData(result.docs);
-          setError("");
-        } else {
-          setError(result.msg);
-        }
-      } catch (err) {
-        setError("We are unable to process now. Please try again later.");
-      }
-    }
-  
-    useEffect(() => {
-      getData();
-    }, []);
-  
-    const handleDelete = async (id) => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-delete/${id}`, {
-          method: "DELETE",
-        });
-  
-        const result = await response.json();
-        if (response.ok) {
-          setResponse("Strength deleted successfully");
-          getData();
-        } else {
-          setError(result.error);
-        }
-      } catch (err) {
-        setError("We are unable to process now. Please try again later.");
-      }
-      setTimeout(() => {
-        setResponse("");
+  async function getData() {
+    try {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-list`, {
+        method: "GET",
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setData(result.docs);
         setError("");
-      }, 5000);
-    };
-  
+      } else {
+        setError(result.msg);
+      }
+    } catch (err) {
+      setError("We are unable to process now. Please try again later.");
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-delete/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setResponse("Area of improvement deleted successfully");
+        getData();
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError("We are unable to process now. Please try again later.");
+    }
+    setTimeout(() => {
+      setResponse("");
+      setError("");
+    }, 3000);
+  };
+
+  const handleActiveChange = async (id, isActive) => {
+    try {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-update-active/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ active: isActive ? "1" : "0" }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setResponse("Area of improvement status updated successfully");
+        getData();
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError("We are unable to process now. Please try again later.");
+    }
+    setTimeout(() => {
+      setResponse("");
+      setError("");
+    }, 5000);
+  };
+
   // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
@@ -98,8 +98,8 @@ function List() {
         enableSorting: false,
       },
       {
-        header: "Strength For",
-        accessorKey: "strength_for",
+        header: "Area For",
+        accessorKey: "area_for",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
@@ -137,7 +137,7 @@ function List() {
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
               <Link
-                to={`/strengths/strength-update/${row.original._id}`}
+                to={`/areas-of-improvement/area-of-improvement-update/${row.original._id}`}
                 className="card-link m-2"
               >
                 Edit
@@ -164,7 +164,7 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.strength_for.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.area.toString().toLowerCase().includes(lowercasedFilter) ||
         row.name.toLowerCase().includes(lowercasedFilter)
       );
     });
@@ -297,6 +297,6 @@ function List() {
       </div>
     </div>
   );
-  }
-  
-  export default List;
+}
+
+export default List;

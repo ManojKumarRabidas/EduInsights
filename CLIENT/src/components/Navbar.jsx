@@ -1,12 +1,36 @@
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const [userName, setUserName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve user name from session storage
+    const name = sessionStorage.getItem('userName');
+    if (name) {
+      setUserName(name);
+    }
+  }, []);
+
+  // Logout function
+  const handleLogout = () => {
+    // Clear session storage
+    sessionStorage.removeItem('userSession');
+    sessionStorage.removeItem('userName');
+
+    // Trigger a storage event to update authentication state in other components
+    window.dispatchEvent(new Event('storage'));
+
+    // Redirect to login page
+    navigate('/login');
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div className="container-fluid">
         {/* Navbar Brand */}
-        <div className="navbar-brand" href="#">
+        <div className="navbar-brand">
           <Link className="nav-link active" to="/">EduInsights</Link>
         </div>
 
@@ -20,7 +44,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               {/* Dropdown Toggle */}
-              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Aditya Roy</a>
+              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{userName || 'User'}</a>
               {/* Dropdown Menu */}
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
@@ -32,8 +56,9 @@ function Navbar() {
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
+                {/* Sign Out link with Logout function */}
                 <li>
-                  <a className="dropdown-item" href="#">Sign Out</a>
+                  <a className="dropdown-item" href="#" onClick={handleLogout}>Sign Out</a>
                 </li>
               </ul>
             </li>
