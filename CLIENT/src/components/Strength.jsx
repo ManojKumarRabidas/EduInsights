@@ -4,18 +4,15 @@ import Create from './partials/strength/Create';
 import Update from './partials/strength/Update';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { Route, Routes, Link, Navigate } from 'react-router-dom';
+import { Route, Routes, NavLink, Navigate } from 'react-router-dom';
 
 export default function Strength(){
 
     return(
         <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light bg-light inner-navbar">
-          {/* <div className="container-fluid"> */}
-            <Link className="navbar-brand" to="strength-list">List</Link>
-            <Link className="navbar-brand" to="strength-create">Create</Link>
-            {/* <Link className="navbar-brand" to="dept-update">Update</Link> */}
-          {/* </div> */}
+          <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="strength-list">List</NavLink>
+          <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="strength-create">Create</NavLink>
         </nav>
   
         <div className="container">

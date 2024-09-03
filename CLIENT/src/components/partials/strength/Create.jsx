@@ -6,14 +6,14 @@ const PORT = import.meta.env.VITE_PORT
 function Create() {
     const [strength_for, setStrengthFor] = useState("");
     const [name, setName] = useState("");
-    const [active, setActive] = useState("");
+    const [active, setActive] = useState(false);
     const [error, setError] = useState("");
     const [response, setResponse] = useState("");
     const navigate = useNavigate();
     const handleSubmit = async (event) => {
       event.preventDefault();
-      const strengthData = { name, strength_for, active };
-      if ((strengthData.name=="") || (strengthData.strength_for=="") || (strengthData.active=="")){
+      const strengthData = { strength_for, name, active: active ? "1" : "0" };
+      if (!strength_for || !name ){
         setError("Please enter all the required values.");
         return;
       }
@@ -29,7 +29,7 @@ function Create() {
           setError("");
           setName("");
           setStrengthFor("");
-          setActive("");
+          setActive(false);
           navigate("/strengths/strength-list");
         } else{
           setError(result.msg);
@@ -44,25 +44,32 @@ function Create() {
     };
   
     return (
-      <div className="container my-5 py-5">
+      <div className="container my-2">
         {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
         {response && (<div className="alert alert-success" role="alert">{response}</div>)}
   
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label"> Name</label>
+            <label className="form-label">Strength For <span className="ei-col-red">*</span></label>
+            <select className="form-select" aria-label="Default select example" name="strength_for" value={strength_for} onChange={(e) => setStrengthFor(e.target.value)}>
+                <option defaultValue>--Select strength for--</option>
+                <option value="TEACHER">TEACHER</option>
+                <option value="STUDENT">STUDENT</option>
+            </select>        
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Name <span className="ei-col-red">*</span></label>
             <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
           </div>
-          <div className="mb-3">
-            <label className="form-label">Strength For</label>
-            <input name="strength_for" type="text" className="form-control" aria-describedby="emailHelp" value={strength_for} onChange={(e) => setStrengthFor(e.target.value)}/>
+          <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
+          <label className="form-label">Active <span className="ei-col-red">*</span></label>
+          <div>
+            <input className="form-check-input cursor-pointer" style={{ marginLeft: "0" }} type="checkbox" role="switch" id="activeSwitch" checked={active} onChange={(e) => setActive(e.target.checked)}/>
+            <label className="form-check-label mx-3" htmlFor="activeSwitch">{active ? "On" : "Off"}</label>
           </div>
-          <div className="mb-3">
-            <label className="form-label">Active</label>
-            <input name="active" type="number" className="form-control" value={active} onChange={(e) => setActive(e.target.value)} />
-          </div>
+        </div>
   
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <button type="submit" className="btn btn-primary">Create</button>
         </form>
       </div>
     );
