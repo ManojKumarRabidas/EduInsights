@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     email: {type: 'string', required: true},
     address: {type: 'string', required: true},
     pin: {type: 'number', required: true},
+    active: {type: 'number', required: true},
+    is_verified: {type: 'number', required: true},
     login_id: {type: 'string', required: true},
     password: {type: 'string', required: true},
 }, { timestamps: true });

@@ -1,11 +1,59 @@
 const {ObjectId} = require('mongodb')
 const deptModel = require("../models/department");
+const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
 const userModel = require ("../models/user");
 const areaOfImprovementModel = require("../models/areaofimprovement");
 
 module.exports = {
+    userList: async(req, res)=>{
+        try {
+            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}});
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    userUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            console.log(params, body);
+            
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+    userPendingVerificationList: async(req, res)=>{
+        try {
+            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}, is_verified: {$nin: [1, -1] }});
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    userUpdateVerificationStatus: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            console.log(params, body);
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Department updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
     deptList: async(req, res)=>{
         try {
             const docs = await deptModel.find();
@@ -76,12 +124,13 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            console.log(params, body);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
             const doc = await deptModel.findByIdAndUpdate(params.id, body, {new: true});
-            res.status(200).json({ message: "User updated successfully", doc: doc });
+            res.status(200).json({ message: "Department updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
@@ -102,12 +151,15 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await strengthModel.create({ name: body.name, strength_for: body.strength_for, active: body.active,});
+            // const doc = await strengthModel.create({ name: body.name, strength_for: body.strength_for, active: body.active,});
+            const doc = await strengthModel.create(body);
             res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
-                res.status(500).json({ status: false, msg: "Strength must be unique." });
+                res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
+                return
             }
+            res.status(500).json({ status: false, msg: err.message });
         }
     },
     strengthDetails: async(req, res)=>{
@@ -186,7 +238,7 @@ module.exports = {
     },
     getDepartments: async(req, res)=>{
         try {
-            const departments = await deptModel.find();
+            const departments = await deptModel.find({active: 1}).sort({name: 1});
             // res.json({ departments });
             res.status(200).json({ departments: departments });
           } catch (error) {
@@ -296,7 +348,8 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
+            // const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
+            const doc = await areaOfImprovementModel.create(body);
             res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){

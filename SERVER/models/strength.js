@@ -6,6 +6,7 @@ const strengthSchema = new mongoose.Schema({
     active: {type: 'number'},
 },{ timestamps: true });
 
-// strengthSchema.index({ name: 1}, {unique: true});
-const Strength = mongoose.model('strength',strengthSchema)
-module.exports = Strength
+strengthSchema.index({ name: 1, strength_for: 1}, {unique: true});
+const StrengthModel = mongoose.model('strengths',strengthSchema)
+module.exports = StrengthModel
+
