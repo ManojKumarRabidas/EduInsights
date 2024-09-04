@@ -35,7 +35,8 @@ module.exports = {
       }
 
       console.log("body", body);
-
+      body.active = 1;
+      body.verified = 0;
       // Hash the password before saving
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(body.password, salt);
@@ -63,23 +64,42 @@ module.exports = {
     }
   },
 
+  userCheckLoginIdAvailability: async(req, res)=>{
+    console.log("abc");
+    
+    try {
+      const params = req.params;
+        if (!params || !params.login_id){
+            res.status(400).json({ msg: "Missing Parameters!" });
+            return;
+        }
+      const doc = await authModel.find({login_id: params.login_id});
+      console.log(doc);
+      // console.log(doc.length);
+      
+      if (doc.length<=0){
+        res.status(200).json({msg: "Available", available: true });
+        return;
+      }
+      res.status(200).json({msg: "Not Available", available: false});
+    } catch (error) {
+      res.status(500).json({ msg: "Failed to retrieve departments" });
+    }
+  },
   // Handle user login
   userLogin: async (req, res) => {
     const { login_id, password } = req.body;
-
     try {
       // Find user by login_id in "authentication" collection
       const authUser = await authModel.findOne({ login_id });
       if (!authUser) {
         return res.status(400).json({ msg: 'Invalid credentials' });
       }
-
       // Check password
       const isMatch = await bcrypt.compare(password, authUser.password);
       if (!isMatch) {
         return res.status(400).json({ msg: 'Invalid credentials' });
       }
-
       // Update last login time
       authUser.last_log_in = new Date();
       await authUser.save();
@@ -93,16 +113,35 @@ module.exports = {
       //   user_type: authUser.user_type
       // };
       // res.json({ user: req.session.user, msg: 'You are now logged in!' });
-      req.session.save(() => {
-        req.session.logged_in = true;
+
+      // req.session.save(() => {
+      //   req.session.logged_in = true;
+      //   req.session.user = {
+      //     _id: authUser.user_id,
+      //     name: authUser.name,
+      //     user_type: authUser.user_type
+      //   };
+      //   console.log("Session after login:", req.session);
+      //   res.json({ user: req.session.user, msg: 'You are now logged in!' });
+      // });
+
+      req.session.regenerate(function (err) {
+        if (err) next(err)
+    
+        // store user information in session, typically a user id
         req.session.user = {
-          _id: authUser.user_id,
-          name: authUser.name,
-          user_type: authUser.user_type
-        };
-        console.log("Session after login:", req.session);
-        res.json({ user: req.session.user, msg: 'You are now logged in!' });
-      });
+              _id: authUser.user_id,
+              name: authUser.name,
+              user_type: authUser.user_type
+            };
+    
+        // save the session before redirection to ensure page
+        // load does not happen before session is saved
+        req.session.save(function (err) {
+          if (err) return next(err)
+            res.json({ user: req.session.user, msg: 'You are now logged in!' });
+        })
+      })
     } catch (err) {
       res.status(500).json({ msg: 'Server error', error: err.message });
     }

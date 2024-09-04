@@ -11,7 +11,7 @@ import {
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
-function List() {
+function Users() {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
@@ -22,7 +22,7 @@ function List() {
 
   async function getData() {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/dept-list`, {
+      const response = await fetch(`${HOST}:${PORT}/server/user-list`, {
         method: "GET",
       });
 
@@ -42,31 +42,33 @@ function List() {
     getData();
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`${HOST}:${PORT}/server/dept-delete/${id}`, {
-        method: "DELETE",
-      });
+  // const handleDelete = async (id) => {
+  //   try {
+  //     const response = await fetch(`${HOST}:${PORT}/server/dept0-delete/${id}`, {
+  //       method: "DELETE",
+  //     });
 
-      const result = await response.json();
-      if (response.ok) {
-        setResponse("Department deleted successfully");
-        getData();
-      } else {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError("We are unable to process now. Please try again later.");
-    }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
-  };
+  //     const result = await response.json();
+  //     if (response.ok) {
+  //       setResponse("Department deleted successfully");
+  //       getData();
+  //     } else {
+  //       setError(result.error);
+  //     }
+  //   } catch (err) {
+  //     setError("We are unable to process now. Please try again later.");
+  //   }
+  //   setTimeout(() => {
+  //     setResponse("");
+  //     setError("");
+  //   }, 3000);
+  // };
 
   const handleActiveChange = async (id, isActive) => {
+    console.log(id, isActive);
+    
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/dept-update-active/${id}`, {
+      const response = await fetch(`${HOST}:${PORT}/server/user-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
         headers: { "Content-Type": "application/json" },
@@ -76,7 +78,7 @@ function List() {
       console.log(result);
       
       if (response.ok) {
-        setResponse("Department status updated successfully");
+        setResponse("User status updated successfully");
         getData();
       } else {
         setError(result.error);
@@ -93,23 +95,72 @@ function List() {
   // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
+      // {
+      //   header: "Sl No",
+      //   accessorFn: (row, i) => i + 1 + pageIndex * pageSize,
+      //   id: "slNo",
+      //   enableSorting: false,
+      // },
       {
-        header: "Sl No",
-        accessorFn: (row, i) => i + 1 + pageIndex * pageSize,
-        id: "slNo",
-        enableSorting: false,
-      },
-      {
-        header: "Department Id",
-        accessorKey: "dept_id",
+        header: "User Type",
+        accessorKey: "user_type",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
       {
-        header: "Department Name",
+        header: "Name",
         accessorKey: "name",
         sortingFn: "alphanumeric",
         enableSorting: true,
+      },
+      {
+        header: "Email Id",
+        accessorKey: "email",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Phone",
+        accessorKey: "phone",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Address",
+        accessorKey: "address",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Department",
+        accessorKey: "department",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Reg Year",
+        accessorKey: "registration_year",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Reg Number",
+        accessorKey: "registration_number",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Verification",
+        accessorKey: "is_verified",
+        sortingFn: "alphanumeric",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <div>
+            
+              {(row.original.is_verified == 0) ? "Not Verified" : (row.original.is_verified == 1) ? "Verified" : "Rejected"}
+            
+          </div>
+        ),
       },
       {
         header: "Active",
@@ -122,7 +173,7 @@ function List() {
               type="checkbox"
               role="switch"
               id={`activeSwitch-${row.id}`}
-              checked={row.original.active === 1}
+              checked={row.original.active == 1}
               onChange={(e) =>
                 handleActiveChange(row.original._id, e.target.checked)
               }
@@ -130,34 +181,34 @@ function List() {
           </div>
         ),
       },
-      {
-        header: "Action",
-        id: "action",
-        enableSorting: false,
-        headerClassName: "ei-text-center-imp",
-        cell: ({ row }) => (
-          <div style={{ textAlign: "center" }}>
-            <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
-              <Link
-                to={`/departments/dept-update/${row.original._id}`}
-                className="card-link m-2"
-              >
-                Edit
-              </Link>
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
-              onClick={() => handleDelete(row.original._id)}
-            >
-              Delete
-            </button>
-          </div>
-        ),
-      },
+      // {
+      //   header: "Action",
+      //   id: "action",
+      //   enableSorting: false,
+      //   headerClassName: "ei-text-center-imp",
+      //   cell: ({ row }) => (
+      //     <div style={{ textAlign: "center" }}>
+      //       <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
+      //         <Link
+      //           to={`/departments/dept-update/${row.original._id}`}
+      //           className="card-link m-2"
+      //         >
+      //           Edit
+      //         </Link>
+      //       </button>
+      //       <button
+      //         type="button"
+      //         className="btn btn-outline-light m-1"
+      //         style={{ color: "blue", backgroundColor: "ghostwhite" }}
+      //         onClick={() => handleDelete(row.original._id)}
+      //       >
+      //         Delete
+      //       </button>
+      //     </div>
+      //   ),
+      // },
     ],
-    [handleDelete, pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
+    [ pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
   );
 
   // Apply global filtering before pagination
@@ -166,8 +217,15 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.dept_id.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter)
+        row.user_type.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.name.toLowerCase().includes(lowercasedFilter) ||
+        row.email.toLowerCase().includes(lowercasedFilter) ||
+        row.phone.toLowerCase().includes(lowercasedFilter) ||
+        row.address.toLowerCase().includes(lowercasedFilter) ||
+        row.department.toLowerCase().includes(lowercasedFilter) ||
+        row.registration_year.toLowerCase().includes(lowercasedFilter) ||
+        row.registration_number.toLowerCase().includes(lowercasedFilter) ||
+        row.is_verified.toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
@@ -233,7 +291,7 @@ function List() {
         className="form-control mb-3"
       />
 
-      <table className="table table-striped">
+      <table className="table table-striped" style={{ fontSize: "smaller" }}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -268,7 +326,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="5" className="text-center">
+              <td colSpan="9" className="text-center">
                 No data available
               </td>
             </tr>
@@ -301,4 +359,4 @@ function List() {
   );
 }
 
-export default List;
+export default Users;

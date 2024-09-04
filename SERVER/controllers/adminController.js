@@ -1,10 +1,58 @@
 const {ObjectId} = require('mongodb')
 const deptModel = require("../models/department");
+const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
 const areaOfImprovementModel = require("../models/areaofimprovement");
 
 module.exports = {
+    userList: async(req, res)=>{
+        try {
+            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}});
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    userUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            console.log(params, body);
+            
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+    userPendingVerificationList: async(req, res)=>{
+        try {
+            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}, is_verified: {$nin: [1, -1] }});
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    userUpdateVerificationStatus: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            console.log(params, body);
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Department updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
     deptList: async(req, res)=>{
         try {
             const docs = await deptModel.find();
@@ -75,12 +123,13 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            console.log(params, body);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
             const doc = await deptModel.findByIdAndUpdate(params.id, body, {new: true});
-            res.status(200).json({ message: "User updated successfully", doc: doc });
+            res.status(200).json({ message: "Department updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
