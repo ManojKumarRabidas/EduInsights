@@ -1,5 +1,6 @@
 const teacherModel = require("../models/teacher_feedback");
 const bcrypt = require ('bcryptjs');
+const { subjectDetails } = require("./adminController");
 
 module.exports = {
     teacherFeedback: async(req, res)=>{
@@ -22,4 +23,6 @@ module.exports = {
             res.status(500).json({ status: false, msg: err.message });
         }
     },
+
+    
 }

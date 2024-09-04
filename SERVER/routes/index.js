@@ -41,6 +41,9 @@ router.put("/area-of-improvement-update-active/:id", adminController.areaOfImpro
 
 
 router.post("/teacher-feedback", teacherController.teacherFeedback);
+router.get("/get-departments", adminController.getDepartments);
+router.get("/get-subjects", adminController.getSubjects);
+router.get("/get-student-names", adminController.getStudentNames);
 
 
 module.exports = router;

@@ -2,6 +2,7 @@ const {ObjectId} = require('mongodb')
 const deptModel = require("../models/department");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
+const userModel = require ("../models/user");
 const areaOfImprovementModel = require("../models/areaofimprovement");
 
 module.exports = {
@@ -362,5 +363,24 @@ module.exports = {
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
-    }
+    },
+
+    getSubjects: async(req, res)=>{
+        try {
+            const subjects = await subjectModel.find({active:1});
+            // res.json({ departments });
+            res.status(200).json({ subjects: subjects });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve subjects" });
+          }
+    },
+    getStudentNames:async(req, res)=>{
+        try {
+            const student_names = await userModel.find({ user_type:"STUDENT"});
+            // res.json({ departments });
+            res.status(200).json({ student_names: student_names });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve student names" });
+          }
+    },
 }
