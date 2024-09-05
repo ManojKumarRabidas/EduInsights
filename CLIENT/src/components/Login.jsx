@@ -12,7 +12,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if ( !login_id || !password ){
-        setError("Please enter all the required values.");
+        setError("Please enter login id and password.");
         return;
     }
     const loginData = { login_id, password};
@@ -58,7 +58,7 @@ function Login() {
         </div>
         <div className="log-in-buttons">
           <button type="submit" className="btn btn-primary my-2">Log In</button>
-          <button className="btn btn-primary my-2"><Link to="/registration">Register</Link></button>
+          <Link to="/registration"><button className="btn btn-primary my-2">Register</button></Link>
         </div>
       </form>
     </div>

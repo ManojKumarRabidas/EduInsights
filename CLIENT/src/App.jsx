@@ -69,7 +69,7 @@ function AppContent({ isAuthenticated }) {
           {/* Conditionally Render Sidebar */}
           {isAuthenticated && !isRegistrationPage && !isLoginPage && <Sidebar />}
           {/* <main className={`main-section ${isRegistrationPage || isLoginPage ? 'col-12' : 'col-md-9 col-lg-10'}`}> */}
-          <main className={`${isRegistrationPage || isLoginPage ? 'col-12 main-section-unrestricted' : 'col-md-9 col-lg-10 main-section'}`}>
+          <main className={`${isRegistrationPage ? 'col-12 main-section-registration': (isLoginPage ? 'col-12 main-section-log-in': 'col-12 main-section')}`}>
             <Routes>
               <Route path='/' element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
               <Route path='/registration' element={<Registration />} />

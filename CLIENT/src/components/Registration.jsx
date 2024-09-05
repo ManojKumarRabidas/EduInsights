@@ -17,10 +17,10 @@ function Registration() {
   const [address, setAddress] = useState("");
   const [pin, setPin] = useState("");
   const [login_id, setLoginId] = useState("");
-  const [isLoginIdInvalid, setIsLoginIdInvalid] = useState(null);
-  const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(null); // For tracking availability
   const [password, setPassword] = useState("");
   const [repeat_password, setRepeatPassword] = useState("");
+  const [isLoginIdInvalid, setIsLoginIdInvalid] = useState(null);
+  const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(null); // For tracking availability
   const [departments, setDepartments] = useState([]);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
@@ -71,7 +71,7 @@ function Registration() {
     setLoginId(id);
 
     // Check login ID availability after user stops typing for a short duration (debounce)
-    if (id.length > 0 && id.length < 4) { // Only check if the ID length is greater than 2
+    if (id.length > 0 && (id.length < 4 || id.length>10)) { // Only check if the ID length is greater than 2
       setIsLoginIdInvalid(true);
       setIsLoginIdAvailable(null);
     } else if(id.length >= 4){
@@ -157,224 +157,257 @@ function Registration() {
     }, 3000);
   };
 
-  return (
-    <div className="container my-2">
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
-      {response && (
-        <div className="alert alert-success" role="alert">
-          {response}
-        </div>
-      )}
-      <Link to="/login">Back to log in</Link>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">
-            User Type <span className="ei-col-red">*</span>
-          </label>
-          <select
-            className="form-select"
-            aria-label="Default select example"
-            name="user_type"
-            value={user_type}
-            onChange={(e) => setUserType(e.target.value)}
-          >
-            <option defaultValue>--Select user type--</option>
-            <option value="TEACHER">TEACHER</option>
-            <option value="STUDENT">STUDENT</option>
-          </select>
-        </div>
+  const clearForm = async()=>{
+    setUserType("")
+    setDepartment("")
+    setRegistrationYear("")
+    setRegistrationNumber("")
+    setTeacherCode("")
+    setEmployeeId("")
+    setName("")
+    setPhone("")
+    setEmail("")
+    setAddress("")
+    setPin("")
+    setLoginId("")
+    setPassword("")
+    setRepeatPassword("")
+    // handleLoginIdChange()
+  }
 
-        {/* Conditional fields for STUDENT */}
-        {user_type === "STUDENT" && (
-          <>
-            <div className="mb-3">
-              <label className="form-label">
-                Department <span className="ei-col-red">*</span>
+  return (
+    <div className="container my-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+      <h5 className="text-center mb-5">EduInsights - User Registration</h5>
+      {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
+      {response && (<div className="alert alert-success" role="alert">{response}</div>)}
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-section ">
+          <div className="registration-rows d-flex justify-content-center align-items-center">
+            <div className="registration-row m-2">
+              <label className="form-label">User Type <span className="ei-col-red">*</span>
               </label>
               <select
                 className="form-select"
                 aria-label="Default select example"
-                name="department"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
+                name="user_type"
+                value={user_type}
+                onChange={(e) => setUserType(e.target.value)}
               >
-                <option defaultValue>--Select department--</option>
-                <option value="MCA">MCA</option>
-                <option value="BCA">BCA</option>
+                <option defaultValue>--Select user type--</option>
+                <option value="TEACHER">TEACHER</option>
+                <option value="STUDENT">STUDENT</option>
               </select>
             </div>
-            <div className="mb-3">
+
+            {/* Conditional fields for STUDENT */}
+            {user_type === "STUDENT" && (
+              <>
+                <div className="registration-row m-2">
+                  <label className="form-label">
+                    Department <span className="ei-col-red">*</span>
+                  </label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    name="department"
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                  >
+                    <option defaultValue>--Select department--</option>
+                    {departments.map((dept) => (
+                      <option key={dept._id} value={dept._id}>{dept.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="registration-row m-2">
+                  <label className="form-label">
+                    Registration Year <span className="ei-col-red">*</span>
+                  </label>
+                  <input
+                    name="registration_year"
+                    type="text"
+                    maxLength={4}
+                    className="form-control"
+                    value={registration_year}
+                    onChange={(e) => setRegistrationYear(e.target.value)}
+                  />
+                </div>
+              </>
+              )}
+
+            {/* Conditional fields for TEACHER */}
+            {user_type === "TEACHER" && (
+              <>
+                <div className="registration-row m-2">
+                  <label className="form-label">
+                    Teacher Code <span className="ei-col-red">*</span>
+                  </label>
+                  <input
+                    name="teacher_code"
+                    type="text"
+                    maxLength={20}
+                    className="form-control"
+                    value={teacher_code}
+                    onChange={(e) => setTeacherCode(e.target.value)}
+                  />
+                </div>
+                <div className="registration-row m-2">
+                  <label className="form-label">
+                    Employee Id <span className="ei-col-red">*</span>
+                  </label>
+                  <input
+                    name="employee_id"
+                    type="text"
+                    maxLength={20}
+                    className="form-control"
+                    value={employee_id}
+                    onChange={(e) => setEmployeeId(e.target.value)}
+                  />
+                </div>
+              </>
+            )}          
+          </div>
+          <div className="registration-rows d-flex justify-content-center align-items-center">
+            {/* Common fields for both TEACHER and STUDENT */}
+            <div className="registration-row m-2">
               <label className="form-label">
-                Registration Year <span className="ei-col-red">*</span>
+                Registration Number <span className="ei-col-red">*</span>
               </label>
               <input
-                name="registration_year"
+                name="registration_number"
                 type="text"
+                maxLength={20}
                 className="form-control"
-                value={registration_year}
-                onChange={(e) => setRegistrationYear(e.target.value)}
+                value={registration_number}
+                onChange={(e) => setRegistrationNumber(e.target.value)}
               />
             </div>
-          </>
-        )}
-
-        {/* Conditional fields for TEACHER */}
-        {user_type === "TEACHER" && (
-          <>
-            <div className="mb-3">
+            <div className="registration-row m-2">
               <label className="form-label">
-                Teacher Code <span className="ei-col-red">*</span>
+                Name <span className="ei-col-red">*</span>
               </label>
               <input
-                name="teacher_code"
+                name="name"
                 type="text"
+                maxLength={70}
                 className="form-control"
-                value={teacher_code}
-                onChange={(e) => setTeacherCode(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div className="mb-3">
+            <div className="registration-row m-2">
               <label className="form-label">
-                Employee Id <span className="ei-col-red">*</span>
+                Phone <span className="ei-col-red">*</span>
               </label>
               <input
-                name="employee_id"
+                name="phone"
                 type="text"
+                maxLength={10}
                 className="form-control"
-                value={employee_id}
-                onChange={(e) => setEmployeeId(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
-          </>
-        )}
-
-        {/* Common fields for both TEACHER and STUDENT */}
-        <div className="mb-3">
-          <label className="form-label">
-            Registration Number <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="registration_number"
-            type="text"
-            className="form-control"
-            value={registration_number}
-            onChange={(e) => setRegistrationNumber(e.target.value)}
-          />
+          </div>
+          <div className="registration-rows d-flex justify-content-center align-items-center">
+            <div className="registration-row m-2">
+              <label className="form-label">
+                Email <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="email"
+                type="email"
+                maxLength={70}
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="registration-row m-2">
+              <label className="form-label">
+                Address <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="address"
+                type="text"
+                maxLength={255}
+                className="form-control"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
+            <div className="registration-row m-2">
+              <label className="form-label">
+                PIN <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="pin"
+                type="text"
+                maxLength={6}
+                className="form-control"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="registration-rows d-flex justify-content-center align-items-center">
+            <div className="registration-row m-2">
+              <label className="form-label">
+                Login Id <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="login_id"
+                type="text"
+                maxLength={20}
+                className="form-control"
+                value={login_id}
+                onChange={handleLoginIdChange}
+              />
+              {isLoginIdAvailable !== null && (
+                <small className={isLoginIdAvailable ? "text-success" : "text-danger"}> 
+                  {isLoginIdAvailable ? "Login ID is available" : "Login ID is not available"}
+                </small>
+              )}
+              {isLoginIdInvalid !== null && (
+                <small className={isLoginIdInvalid ? "text-danger" : "text-success"}> 
+                  {isLoginIdInvalid ? "Login ID must contain at least 4 and maximum 20 character" : ""}
+                </small>
+              )}
+            </div>
+            <div className="registration-row m-2">
+              <label className="form-label">
+                Password <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="password"
+                type="password"
+                maxLength={20}
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="registration-row m-2">
+              <label className="form-label">
+                Repeat Password <span className="ei-col-red">*</span>
+              </label>
+              <input
+                name="repeat_password"
+                type="password"
+                maxLength={20}
+                className="form-control"
+                value={repeat_password}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Name <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="name"
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+        <div className="buttons-div d-flex justify-content-center align-items-center">
+          <Link to="/login"><button className="btn btn-primary m-2">Back to log in</button></Link>
+          <button type="submit" className="btn btn-primary m-2">Save</button>
+          <button type="reset" className="btn btn-primary m-2" onClick={() => clearForm()}>Clear</button>
         </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Phone <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="phone"
-            type="text"
-            className="form-control"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Email <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="email"
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Address <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="address"
-            type="text"
-            className="form-control"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            PIN <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="pin"
-            type="text"
-            className="form-control"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Login Id <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="login_id"
-            type="text"
-            className="form-control"
-            value={login_id}
-            onChange={handleLoginIdChange}
-          />
-          {isLoginIdAvailable !== null && (
-            <small className={isLoginIdAvailable ? "text-success" : "text-danger"}> 
-              {isLoginIdAvailable ? "Login ID is available" : "Login ID is not available"}
-            </small>
-          )}
-          {isLoginIdInvalid !== null && (
-            <small className={isLoginIdInvalid ? "text-danger" : "text-success"}> 
-              {isLoginIdInvalid ? "Login ID must contain at least 4 character" : ""}
-            </small>
-          )}
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Password <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="password"
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">
-            Repeat Password <span className="ei-col-red">*</span>
-          </label>
-          <input
-            name="repeat_password"
-            type="password"
-            className="form-control"
-            value={repeat_password}
-            onChange={(e) => setRepeatPassword(e.target.value)}
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Save
-        </button>
       </form>
     </div>
   );

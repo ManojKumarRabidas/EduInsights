@@ -13,9 +13,7 @@ const userSchema = new mongoose.Schema({
     address: {type: 'string', required: true},
     pin: {type: 'number', required: true},
     active: {type: 'number', required: true},
-    is_verified: {type: 'number', required: true},
-    login_id: {type: 'string', required: true},
-    password: {type: 'string', required: true},
+    is_verified: {type: 'number', required: true}
 }, { timestamps: true });
 
 userSchema.index({ login_id: 1 }, { unique: true });

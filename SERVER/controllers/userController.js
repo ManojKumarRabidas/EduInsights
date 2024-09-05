@@ -9,37 +9,30 @@ module.exports = {
       const body = req.body;
 
       // Check for missing parameters
-      if (
-        !body.user_type ||
-        !body.registration_number ||
-        !body.name ||
-        !body.phone ||
-        !body.email ||
-        !body.address ||
-        !body.pin ||
-        !body.login_id ||
-        !body.password
-      ) {
+      if ( !body.user_type || !body.registration_number || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-
       if ((body.user_type == "TEACHER") && (!body.teacher_code || !body.employee_id)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-
+      
       if ((body.user_type == "STUDENT") && (!body.department || !body.registration_year)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-
-      console.log("body", body);
+      
+      body.is_verified = 0;
       body.active = 1;
-      body.verified = 0;
+      const password = body.password;
+      const login_id = body.login_id;
+      delete body.password;
+      delete body.login_id;
+      console.log("body", body);
       // Hash the password before saving
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(body.password, salt);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       // Create user in "users" collection
       const userDoc = await userModel.create(body);
@@ -49,12 +42,12 @@ module.exports = {
         user_id: userDoc._id,
         user_type: userDoc.user_type,
         name: userDoc.name,
-        login_id: userDoc.login_id,
+        login_id: login_id,
         password: hashedPassword,
         last_log_in: null, // Initialize to null; will update on login
       });
 
-      res.status(201).json({ status: true, msg: "Registered successfully.", user: userDoc, auth: authDoc });
+      res.status(201).json({ status: true, msg: "Registered successfully."});
     } catch (err) {
       if (err.code == 11000) {
         res.status(500).json({ status: false, msg: "Login Id is not available. Please try something else." });
