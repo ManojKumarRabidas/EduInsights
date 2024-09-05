@@ -151,8 +151,14 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.dept_id.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter)
+        row.user_type.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.name.toLowerCase().includes(lowercasedFilter) ||
+        row.email.toLowerCase().includes(lowercasedFilter) ||
+        row.phone.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.address.toLowerCase().includes(lowercasedFilter) ||
+        row.department.toLowerCase().includes(lowercasedFilter) ||
+        row.registration_year.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.registration_number.toString().toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
