@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
 const teacherController = require ("../controllers/teacherController")
+const studentController = require ("../controllers/studentController")
 
 router.post("/user-create", userController.userCreate);
 router.post('/login', userController.userLogin);
@@ -41,6 +42,12 @@ router.put("/area-of-improvement-update-active/:id", adminController.areaOfImpro
 
 
 router.post("/teacher-feedback", teacherController.teacherFeedback);
+
+router.post("/student-feedback", studentController.studentFeedback);
+router.get("/get-subjects-code", studentController.getSubjectsCode);
+router.get("/get-teacher-code", studentController.getTeachersCode);
+router.get("/get-strength-name", studentController.getStrengthName);
+router.get("/get-improvement-area", studentController.getImprovementArea);
 
 
 module.exports = router;

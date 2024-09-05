@@ -10,6 +10,7 @@ function Sidebar() {
         <NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strengths</NavLink>
         <NavLink to="/areas-of-improvement" className={({ isActive }) => (isActive ? 'active' : '')}>Areas of Improvement</NavLink>
         <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher_feedback</NavLink>
+        <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Student_Feedback</NavLink>
     </div>
   );
 }
