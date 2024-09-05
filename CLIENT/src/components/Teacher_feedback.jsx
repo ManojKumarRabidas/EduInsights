@@ -1,5 +1,5 @@
 import '../App.css'
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 import { useNavigate , Link } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
@@ -30,7 +30,61 @@ function Teacher_feedback() {
   const [additional_comments, setAdditionalComments] = useState("");
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
+  const [departments, setDepartments] = useState([]);
+  const [subject_codes, setSubjectCodes] = useState([]);
+  const [student_names, setStudentNames] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await fetch(`${HOST}:${PORT}/server/get-departments`);
+        const data = await response.json();
+        console.log(data)
+        if (response.ok)  {
+          setDepartments(data.departments);
+        } else {
+          setError("Failed to load departments.");
+        }
+      } catch (err) {
+        setError("Failed to load departments.");
+      }
+    };
+
+    const fetchSubjects = async () => {
+      try {
+        const response = await fetch(`${HOST}:${PORT}/server/get-subjects`);
+        const data = await response.json();
+        if (response.ok) {
+          setSubjectCodes(data.subjects);
+        } else {
+          setError("Failed to load subjects.");
+        }
+      } catch (err) {
+        setError("Failed to load subjects.");
+      }
+    };
+
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch(`${HOST}:${PORT}/server/get-student-names`);
+        const data = await response.json();
+        if (response.ok) {
+          setStudentNames(data.student_names);
+        } else {
+          setError("Failed to load student names.");
+        }
+      } catch (err) {
+        setError("Failed to load student names.");
+      }
+    };
+
+    fetchDepartments();
+    fetchSubjects();
+    fetchStudents();
+  }, []);
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
       if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_no || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names || !area_of_improvement_names || !additional_comments){
@@ -107,11 +161,23 @@ function Teacher_feedback() {
           <input name="teacher_name" type="text" className="form-control" aria-describedby="emailHelp" value={teacher_name} onChange={(e) => setTeacherName(e.target.value)}/>
         </div>
 
-
         <div className="mb-3">
           <label className="form-label">Student Name <span className="ei-col-red">*</span></label>
-          <input name="student_name" type="text" className="form-control" aria-describedby="emailHelp" value={student_name} onChange={(e) => setStudentName(e.target.value)}/>
+          <select
+            name="student_name"
+            className="form-control"
+            value={student_name}
+            onChange={(e) => setStudentName(e.target.value)}
+          >
+            <option value="">Select Student Name</option>
+            {student_names.map((student) => (
+              <option key={student._id} value={student._id}>
+                {student.name} - {student.registration_number}
+              </option>
+            ))}
+          </select>
         </div>
+
 
 
         <div className="mb-3">
@@ -121,23 +187,30 @@ function Teacher_feedback() {
 
         <div className="mb-3">
           <label className="form-label">Department <span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="department" value={department} onChange={(e) => setDepartment(e.target.value)}>
-                <option defaultValue>--Select Your Department--</option>
-                <option value="BCA">BCA</option>
-                <option value="MCA">MCA</option>
-            </select>
+          <select
+            name="department"
+            className="form-control"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          >
+            <option value="">Select Department</option>
+            {departments.map((dept) => (
+              <option key={dept._id} value={dept._id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="subject_code" value={subject_code} onChange={(e) => setSubjectCode(e.target.value)}>
-                <option defaultValue>--Select subject_code--</option>
-                <option value="BCA">BCAN101</option>
-                <option value="BCA">BCAN102</option>
-                <option value="BCA">BCA103</option>
-                <option value="MCA">MCA101</option>
-                <option value="MCA">MCA102</option>
-                <option value="MCA">MCA100</option>
+            <option value="">Select Subject Code</option>
+            {subject_codes.map((subject) => (
+              <option key={subject._id} value={subject._id}>
+                {subject.subject_code}
+              </option>
+            ))}
             </select>
         </div>
 
