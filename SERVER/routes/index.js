@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
 const teacherController = require ("../controllers/teacherController")
+const studentController = require ("../controllers/studentController")
 
 router.post("/user-create", userController.userCreate);
 router.get("/check-login-id/:login_id", userController.userCheckLoginIdAvailability);
@@ -48,6 +49,12 @@ router.post("/teacher-feedback", teacherController.teacherFeedback);
 router.get("/get-departments", adminController.getDepartments);
 router.get("/get-subjects", adminController.getSubjects);
 router.get("/get-student-names", adminController.getStudentNames);
+router.post("/student-feedback", studentController.studentFeedback);
+router.get("/get-subjects-code", studentController.getSubjectsCode);
+router.get("/get-teacher-code", studentController.getTeachersCode);
+router.get("/get-strength-name", studentController.getStrengthName);
+router.get("/get-improvement-area", studentController.getImprovementArea);
+
 
 module.exports = router;
 

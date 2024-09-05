@@ -11,6 +11,7 @@ import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
 import Teacher_feedback from './components/Teacher_feedback';
+import StudentFeedback from './components/StudentFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -83,6 +84,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/areas-of-improvement/*' element={<AreaOfImprovement />} />
               <Route path='/subjects/*' element={<Subject />} />
               <Route path='/teacher-feedback' element={<Teacher_feedback/>} />
+              <Route path='/student-feedback' element={<StudentFeedback/>} />
             </Routes>
           </main>
         </div>
