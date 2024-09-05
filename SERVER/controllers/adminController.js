@@ -3,7 +3,6 @@ const deptModel = require("../models/department");
 const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
-const userModel = require ("../models/user");
 const areaOfImprovementModel = require("../models/areaofimprovement");
 
 module.exports = {
@@ -64,13 +63,15 @@ module.exports = {
     },
     deptCreate: async(req, res)=>{
         try {
-            console.log("req.session admin", req.session);
+            console.log("req.session admin", req.session.user);
             const body = req.body;
             if (!body.dept_id || !body.name || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await deptModel.create({ name: body.name, dept_id: body.dept_id, active: body.active,});
+            // body.createdBy = req.session.user._id;
+            // body.createdBy = new ObjectId(body.createdBy);
+            const doc = await deptModel.create(body);
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){

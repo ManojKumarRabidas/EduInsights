@@ -220,12 +220,12 @@ function Users() {
         row.user_type.toString().toLowerCase().includes(lowercasedFilter) ||
         row.name.toLowerCase().includes(lowercasedFilter) ||
         row.email.toLowerCase().includes(lowercasedFilter) ||
-        row.phone.toLowerCase().includes(lowercasedFilter) ||
+        row.phone.toString().toLowerCase().includes(lowercasedFilter) ||
         row.address.toLowerCase().includes(lowercasedFilter) ||
         row.department.toLowerCase().includes(lowercasedFilter) ||
-        row.registration_year.toLowerCase().includes(lowercasedFilter) ||
-        row.registration_number.toLowerCase().includes(lowercasedFilter) ||
-        row.is_verified.toLowerCase().includes(lowercasedFilter)
+        row.registration_year.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.registration_number.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.is_verified.toString().toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
@@ -326,7 +326,7 @@ function Users() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="9" className="text-center">
+              <td colSpan="10" className="text-center">
                 No data available
               </td>
             </tr>

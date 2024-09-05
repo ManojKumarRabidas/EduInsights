@@ -5,6 +5,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
         <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '')} end>Home</NavLink>
+        <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')} end>Admin Dashboard</NavLink>
         <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')} end>Users</NavLink>
         <NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')} end>Pending Verifications</NavLink>
         <NavLink to="/departments" className={({ isActive }) => (isActive ? 'active' : '')}>Departments</NavLink>

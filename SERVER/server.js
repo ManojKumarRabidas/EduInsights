@@ -21,10 +21,10 @@ app.use(
     secret: process.env.SESSION_SECRET || 'eduSecretKey', // Secret for signing the session ID cookie
     resave: false, // Prevents session being saved back to the store if it hasn’t been modified
     saveUninitialized: true, // Prevents uninitialized sessions being saved to the store
-    // store: MongoStore.create({
-    //   mongoUrl: process.env.MONGO_URL,
-    //   collectionName: 'sessions',
-    // }),
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      collectionName: 'sessions',
+    }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // Session cookie expiration (1 day)
       secure: false, // Set to true if using https

@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Home from './components/Home';
+import AdminDashboard from './components/AdminDashboard';
 import Users from './components/Users';
 import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
@@ -12,6 +13,7 @@ import Subject from './components/Subject';
 import Teacher_feedback from './components/Teacher_feedback';
 import StudentFeedback from './components/StudentFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
+// import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
@@ -74,6 +76,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/registration' element={<Registration />} />
               <Route path='/login' element={<Login />} />
               <Route path='/home' element={<Home />} />
+              <Route path='/admin-dashboard' element={<AdminDashboard />} />
               <Route path='/users' element={<Users />} />
               <Route path='/pending-verifications' element={<PendingVerifications />} />
               <Route path='/departments/*' element={<Department />} />
