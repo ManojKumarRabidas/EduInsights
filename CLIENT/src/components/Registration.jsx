@@ -109,7 +109,7 @@ function Registration() {
       return;
     }
     if (password !== repeat_password) {
-      setError("Please enter the same password.");
+      setError("'Password' and 'Repeat Password' is different.");
       return;
     }
     if (isLoginIdAvailable === false) {
@@ -143,7 +143,9 @@ function Registration() {
       if (response.ok) {
         setResponse(result.msg);
         setError("");
-        navigate("/login");
+        setTimeout(() => {
+          navigate("/login");
+        }, 5000);
       } else {
         setError(result.msg);
       }
@@ -154,7 +156,7 @@ function Registration() {
     setTimeout(() => {
       setResponse("");
       setError("");
-    }, 3000);
+    }, 5000);
   };
 
   const clearForm = async()=>{
@@ -177,7 +179,7 @@ function Registration() {
 
   return (
     <div className="container my-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-      <h5 className="text-center mb-5">EduInsights - User Registration</h5>
+      <h3 className="text-center mb-5">EduInsights - User Registration</h3>
       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 

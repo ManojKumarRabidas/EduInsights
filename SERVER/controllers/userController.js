@@ -1,3 +1,4 @@
+const {ObjectId} = require('mongodb')
 const userModel = require("../models/user");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
@@ -7,8 +8,7 @@ module.exports = {
   userCreate: async (req, res) => {
     try {
       const body = req.body;
-
-      // Check for missing parameters
+      console.log(body);
       if ( !body.user_type || !body.registration_number || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
@@ -22,32 +22,32 @@ module.exports = {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-      
-      body.is_verified = 0;
-      body.active = 1;
+      if (body.department) {
+        body.department = new ObjectId(body.department);
+      };
+      const is_verified = 0;
+      const active = 1;
       const password = body.password;
       const login_id = body.login_id;
       delete body.password;
       delete body.login_id;
-      console.log("body", body);
-      // Hash the password before saving
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-
-      // Create user in "users" collection
+      console.log("later", body);
+      
       const userDoc = await userModel.create(body);
-
-      // Create entry in "authentication" collection
-      const authDoc = await authModel.create({
+      await authModel.create({
         user_id: userDoc._id,
         user_type: userDoc.user_type,
         name: userDoc.name,
         login_id: login_id,
         password: hashedPassword,
-        last_log_in: null, // Initialize to null; will update on login
+        is_verified: is_verified,
+        active: active,
+        last_log_in: null,
       });
 
-      res.status(201).json({ status: true, msg: "Registered successfully."});
+      res.status(201).json({ status: true, msg: "Registered successfully. Please wait, We are redirecting you to log in page."});
     } catch (err) {
       if (err.code == 11000) {
         res.status(500).json({ status: false, msg: "Login Id is not available. Please try something else." });
@@ -87,6 +87,15 @@ module.exports = {
       const authUser = await authModel.findOne({ login_id });
       if (!authUser) {
         return res.status(400).json({ msg: 'Invalid credentials' });
+      }
+      if (authUser.is_verified == 0){
+        return res.status(400).json({ msg: 'Your account is still not verified. Please contact with admin for verification.' });
+      }
+      if (authUser.is_verified == -1){
+        return res.status(400).json({ msg: 'Your account creation request is rejected. Please contact with admin for verification.' });
+      }
+      if (authUser.active == 0){
+        return res.status(400).json({ msg: 'Your account is deactivated. Please contact with admin for activation.' });
       }
       // Check password
       const isMatch = await bcrypt.compare(password, authUser.password);

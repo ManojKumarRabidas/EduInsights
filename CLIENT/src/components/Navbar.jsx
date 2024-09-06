@@ -52,7 +52,13 @@ function Navbar() {
                   <a className="dropdown-item" href="#">Settings</a>
                 </li>
                 <li>
+                  <a className="dropdown-item" href="#">User Manual</a>
+                </li>
+                <li>
                   <a className="dropdown-item" href="#">Profile</a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">Change Password</a>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />

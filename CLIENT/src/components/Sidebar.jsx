@@ -5,9 +5,10 @@ function Sidebar() {
   return (
     <div className="sidebar">
         <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '')} end>Home</NavLink>
-        <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')} end>Admin Dashboard</NavLink>
-        <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')} end>Users</NavLink>
-        <NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')} end>Pending Verifications</NavLink>
+        <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Admin Dashboard</NavLink>
+        <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>
+        <NavLink to="/support-users" className={({ isActive }) => (isActive ? 'active' : '')}>Support Users</NavLink>
+        <NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')}>Pending Verifications</NavLink>
         <NavLink to="/departments" className={({ isActive }) => (isActive ? 'active' : '')}>Departments</NavLink>
         <NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>
         <NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strengths</NavLink>

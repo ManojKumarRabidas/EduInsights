@@ -16,6 +16,13 @@ router.put("/user-update-active/:id", adminController.userUpdateActive);
 router.get("/pending-verification-user-list", adminController.userPendingVerificationList);
 router.put("/user-update-verificaton/:id", adminController.userUpdateVerificationStatus);
 
+router.get("/support-user-list", adminController.supportUserList);
+router.post("/support-user-create", adminController.supportUserCreate);
+router.get("/support-user-details/:id", adminController.supportUserDetails);
+router.patch("/support-user-update/:id", adminController.supportUserUpdate);
+router.delete("/support-user-delete/:id", adminController.supportUserDelete);
+router.put("/support-user-update-active/:id", adminController.supportUserUpdateActive);
+
 router.get("/dept-list", adminController.deptList);
 router.post("/dept-create", adminController.deptCreate);
 router.get("/dept-details/:id", adminController.deptDetails);

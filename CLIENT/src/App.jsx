@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
 import Users from './components/Users';
+import SupportUsers from './components/SupportUser';
 import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
 import Strength from './components/Strength';
@@ -78,6 +79,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/home' element={<Home />} />
               <Route path='/admin-dashboard' element={<AdminDashboard />} />
               <Route path='/users' element={<Users />} />
+              <Route path='/support-users/*' element={<SupportUsers />} />
               <Route path='/pending-verifications' element={<PendingVerifications />} />
               <Route path='/departments/*' element={<Department />} />
               <Route path='/strengths/*' element={<Strength />} />
