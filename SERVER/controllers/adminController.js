@@ -54,10 +54,6 @@ module.exports = {
                     }
                 }
             ]);
-            
-            console.log(docs);
-            
-            
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -67,8 +63,6 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            console.log(params, body);
-            
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -90,10 +84,14 @@ module.exports = {
                         foreignField: "user_id",
                         as: "auth"}},
                 {$unwind: "$auth"},
-                {$lookup: {from: "departments",
-                        localField: "_id",
-                        foreignField: "department",
-                        as: "department"}},
+                {
+                    $lookup: {
+                        from: "departments",
+                        localField: "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                },
                 {$addFields: {department: { $arrayElemAt: ["$department", 0] }}},
                 {$project: { _id: 1,
                         user_type: 1,
@@ -107,8 +105,6 @@ module.exports = {
                         is_verified: "$auth.is_verified"}},
                 {$match: {is_verified: {$nin: [1, -1] }}},
             ]);
-            console.log(docs);
-            
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -120,7 +116,6 @@ module.exports = {
             const body = req.body;
             // body.updatedBy = req.session.user._id;
             // body.updatedBy = new ObjectId(body.updatedBy);
-            console.log(params, body);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -189,8 +184,6 @@ module.exports = {
             });
             res.status(201).json({ status: true, msg: "Registered successfully.", doc:userDoc});
         } catch (err) {
-            console.log(err);
-            
             if(err.code==11000){
                 res.status(500).json({ status: false, msg: "Email Id must be unique." });
                 return
@@ -331,7 +324,6 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            console.log(params, body);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -477,8 +469,6 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            console.log(req.params);
-            // const doc = await subjectModel.findById({ _id: params.id });
             const doc = await subjectModel.aggregate([
                 {$match: {_id: new ObjectId(params.id)}},
                 {$lookup: {from: "departments",

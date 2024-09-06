@@ -8,7 +8,6 @@ module.exports = {
   userCreate: async (req, res) => {
     try {
       const body = req.body;
-      console.log(body);
       if ( !body.user_type || !body.registration_number || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
@@ -24,6 +23,8 @@ module.exports = {
       }
       if (body.department) {
         body.department = new ObjectId(body.department);
+      } else{
+        body.department=null;
       };
       const is_verified = 0;
       const active = 1;
@@ -33,7 +34,6 @@ module.exports = {
       delete body.login_id;
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      console.log("later", body);
       
       const userDoc = await userModel.create(body);
       await authModel.create({
@@ -58,8 +58,6 @@ module.exports = {
   },
 
   userCheckLoginIdAvailability: async(req, res)=>{
-    console.log("abc");
-    
     try {
       const params = req.params;
         if (!params || !params.login_id){
@@ -67,9 +65,6 @@ module.exports = {
             return;
         }
       const doc = await authModel.find({login_id: params.login_id});
-      console.log(doc);
-      // console.log(doc.length);
-      
       if (doc.length<=0){
         res.status(200).json({msg: "Available", available: true });
         return;
@@ -106,7 +101,6 @@ module.exports = {
       authUser.last_log_in = new Date();
       await authUser.save();
 
-      console.log("authuser", authUser);
       
       // // Store user data in session
       // req.session.user = {
