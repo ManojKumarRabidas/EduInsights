@@ -4,7 +4,6 @@ const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
 
 module.exports = {
-  // Create a new user
   userCreate: async (req, res) => {
     try {
       const body = req.body;
@@ -74,11 +73,10 @@ module.exports = {
       res.status(500).json({ msg: "Failed to retrieve departments" });
     }
   },
-  // Handle user login
+
   userLogin: async (req, res) => {
     const { login_id, password } = req.body;
     try {
-      // Find user by login_id in "authentication" collection
       const authUser = await authModel.findOne({ login_id });
       if (!authUser) {
         return res.status(400).json({ msg: 'Invalid credentials' });
@@ -92,17 +90,13 @@ module.exports = {
       if (authUser.active == 0){
         return res.status(400).json({ msg: 'Your account is deactivated. Please contact with admin for activation.' });
       }
-      // Check password
       const isMatch = await bcrypt.compare(password, authUser.password);
       if (!isMatch) {
         return res.status(400).json({ msg: 'Invalid credentials' });
       }
-      // Update last login time
       authUser.last_log_in = new Date();
       await authUser.save();
 
-      
-      // // Store user data in session
       // req.session.user = {
       //   _id: authUser.user_id,
       //   name: authUser.name,
@@ -123,16 +117,11 @@ module.exports = {
 
       req.session.regenerate(function (err) {
         if (err) next(err)
-    
-        // store user information in session, typically a user id
         req.session.user = {
               _id: authUser.user_id,
               name: authUser.name,
               user_type: authUser.user_type
             };
-    
-        // save the session before redirection to ensure page
-        // load does not happen before session is saved
         req.session.save(function (err) {
           if (err) return next(err)
             res.json({ user: req.session.user, msg: 'You are now logged in!' });
@@ -143,14 +132,68 @@ module.exports = {
     }
   },
 
-  // Handle user logout
   userLogout: (req, res) => {
     req.session.destroy((err) => {
       if (err) {
         return res.status(500).json({ msg: 'Logout failed', error: err.message });
       }
-      res.clearCookie('connect.sid'); // Clear the session cookie
+      res.clearCookie('connect.sid');
       res.json({ msg: 'Logout successful' });
     });
+  }, 
+
+  profileDetails: async(req, res) =>{
+    try {
+      var userId;
+      if(req.session.user && req.session.user._id){
+        userId = new ObjectId(req.session.user._id);
+      } else {
+        userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      }
+        const docs = await userModel.aggregate([
+          {$match: {_id: userId}},
+          {$lookup: {from: "authentications",
+                  localField: "_id",
+                  foreignField: "user_id",
+                  as: "auth"}},
+          {$unwind: "$auth"},
+          {$lookup: {from: "departments",
+                  localField: "department",
+                  foreignField: "_id",
+                  as: "department"}},
+          {$addFields: {department: { $arrayElemAt: ["$department", 0] }}},
+          {$project: { _id: 1,
+                  user_type: 1,
+                  name: 1,
+                  teacher_code: 1,
+                  employee_id: 1,
+                  registration_year: 1,
+                  registration_number: 1,
+                  phone: 1,
+                  email: 1,
+                  pin: 1,
+                  address: 1,
+                  department: {$ifNull: ["$department.name", ""]},
+                  active: "$auth.active",
+                  is_verified: "$auth.is_verified",
+                  createdAt: 1,
+                  last_log_in: "$auth.last_log_in",
+                }},
+        ]);
+        const formatDate = (date) => {
+          if (!date) return "";
+          const options = { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" };
+          return new Intl.DateTimeFormat("en-IN", options).format(new Date(date)).replace(",", " -");
+        };
+        const doc = docs[0]
+        doc.createdAt= formatDate(doc.createdAt),
+        doc.last_log_in= formatDate(doc.last_log_in),
+        doc.registration_year= formatDate(doc.registration_year),
+        doc.active= doc.active === 1 ? "Active" : "Inactive",
+        doc.is_verified= doc.is_verified === 1 ? "Verified" : (doc.is_verified === -1 ? "Rejected" : "Not Verified"),
+        res.status(200).json({ doc: doc });
+    } catch (err) {
+        res.status(400).json({ msg: err.message });
+    }
   }
 };

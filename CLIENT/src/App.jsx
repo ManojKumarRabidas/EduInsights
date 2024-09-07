@@ -14,6 +14,9 @@ import Subject from './components/Subject';
 import Teacher_feedback from './components/Teacher_feedback';
 import StudentFeedback from './components/StudentFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
+import Profile from './components/Profile';
+import UserManual from './components/UserManual';
+import ChangePassword from './components/ChangePassword';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -87,6 +90,9 @@ function AppContent({ isAuthenticated }) {
               <Route path='/subjects/*' element={<Subject />} />
               <Route path='/teacher-feedback' element={<Teacher_feedback/>} />
               <Route path='/student-feedback' element={<StudentFeedback/>} />
+              <Route path='/profile' element={<Profile/>} />
+              <Route path='/user-manual' element={<UserManual/>} />
+              <Route path='/change-password' element={<ChangePassword/>} />
             </Routes>
           </main>
         </div>

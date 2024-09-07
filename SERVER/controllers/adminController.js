@@ -244,7 +244,6 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // const doc = await authModel.findByIdAndUpdate(params.id, body, {new: true});
             const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
             res.status(200).json({ message: "Support User updated successfully", doc: doc });
         } catch (err) {
