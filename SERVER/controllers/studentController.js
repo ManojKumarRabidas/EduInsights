@@ -50,7 +50,7 @@ module.exports = {
     studentFeedback: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.month_of_rating || !body.date_of_rating || !body.teacher_code || !body.subject_code || !body.student_name || !body.clarity_of_explanation || !body.subject_knowledge || !body.encouragement_of_question || !body.maintains_discipline || !body.fairness_in_treatment || !body.approachability || !body.behaviour_and_attitude || !body.encouragement_and_support || !body.overall_teaching_quality || !body.provide_study_material || !body.explain_with_supportive_analogy || !body.use_of_media || !body.strength_of_teacher || !body.areas_for_improvement || !body.additional_comments){
+            if (!body.month_of_rating || !body.date_of_rating || !body.teacher_code || !body.subject_code || !body.student_name || !body.clarity_of_explanation || !body.subject_knowledge || !body.encouragement_of_question || !body.maintains_discipline || !body.fairness_in_treatment || !body.approachability || !body.behaviour_and_attitude || !body.encouragement_and_support || !body.overall_teaching_quality || !body.provide_study_material || !body.explain_with_supportive_analogy || !body.use_of_media || !body.strength_of_teacher || !body.areas_for_improvement){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }

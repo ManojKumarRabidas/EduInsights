@@ -20,10 +20,10 @@ const student_feedbackSchema = new mongoose.Schema({
     use_of_media: {type: 'string', required: true},
     strength_of_teacher: {type: 'string', required: true},
     areas_for_improvement: {type: 'string', required: true},
-    additional_comments: {type: 'string', required: true},
+    additional_comments: {type: 'string'},
+    anonymous: {type: 'number'},
 
 },{timestamps: true});
-
 
 const Student_feedback = mongoose.model('student_feedback',student_feedbackSchema)
 module.exports = Student_feedback
