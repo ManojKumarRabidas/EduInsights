@@ -12,7 +12,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if ( !login_id || !password ){
-        setError("Please enter all the required values.");
+        setError("Please enter login id and password.");
         return;
     }
     const loginData = { login_id, password};
@@ -42,7 +42,8 @@ function Login() {
   };
 
   return (
-    <div className="container my-2">
+    <div className="container my-2 shadow-sm p-5 mb-5 bg-body-tertiary rounded">
+      <h3 className="text-center mb-5">EduInsights</h3>
       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
@@ -58,7 +59,7 @@ function Login() {
         </div>
         <div className="log-in-buttons">
           <button type="submit" className="btn btn-primary my-2">Log In</button>
-          <button className="btn btn-primary my-2"><Link to="/registration">Register</Link></button>
+          <Link to="/registration"><button className="btn btn-primary my-2">Register</button></Link>
         </div>
       </form>
     </div>

@@ -31,7 +31,7 @@ function Navbar() {
       <div className="container-fluid">
         {/* Navbar Brand */}
         <div className="navbar-brand">
-          <Link className="nav-link active" to="/">EduInsights</Link>
+          <Link className="nav-link active" to="/"> <img style={{maxWidth: "2rem", margin: "0rem 0.4rem 0rem 1rem"}} src="../src/assets/images/eduInsights-logo.png" alt="" /> EduInsights</Link>
         </div>
 
         {/* Toggle button for mobile view */}
@@ -44,6 +44,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               {/* Dropdown Toggle */}
+              {/* <i class="bi bi-person-circle"></i> */}
               <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{userName || 'User'}</a>
               {/* Dropdown Menu */}
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -51,7 +52,13 @@ function Navbar() {
                   <a className="dropdown-item" href="#">Settings</a>
                 </li>
                 <li>
+                  <a className="dropdown-item" href="#">User Manual</a>
+                </li>
+                <li>
                   <a className="dropdown-item" href="#">Profile</a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">Change Password</a>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />

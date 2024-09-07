@@ -164,7 +164,7 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.area.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.area_for.toLowerCase().includes(lowercasedFilter) ||
         row.name.toLowerCase().includes(lowercasedFilter)
       );
     });

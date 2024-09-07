@@ -73,6 +73,8 @@ function List() {
       });
 
       const result = await response.json();
+      console.log(result);
+      
       if (response.ok) {
         setResponse("Department status updated successfully");
         getData();

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   useReactTable,
@@ -18,11 +18,11 @@ function List() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
-  const [sorting, setSorting] = useState([]); 
+  const [sorting, setSorting] = useState([]); // State to manage sorting
 
   async function getData() {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-list`, {
+      const response = await fetch(`${HOST}:${PORT}/server/support-user-list`, {
         method: "GET",
       });
 
@@ -44,13 +44,13 @@ function List() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-delete/${id}`, {
+      const response = await fetch(`${HOST}:${PORT}/server/support-user-delete/${id}`, {
         method: "DELETE",
       });
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Subject deleted successfully");
+        setResponse("Support User deleted successfully");
         getData();
       } else {
         setError(result.error);
@@ -61,23 +61,25 @@ function List() {
     setTimeout(() => {
       setResponse("");
       setError("");
-    }, 5000);
+    }, 3000);
   };
 
   const handleActiveChange = async (id, isActive) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-update-active/${id}`, {
+      const response = await fetch(`${HOST}:${PORT}/server/support-user-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
         headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
+      console.log(result);
+      
       if (response.ok) {
-        setResponse("Subject status updated successfully");
+        setResponse("Support User status updated successfully");
         getData();
       } else {
-        setError(result.msg);
+        setError(result.error);
       }
     } catch (err) {
       setError("We are unable to process now. Please try again later.");
@@ -98,8 +100,14 @@ function List() {
         enableSorting: false,
       },
       {
-        header: "Subject Code",
-        accessorKey: "subject_code",
+        header: "User Type",
+        accessorKey: "user_type",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Employee Id",
+        accessorKey: "employee_id",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
@@ -110,8 +118,14 @@ function List() {
         enableSorting: true,
       },
       {
-        header: "Department Name",
-        accessorKey: "department",
+        header: "Phone",
+        accessorKey: "phone",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Email Id",
+        accessorKey: "email",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
@@ -142,15 +156,9 @@ function List() {
         cell: ({ row }) => (
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
-              <Link to={`/subjects/subject-update/${row.original._id}`} className="card-link m-2">Edit</Link>
+              <Link to={`/support-users/support-user-update/${row.original._id}`} className="card-link m-2" >Edit</Link>
             </button>
-            <button
-              type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
-              onClick={() => handleDelete(row.original._id)}
-            > Delete
-            </button>
+            <button type="button" className="btn btn-outline-light m-1" style={{ color: "blue", backgroundColor: "ghostwhite" }} onClick={() => handleDelete(row.original._id)} >Delete </button>
           </div>
         ),
       },
@@ -164,9 +172,11 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.subject_code.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter) || 
-        row.department.toLowerCase().includes(lowercasedFilter)
+        row.user_type.toLowerCase().includes(lowercasedFilter) ||
+        row.employee_id.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.name.toLowerCase().includes(lowercasedFilter) ||
+        row.phone.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.email.toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
@@ -267,7 +277,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="6" className="text-center">
+              <td colSpan="9" className="text-center">
                 No data available
               </td>
             </tr>
@@ -301,5 +311,3 @@ function List() {
 }
 
 export default List;
-
-
