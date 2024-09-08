@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   useReactTable,
@@ -18,11 +18,11 @@ function List() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
-  const [sorting, setSorting] = useState([]); 
+  const [sorting, setSorting] = useState([]); // State to manage sorting
 
   async function getData() {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-list`, {
+      const response = await fetch(`${HOST}:${PORT}/server/pending-verification-user-list`, {
         method: "GET",
       });
 
@@ -42,15 +42,19 @@ function List() {
     getData();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleVerification = async (id, status) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-delete/${id}`, {
-        method: "DELETE",
+      const response = await fetch(`${HOST}:${PORT}/server/user-update-verificaton/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ is_verified: status }),
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
+      console.log(result);
+      
       if (response.ok) {
-        setResponse("Subject deleted successfully");
+        setResponse("User verification status updated successfully");
         getData();
       } else {
         setError(result.error);
@@ -64,76 +68,57 @@ function List() {
     }, 5000);
   };
 
-  const handleActiveChange = async (id, isActive) => {
-    try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-update-active/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        setResponse("Subject status updated successfully");
-        getData();
-      } else {
-        setError(result.msg);
-      }
-    } catch (err) {
-      setError("We are unable to process now. Please try again later.");
-    }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
-  };
-
   // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
-      {
-        header: "Sl No",
-        accessorFn: (row, i) => i + 1 + pageIndex * pageSize,
-        id: "slNo",
-        enableSorting: false,
-      },
-      {
-        header: "Subject Code",
-        accessorKey: "subject_code",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Name",
-        accessorKey: "name",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Department Name",
-        accessorKey: "department",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Active",
-        accessorKey: "active",
-        enableSorting: false,
-        cell: ({ row }) => (
-          <div className="form-switch">
-            <input
-              className="form-check-input cursor-pointer"
-              type="checkbox"
-              role="switch"
-              id={`activeSwitch-${row.id}`}
-              checked={row.original.active === 1}
-              onChange={(e) =>
-                handleActiveChange(row.original._id, e.target.checked)
-              }
-            />
-          </div>
-        ),
-      },
+        {
+            header: "User Type",
+            accessorKey: "user_type",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Name",
+            accessorKey: "name",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Email Id",
+            accessorKey: "email",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Phone",
+            accessorKey: "phone",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Address",
+            accessorKey: "address",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Department",
+            accessorKey: "department",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Reg Year",
+            accessorKey: "registration_year",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
+        {
+            header: "Reg Number",
+            accessorKey: "registration_number",
+            sortingFn: "alphanumeric",
+            enableSorting: true,
+        },
       {
         header: "Action",
         id: "action",
@@ -141,21 +126,23 @@ function List() {
         headerClassName: "ei-text-center-imp",
         cell: ({ row }) => (
           <div style={{ textAlign: "center" }}>
-            <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
-              <Link to={`/subjects/subject-update/${row.original._id}`} className="card-link m-2">Edit</Link>
-            </button>
             <button
               type="button"
               className="btn btn-outline-light m-1"
               style={{ color: "blue", backgroundColor: "ghostwhite" }}
-              onClick={() => handleDelete(row.original._id)}
-            > Delete
-            </button>
+              onClick={() => handleVerification(row.original._id, "1")}
+            >Accept </button>
+            <button
+              type="button"
+              className="btn btn-outline-light m-1"
+              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              onClick={() => handleVerification(row.original._id, "-1")}
+            > Reject</button>
           </div>
         ),
       },
     ],
-    [handleDelete, pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
+    [handleVerification, pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
   );
 
   // Apply global filtering before pagination
@@ -164,9 +151,14 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.subject_code.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter) || 
-        row.department.toLowerCase().includes(lowercasedFilter)
+        row.user_type.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.name.toLowerCase().includes(lowercasedFilter) ||
+        row.email.toLowerCase().includes(lowercasedFilter) ||
+        row.phone.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.address.toLowerCase().includes(lowercasedFilter) ||
+        row.department.toLowerCase().includes(lowercasedFilter) ||
+        row.registration_year.toString().toLowerCase().includes(lowercasedFilter) ||
+        row.registration_number.toString().toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
@@ -267,7 +259,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="6" className="text-center">
+              <td colSpan="9" className="text-center">
                 No data available
               </td>
             </tr>
@@ -301,5 +293,3 @@ function List() {
 }
 
 export default List;
-
-

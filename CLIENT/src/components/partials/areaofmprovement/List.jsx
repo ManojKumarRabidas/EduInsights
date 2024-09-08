@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   useReactTable,
@@ -18,11 +18,11 @@ function List() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
-  const [sorting, setSorting] = useState([]); 
+  const [sorting, setSorting] = useState([]); // State to manage sorting
 
   async function getData() {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-list`, {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-list`, {
         method: "GET",
       });
 
@@ -44,13 +44,13 @@ function List() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-delete/${id}`, {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-delete/${id}`, {
         method: "DELETE",
       });
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Subject deleted successfully");
+        setResponse("Area of improvement deleted successfully");
         getData();
       } else {
         setError(result.error);
@@ -61,12 +61,12 @@ function List() {
     setTimeout(() => {
       setResponse("");
       setError("");
-    }, 5000);
+    }, 3000);
   };
 
   const handleActiveChange = async (id, isActive) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/subject-update-active/${id}`, {
+      const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
         headers: { "Content-Type": "application/json" },
@@ -74,10 +74,10 @@ function List() {
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Subject status updated successfully");
+        setResponse("Area of improvement status updated successfully");
         getData();
       } else {
-        setError(result.msg);
+        setError(result.error);
       }
     } catch (err) {
       setError("We are unable to process now. Please try again later.");
@@ -98,20 +98,14 @@ function List() {
         enableSorting: false,
       },
       {
-        header: "Subject Code",
-        accessorKey: "subject_code",
+        header: "Area For",
+        accessorKey: "area_for",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
       {
         header: "Name",
         accessorKey: "name",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Department Name",
-        accessorKey: "department",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
@@ -142,14 +136,20 @@ function List() {
         cell: ({ row }) => (
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
-              <Link to={`/subjects/subject-update/${row.original._id}`} className="card-link m-2">Edit</Link>
+              <Link
+                to={`/areas-of-improvement/area-of-improvement-update/${row.original._id}`}
+                className="card-link m-2"
+              >
+                Edit
+              </Link>
             </button>
             <button
               type="button"
               className="btn btn-outline-light m-1"
               style={{ color: "blue", backgroundColor: "ghostwhite" }}
               onClick={() => handleDelete(row.original._id)}
-            > Delete
+            >
+              Delete
             </button>
           </div>
         ),
@@ -164,9 +164,8 @@ function List() {
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.subject_code.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter) || 
-        row.department.toLowerCase().includes(lowercasedFilter)
+        row.area_for.toLowerCase().includes(lowercasedFilter) ||
+        row.name.toLowerCase().includes(lowercasedFilter)
       );
     });
   }, [data, globalFilter]);
@@ -267,7 +266,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="6" className="text-center">
+              <td colSpan="5" className="text-center">
                 No data available
               </td>
             </tr>
@@ -301,5 +300,3 @@ function List() {
 }
 
 export default List;
-
-

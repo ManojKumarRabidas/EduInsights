@@ -1,0 +1,114 @@
+function Home() {
+    return (
+      <div>
+        <main className="container my-2">
+          <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h5 className="mb-3">Top growths in overall teaching quality last month</h5>
+              <div className=" justify-content-center">
+                <table className="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="row">Teacher Code</th>
+                            <th scope="row">Teacher Name</th>
+                            <th scope="row">Feedback Of Month Before Previous Month</th>
+                            <th scope="row">Feedback Of Previous Month</th>
+                            <th scope="row">Improvement Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SS1</td>
+                            <td>Subrata Saha</td>
+                            <td className="text-end">2.75</td>
+                            <td className="text-end">2</td>
+                            <td className="text-end">-27.27</td>
+                        </tr>
+                        <tr>
+                            <td>SS1</td>
+                            <td>Subrata Saha</td>
+                            <td className="text-end">2.75</td>
+                            <td className="text-end">2</td>
+                            <td className="text-end">-27.27</td>
+                        </tr>
+                        <tr>
+                            <td>SS1</td>
+                            <td>Subrata Saha</td>
+                            <td className="text-end">2.75</td>
+                            <td className="text-end">2</td>
+                            <td className="text-end">-27.27</td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+          </section>
+          <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h5 className="mb-3">Select user type and user to see his/her details</h5>
+              <div className=" justify-content-center">
+                <div className="mb-3">
+                    <label className="form-label">Select User Type <span className="ei-col-red">*</span></label>
+                    <select name="user_type" className="form-control">
+                        <option defaultValue>-- select --</option>
+                        <option value="STUDENT">STUDENT</option>
+                        <option value="TEACHER">TEACHER</option>
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Name <span className="ei-col-red">*</span></label>
+                    <select name="name" className="form-control">
+                        <option defaultValue>-- select --</option>
+                        <option value="">Priya Bhar</option>
+                        <option value="">Disha Khan</option>
+                    </select>
+                </div>
+              </div>
+          </section>
+          <section className="bg-light py-5 my-2">
+            <div className="container px-5">
+              <div className="row gx-5 justify-content-center">
+                Line Chart <br />
+                OVERALL STUDENT QUALITY / Current Year Average Overall Teaching Quality
+              </div>
+            </div>
+          </section>
+          <section className="bg-light py-5 my-2">
+            <div className="container px-5">
+              <div className="row gx-5 justify-content-center">
+                Single Bar Chart <br />
+                LAST SEMESTER FEEDBACK / Last Month Average Feedback
+              </div>
+            </div>
+          </section>
+          <section className="bg-light py-5 my-2">
+            <div className="container px-5">
+              <div className="row gx-5 justify-content-center">
+                Multi Bar Chart <br />
+                LAST THREE SEMESTER FEEDBACK / Last Three Months Average Feedback
+              </div>
+            </div>
+          </section>
+          <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h5 className="mb-3">TOP STRENGTHS AND AREAS FOR IMPROVEMENT BASED ON LAST THREE SEMESTER FEEDBACKS</h5>
+              <div className=" justify-content-center">
+                <table className="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="row">Strengths</th>
+                            <th scope="row">Areas of Improvement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SS1, jbajf, jgdha, khdgadhkj</td>
+                            <td>kfhkaje, dhkaf, fhgdfk, hjdafk</td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+  
+  export default Home;
+  

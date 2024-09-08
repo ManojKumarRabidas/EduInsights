@@ -12,12 +12,16 @@
 }
 /* General styles */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+  font-family: math !important;
   background-color: #f8f9fa;
   margin: 0;
   padding: 0;
 }
-
+a{
+  text-decoration: none !important;
+  color: blue;
+}
 /* Navbar styles */
 .navbar {
   background-color: #ffffff;
@@ -65,8 +69,13 @@ body {
 }
 
 .ei-row{
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
+}
+.ei-row-unrestricted {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 /* Sidebar styles */
 .sidebar {
@@ -91,7 +100,7 @@ body {
   font-weight: 500;
   text-decoration: none;
   border-radius: 0.5rem;
-  margin: 0.5rem 1rem;
+  margin: 0.5rem 0;
   transition: all 0.2s;
 }
 
@@ -129,11 +138,31 @@ body {
 
 .main-section{
   margin-top: 3.5rem !important;
-  margin-left: 15rem !important;
   padding: 13px 0px 0px 18px !important;
+  max-width: 81vw !important;
+  margin-right: 0 !important;
+  margin-left: 16vw !important;
+}
+.main-section-log-in {
+  margin-top: 8rem !important;
+  max-width: 28rem !important;
+}
+.main-section-registration {
+  margin-top: 4rem !important;
+}
+.main-section-registration input,.main-section-registration select{
+  width: 25vw !important;
 }
 .inner-navbar{
   padding-left:15px !important;
+}
+
+.log-in-buttons button{
+  width: 100%;
+}
+
+.log-in-buttons button a{
+  color: white;
 }
 /* Media queries for responsiveness */
 @media (max-width: 991.98px) {

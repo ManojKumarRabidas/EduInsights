@@ -4,7 +4,7 @@ const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
 
 function Create() {
-  const [dept_id, setDeptId] = useState("");
+  const [area_for, setAreaFor] = useState("");
   const [name, setName] = useState("");
   const [active, setActive] = useState(false);
   const [error, setError] = useState("");
@@ -13,14 +13,14 @@ function Create() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // const deptData = { name, dept_id, active };
-    const deptData = { name, dept_id, active: active ? "1" : "0" };
-    if ((deptData.name=="") || (deptData.dept_id=="")){
+    const areaOfImprovementData = { name, area_for, active: active ? "1" : "0" };
+    if (!areaOfImprovementData.name || !areaOfImprovementData.area_for){
       setError("Please enter all the required values.");
       return;
     }
-    const response = await fetch(`${HOST}:${PORT}/server/dept-create`, {
+    const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
       method: "POST",
-      body: JSON.stringify(deptData),
+      body: JSON.stringify(areaOfImprovementData),
       headers: {"Content-Type": "application/json"},
     });
     if (response){
@@ -28,10 +28,10 @@ function Create() {
       if (response.ok){
         setResponse(result.msg);
         setError("");
-        setDeptId("");
+        setAreaFor("");
         setName("");
         setActive(false);
-        navigate("/departments/dept-list");
+        navigate("/areas-of-improvement/area-of-improvement-list");
       } else{
         setError(result.msg);
       }
@@ -51,11 +51,18 @@ function Create() {
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Department Id <span className="ei-col-red">*</span></label>
-          <input name="dept_id" type="text" className="form-control" aria-describedby="emailHelp" value={dept_id} onChange={(e) => setDeptId(e.target.value)}/>
+          {/* <label className="form-label">Area For <span className="ei-col-red">*</span></label>
+          <input name="area_for" type="text" className="form-control" aria-describedby="emailHelp" value={area_for} onChange={(e) => setAreaFor(e.target.value)}/> */}
+
+          <label className="form-label">Area For <span className="ei-col-red">*</span></label>
+          <select className="form-select" aria-label="Default select example" name="area_for" value={area_for} onChange={(e) => setAreaFor(e.target.value)}>
+              <option defaultValue>--Select area for--</option>
+              <option value="TEACHER">TEACHER</option>
+              <option value="STUDENT">STUDENT</option>
+          </select>        
         </div>
         <div className="mb-3">
-          <label className="form-label">Department Name <span className="ei-col-red">*</span></label>
+          <label className="form-label">Name <span className="ei-col-red">*</span></label>
           <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
         </div>
         <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>

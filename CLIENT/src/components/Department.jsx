@@ -11,11 +11,8 @@ export default function Department() {
 return (
   <div className="App">
       <nav className="navbar navbar-expand-lg navbar-light bg-light inner-navbar">
-        {/* <div className="container-fluid"> */}
-          <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="dept-list">List</NavLink>
-          <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="dept-create">Create</NavLink>
-          {/* <Link className="navbar-brand" to="dept-update">Update</Link> */}
-        {/* </div> */}
+        <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="dept-list">List</NavLink>
+        <NavLink className={({ isActive }) => (isActive ? 'active navbar-brand inner-nav-item' : 'navbar-brand inner-nav-item')} to="dept-create">Create</NavLink>
       </nav>
 
       <div className="container">
@@ -33,4 +30,3 @@ return (
     </div>
   )
 }
-
