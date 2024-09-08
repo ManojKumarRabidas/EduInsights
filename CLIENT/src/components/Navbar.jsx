@@ -51,7 +51,7 @@ function Navbar() {
                 <li><a className="dropdown-item" href="#">Settings</a></li>
                 <li><Link className="dropdown-item" to="/user-manual">User Manual</Link></li>
                 <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
-                <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
+                <li><Link className="dropdown-item" to="/password">Change Password</Link></li>
                 <li><hr className="dropdown-divider" /></li>
                 <li><a className="dropdown-item" href="#" onClick={handleLogout}>Sign Out</a></li>
               </ul>

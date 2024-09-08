@@ -1,4 +1,4 @@
-import "../App.css";
+// import "../App.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
@@ -45,9 +45,8 @@ export default function ChangePassword(){
       };
     return(
         <div>
-            <main className="container my-2">
+            <main className="container my-4">
                 <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-                    <h5 className="mb-3">Change Password</h5>
                     {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
                     {response && (<div className="alert alert-success" role="alert">{response}</div>)}
                     <form onSubmit={handleSubmit}>
@@ -64,8 +63,7 @@ export default function ChangePassword(){
                                 <label className="form-label">Confirm Password <span className="ei-col-red">*</span></label>
                                 <input name="confirm_password" type="text" className="form-control" aria-describedby="emailHelp" value={confirm_password} onChange={(e) => setConfirmPassword(e.target.value)}/>
                             </div>
-                            <button type="submit" className="btn btn-primary mx-2">Change Password</button>
-                            <button type="" className="btn btn-primary mx-2">Forgot Password</button>
+                            <button type="submit" className="btn btn-primary mx-2">Change</button>
                         </div>
                     </form>
                 </section>
