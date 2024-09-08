@@ -20,7 +20,7 @@ const teacher_feedbackSchema = new mongoose.Schema({
     overall_student_quality: {type: 'string', required: true},
     strength_names: {type: 'string', required: true},
     area_of_improvement_names: {type: 'string', required: true},
-    additional_comments: {type: 'string', required: true},
+    additional_comments: {type: 'string'},
 
 },{timestamps: true});
 

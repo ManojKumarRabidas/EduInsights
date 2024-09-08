@@ -12,7 +12,7 @@ function Teacher_feedback() {
   const [date_of_rating, setDateOfRating] = useState("");
   const [teacher_name, setTeacherName] = useState("");
   const [student_name, setStudentName] = useState("");
-  const [student_reg_no, setStudentRegNo] = useState("");
+  const [student_reg_year, setStudentRegYear] = useState("");
   const [department, setDepartment] = useState("");
   const [subject_code, setSubjectCode] = useState("");
   const [class_participation, setClassParticipation] = useState("");
@@ -79,6 +79,10 @@ function Teacher_feedback() {
       }
     };
 
+
+    const today = new Date().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+    setDateOfRating(today);
+
     fetchDepartments();
     fetchSubjects();
     fetchStudents();
@@ -87,11 +91,11 @@ function Teacher_feedback() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_no || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names || !area_of_improvement_names || !additional_comments){
+      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_year || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names || !area_of_improvement_names ){
             setError("Please enter all the required values.");
             return;
         }
-        const teacherData = { semester_of_rating, date_of_rating, teacher_name, student_name, student_reg_no,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names, area_of_improvement_names,  additional_comments };
+        const teacherData = { semester_of_rating, date_of_rating, teacher_name, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names, area_of_improvement_names,  additional_comments };
         const response = await fetch(`${HOST}:${PORT}/server/teacher-feedback`, {
           method: "POST",
           body: JSON.stringify(teacherData),
@@ -123,6 +127,19 @@ function Teacher_feedback() {
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
       <Link to="/"></Link>
       <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+        <label className="form-label">
+         Date Of Rating <span className="ei-col-red">*</span>
+         </label>
+         <input
+        type="date"
+        className="form-control"
+        aria-label="Date of Rating"
+        name="date_of_rating"
+        value={date_of_rating}
+        disabled
+        onChange={(e) => setDateOfRating(e.target.value)}/>
+        </div>
 
       <div className="mb-3">
           <label className="form-label">Semester Of Rating <span className="ei-col-red">*</span></label>
@@ -141,24 +158,34 @@ function Teacher_feedback() {
 
 
 
-        <div className="mb-3">
-        <label className="form-label">
-         Date Of Rating <span className="ei-col-red">*</span>
-         </label>
-         <input
-        type="date"
-        className="form-control"
-        aria-label="Date of Rating"
-        name="date_of_rating"
-        value={date_of_rating}
-        onChange={(e) => setDateOfRating(e.target.value)}/>
-        </div>
 
 
          
         <div className="mb-3">
           <label className="form-label">Teacher Name <span className="ei-col-red">*</span></label>
           <input name="teacher_name" type="text" className="form-control" aria-describedby="emailHelp" value={teacher_name} onChange={(e) => setTeacherName(e.target.value)}/>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Department <span className="ei-col-red">*</span></label>
+          <select
+            name="department"
+            className="form-control"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          >
+            <option value="">Select Department</option>
+            {departments.map((dept) => (
+              <option key={dept._id} value={dept._id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label"> Student Registration Year<span className="ei-col-red">*</span></label>
+          <input name="student_reg_year" type="text" className="form-control" aria-describedby="emailHelp" value={student_reg_year} onChange={(e) => setStudentRegYear(e.target.value)}/>
         </div>
 
         <div className="mb-3">
@@ -180,27 +207,7 @@ function Teacher_feedback() {
 
 
 
-        <div className="mb-3">
-          <label className="form-label"> Student Registration No <span className="ei-col-red">*</span></label>
-          <input name="student_reg_no" type="text" className="form-control" aria-describedby="emailHelp" value={student_reg_no} onChange={(e) => setStudentRegNo(e.target.value)}/>
-        </div>
 
-        <div className="mb-3">
-          <label className="form-label">Department <span className="ei-col-red">*</span></label>
-          <select
-            name="department"
-            className="form-control"
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          >
-            <option value="">Select Department</option>
-            {departments.map((dept) => (
-              <option key={dept._id} value={dept._id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
-        </div>
 
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
@@ -378,7 +385,7 @@ function Teacher_feedback() {
           <input name="area_of_improvement_names" type="text" className="form-control" aria-describedby="emailHelp" value={area_of_improvement_names} onChange={(e) => setAreaOfImprovementNames(e.target.value)}/>
         </div>
         <div className="mb-3">
-          <label className="form-label">Additional Comments <span className="ei-col-red">*</span></label>
+          <label className="form-label">Additional Comments </label>
           <input name="additional_comments" type="text" className="form-control" aria-describedby="emailHelp" value={additional_comments} onChange={(e) => setAdditionalComments(e.target.value)}/>
         </div>
         <button type="submit" className="btn btn-primary">Save</button>
