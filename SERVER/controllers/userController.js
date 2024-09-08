@@ -195,5 +195,39 @@ module.exports = {
     } catch (err) {
         res.status(400).json({ msg: err.message });
     }
-  }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      const body = req.body;
+      console.log(body);
+      if ( !body.old_password || !body.new_password) {
+        res.status(400).json({ msg: "Missing Parameters!" });
+        return;
+      }
+      var userId;
+      if(req.session.user && req.session.user._id){
+        userId = new ObjectId(req.session.user._id);
+      } else {
+        userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      }
+
+      const user = await authModel.findOne({user_id: userId});
+      if (!user) {
+        return res.status(404).json({status: false, msg: 'User not found' });
+      }
+      const isMatch = await bcrypt.compare(body.old_password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ status: false, msg: 'Old password is incorrect' });
+      }
+      const hashedPassword = await bcrypt.hash(body.new_password, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      res.status(200).json({ status: true, msg: 'Password changed successfully' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ status: false, msg: "An error occurred while changing the password" });
+    }
+  },
 };

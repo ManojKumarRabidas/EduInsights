@@ -12,15 +12,20 @@ export default function ChangePassword(){
     const navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // const deptData = { name, dept_id, active };
-        const deptData = { name, dept_id, active: active ? "1" : "0" };
-        if ((deptData.name=="") || (deptData.dept_id=="")){
+        if (!new_password || !confirm_password){
+          if (new_password != confirm_password){
+            setError("New password and confirm password must be same.");
+            return;
+          }
+        }
+        const passwordData = { old_password, new_password};
+        if (!old_password || !new_password){
           setError("Please enter all the required values.");
           return;
         }
         const response = await fetch(`${HOST}:${PORT}/server/change-password`, {
           method: "POST",
-          body: JSON.stringify(deptData),
+          body: JSON.stringify(passwordData),
           headers: {"Content-Type": "application/json"},
         });
         if (response){
@@ -31,7 +36,7 @@ export default function ChangePassword(){
             setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");
-            navigate("/change-password");
+            navigate("/password/change-password");
           } else{
             setError(result.msg);
           }
@@ -57,11 +62,11 @@ export default function ChangePassword(){
                             </div>
                             <div className="mb-3">
                                 <label className="form-label">New Password <span className="ei-col-red">*</span></label>
-                                <input name="new_password" type="text" className="form-control" aria-describedby="emailHelp" value={new_password} onChange={(e) => setNewPassword(e.target.value)}/>
+                                <input name="new_password" type="password" className="form-control" aria-describedby="emailHelp" value={new_password} onChange={(e) => setNewPassword(e.target.value)}/>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label">Confirm Password <span className="ei-col-red">*</span></label>
-                                <input name="confirm_password" type="text" className="form-control" aria-describedby="emailHelp" value={confirm_password} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                                <input name="confirm_password" type="password" className="form-control" aria-describedby="emailHelp" value={confirm_password} onChange={(e) => setConfirmPassword(e.target.value)}/>
                             </div>
                             <button type="submit" className="btn btn-primary mx-2">Change</button>
                         </div>
