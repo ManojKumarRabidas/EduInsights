@@ -1,14 +1,19 @@
 import '../App.css'
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 
 import { useNavigate , Link } from "react-router-dom";
+import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
 
 
 
 function Student_feedback() {
+  // const  state = {
+  //   startDate: new Date()
+  // };
   const [month_of_rating, setMonthOfRating] = useState("");
+  // const [month_of_rating, setMonthOfRating] = useState(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
   const [date_of_rating, setDateOfRating] = useState("");
   const [teacher_code, setTeacherCode] = useState("");
   const [subject_code, setSubjectCode] = useState("");
@@ -25,24 +30,32 @@ function Student_feedback() {
   const [provide_study_material, setProvideStudyMaterial] = useState("");
   const [explain_with_supportive_analogy, setExplainWithSupportiveAnalogy] = useState("");
   const [use_of_media , setUseOfMedia] = useState("");
-  const [strength_of_teacher, setStrengthOfTeacher] = useState("");
   const [areas_for_improvement, setAreasForImprovement] = useState("");
   const [additional_comments, setAdditionalComments] = useState("");
   const [subjects, setSubjectsCode] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [strengths_name, setStrengthsName] = useState([]);
+  const [strengths, setStrengths] = useState([]);
   const [improvement_area, setImprovementArea] = useState([]);
+  const [anonymous, setAnonymous] = useState(false);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
   const navigate = useNavigate();
 
+  const [strengths_options, setStrengthOptions] = useState([]);
+    
+    useEffect(() => {
+    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+    const currentYear = new Date().getFullYear();
+    const month_of_rating = `${currentMonth} ${currentYear}`;
+    setMonthOfRating(month_of_rating);
 
-  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    setDateOfRating(today);
+
     const fetchSubjectsCode = async () => {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-subjects-code`);
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
           setSubjectsCode(data.subjects);
         } else {
@@ -57,7 +70,6 @@ function Student_feedback() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-teacher-code`);
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
           setTeachers(data.teachers);
         } else {
@@ -72,9 +84,11 @@ function Student_feedback() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
-          setStrengthsName(data.strengthsname);
+          setStrengthOptions((data.docs).map(item => ({
+            value: item.name,
+            label: item.name
+          })));
         } else {
           setError("Failed to load strengths name.");
         }
@@ -87,7 +101,6 @@ function Student_feedback() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-improvement-area`);
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
           setImprovementArea(data.improvementarea);
         } else {
@@ -104,14 +117,21 @@ function Student_feedback() {
     fetchImprovementArea();
   }, []);
   
+  const handleStrengthChange = (selected) => {
+    setStrengths(selected);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || !strength_of_teacher || !areas_for_improvement || !additional_comments){
+      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || !strengths || !areas_for_improvement){
             setError("Please enter all the required values.");
             return;
         }
-        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, student_name,clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strength_of_teacher, areas_for_improvement,  additional_comments };
+        const final_strengths = [];
+        for (let i =0; i<(strengths).length; i++) {
+          final_strengths.push(strengths[i].value)
+        }
+        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, areas_for_improvement,  additional_comments};
         const response = await fetch(`${HOST}:${PORT}/server/student-feedback`, {
           method: "POST",
           body: JSON.stringify(studentData),
@@ -119,13 +139,12 @@ function Student_feedback() {
         });
         if (response){
           const result = await response.json();
-          console.log(result);
           if (response.ok){
             setResponse(result.msg);
             setError("");
             // setDeptId("");
             // setName("");
-            // navigate("/login");
+            navigate("/home");
           } else{
             setError(result.msg);
           }
@@ -138,6 +157,7 @@ function Student_feedback() {
         }, 3000);
       };
 
+
       return(
         <div className="container my-2">
           {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
@@ -148,28 +168,18 @@ function Student_feedback() {
 
       <div className="mb-3">
           <label className="form-label">Month Of Rating <span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="month_of_rating" value={month_of_rating} onChange={(e) => setMonthOfRating(e.target.value)}>
-            <option defaultValue>--Select subject_code--</option>
-                <option value="BCA">BCAN101</option>
-                <option value="BCA">BCAN102</option>
-            </select>
+          <input
+            type="text"
+            className="form-control"
+            value={month_of_rating}
+            disabled
+          />
         </div>
 
-
-
-        <div className="mb-3">
-        <label className="form-label">
-         Date Of Rating <span className="ei-col-red">*</span>
-         </label>
-         <input
-        type="date"
-        className="form-control"
-        aria-label="Date of Rating"
-        name="date_of_rating"
-        value={date_of_rating}
-        onChange={(e) => setDateOfRating(e.target.value)}/>
+        <div className="form-group">
+        <label htmlFor="dateOfRating">Date of Rating</label>
+          <input type="date" className="form-control" id="dateOfRating" value={date_of_rating} disabled/>
         </div>
-
 
         <div className="mb-3">
           <label className="form-label">Teacher Code <span className="ei-col-red">*</span></label>
@@ -183,33 +193,33 @@ function Student_feedback() {
             </select>
         </div>
 
-
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="subject_code" value={subject_code} onChange={(e) => setSubjectCode(e.target.value)}>
             <option value="">Select Subject Code</option>
             {subjects.map((subject) => (
               <option key={subject._id} value={subject._id}>
-                {subject.name}
+                {subject.subject_code}
               </option>
             ))}
-                {/* <option defaultValue>--Select subject_code--</option>
-                <option value="BCA">BCAN101</option>
-                <option value="BCA">BCAN102</option>
-                <option value="BCA">BCA103</option>
-                <option value="MCA">MCA101</option>
-                <option value="MCA">MCA102</option>
-                <option value="MCA">MCA100</option> */}
             </select>
         </div>
 
+        <div className="mb-3">
+          <label className="form-label"></label>
+        </div>
+        <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
+          <label className="form-label">Do you want to be anonymous? </label>
+          <div>
+            <input className="form-check-input cursor-pointer" style={{ marginLeft: "0" }} type="checkbox" role="switch" id="activeSwitch" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}/>
+            <label className="form-check-label mx-3" htmlFor="activeSwitch"></label>
+          </div>
+        </div>
 
         <div className="mb-3">
           <label className="form-label"> Student Name <span className="ei-col-red">*</span></label>
           <input name="student_name" type="text" className="form-control" aria-describedby="emailHelp" value={student_name} onChange={(e) => setStudentName(e.target.value)}/>
         </div>
-
-        {/* Do you want to anonymous: (Toggle YES or NO) */}
 
         <div className="mb-3">
           <label className="form-label">Clarity Of Explanation <span className="ei-col-red">*</span></label>
@@ -236,7 +246,6 @@ function Student_feedback() {
             </select>
         </div>
 
-
         <div className="mb-3">
           <label className="form-label">Encouragement Of Question <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="encouragement_of_question" value={encouragement_of_question} onChange={(e) => setEncouragementOfQuestion(e.target.value)}>
@@ -248,7 +257,6 @@ function Student_feedback() {
                 <option value="1">Not engaging </option>
             </select>
         </div>
-
 
         <div className="mb-3">
           <label className="form-label">Maintains Discipline<span className="ei-col-red">*</span></label>
@@ -262,7 +270,6 @@ function Student_feedback() {
             </select>
         </div>
 
-
         <div className="mb-3">
           <label className="form-label">Fairness In Treatment<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="fairness_in_treatment" value={fairness_in_treatment} onChange={(e) => setFairnessInTreatment(e.target.value)}>
@@ -274,8 +281,6 @@ function Student_feedback() {
                 <option value="1">Very unfair</option>
             </select>
         </div>
-
-
 
         <div className="mb-3">
           <label className="form-label">Approachability<span className="ei-col-red">*</span></label>
@@ -289,7 +294,6 @@ function Student_feedback() {
             </select>
         </div>
 
-
         <div className="mb-3">
           <label className="form-label">Behaviour And Attitude<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="behaviour_and_attitude" value={behaviour_and_attitude} onChange={(e) => setBehaviourAndAttitude(e.target.value)}>
@@ -301,7 +305,6 @@ function Student_feedback() {
                 <option value="1"> Very disrespectful </option>
             </select>
         </div>
-
 
         <div className="mb-3">
           <label className="form-label">Encouragement And Support<span className="ei-col-red">*</span></label>
@@ -315,8 +318,6 @@ function Student_feedback() {
             </select>
         </div>
 
-
-
         <div className="mb-3">
           <label className="form-label">Overall Teaching Quality <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="overall_teaching_quality" value={overall_teaching_quality} onChange={(e) => setOverallTeachingQuality(e.target.value)}>
@@ -328,7 +329,6 @@ function Student_feedback() {
                 <option value="1">Very dissatisfied </option>
             </select>
         </div>
-
 
         <div className="mb-3">
           <label className="form-label">Provide Study Material<span className="ei-col-red">*</span></label>
@@ -365,30 +365,26 @@ function Student_feedback() {
                 <option value="2">Rarely</option>
                 <option value="1">Never</option>
             </select>
-        </div>
-
-    
+        </div>   
 
         <div className="mb-3">
-          <label className="form-label">Strength Of Teacher<span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="strength_of_teacher" value={strength_of_teacher} onChange={(e) => setStrengthOfTeacher(e.target.value)}>
-                <option defaultValue>--Select Strength --</option>
-                {strengths_name.map((name) => (
-              <option key={name._id} value={name._id}>
-                {name.name}
-              </option>
-            ))}
-            </select>
+          <label htmlFor="strength_of_teacher">Strengths:</label>
+          <Select
+              isMulti
+              options={strengths_options}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={handleStrengthChange}
+              value={strengths}
+            />
         </div>
-
-
 
         <div className="mb-3">
           <label className="form-label">Areas For Improvement<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="areas_for_improvement" value={areas_for_improvement} onChange={(e) => setAreasForImprovement(e.target.value)}>
                 <option defaultValue>--Areas For Improvement --</option>
                 {improvement_area.map((area) => (
-              <option key={area._id} value={area._id}>
+              <option key={area.name} value={area.name}>
                 {area.name}
               </option>
             ))}
@@ -396,10 +392,13 @@ function Student_feedback() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Additional Comments <span className="ei-col-red">*</span></label>
+          <label className="form-label">Additional Comments </label>
           <input name="additional_comments" type="text" className="form-control" aria-describedby="emailHelp" value={additional_comments} onChange={(e) => setAdditionalComments(e.target.value)}/>
         </div>
         <button type="submit" className="btn btn-primary">Save</button>
+        {/* <button type="clear" className="btn btn-primary ms-4 ">clear</button> */}
+        <button type="reset" className="btn btn-primary ms-4 ">Clear</button>
+        
         </form>
         </div>
       );

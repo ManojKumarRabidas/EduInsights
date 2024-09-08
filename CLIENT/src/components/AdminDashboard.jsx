@@ -65,21 +65,24 @@ function Home() {
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                Line Chart
+                Line Chart <br />
+                OVERALL STUDENT QUALITY / Current Year Average Overall Teaching Quality
               </div>
             </div>
           </section>
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                First table
+                Single Bar Chart <br />
+                LAST SEMESTER FEEDBACK / Last Month Average Feedback
               </div>
             </div>
           </section>
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                First table
+                Multi Bar Chart <br />
+                LAST THREE SEMESTER FEEDBACK / Last Three Months Average Feedback
               </div>
             </div>
           </section>
