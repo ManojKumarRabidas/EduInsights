@@ -28,7 +28,7 @@ export default function App() {
 
   // Function to check session
   const checkSession = () => {
-    const session = sessionStorage.getItem('userSession');
+    const session = sessionStorage.getItem('eiUserSession');
     setIsAuthenticated(session === 'true');
   };
 

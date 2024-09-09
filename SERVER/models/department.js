@@ -4,6 +4,8 @@ const departmentSchema = new mongoose.Schema({
     name: {type: 'string', required: true},
     dept_id: {type: 'string', required: true},
     active: {type: 'number'},
+    createdBy: {type: 'ObjectId'},
+    updatedBy: {type: 'ObjectId'}
 }, { timestamps: true });
 
 departmentSchema.index({ dept_id: 1 }, { unique: true });

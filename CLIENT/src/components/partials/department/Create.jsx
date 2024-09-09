@@ -14,13 +14,15 @@ function Create() {
     event.preventDefault();
     // const deptData = { name, dept_id, active };
     const deptData = { name, dept_id, active: active ? "1" : "0" };
-    if ((deptData.name=="") || (deptData.dept_id=="")){
+    if ((!name || !dept_id)){
       setError("Please enter all the required values.");
       return;
     }
+    const userId = sessionStorage.getItem('eiUserId');
+    const payload = {userId: userId, deptData: deptData}
     const response = await fetch(`${HOST}:${PORT}/server/dept-create`, {
       method: "POST",
-      body: JSON.stringify(deptData),
+      body: JSON.stringify(payload),
       headers: {"Content-Type": "application/json"},
     });
     if (response){

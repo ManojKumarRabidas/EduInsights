@@ -144,12 +144,17 @@ module.exports = {
 
   profileDetails: async(req, res) =>{
     try {
-      var userId;
-      if(req.session.user && req.session.user._id){
-        userId = new ObjectId(req.session.user._id);
-      } else {
-        userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      var userId = req.headers.authorization?.split(' ')[1];
+      if (!userId) {
+        return res.status(400).json({ msg: 'User ID is missing' });
       }
+      userId = new ObjectId(userId);
+      // var userId;
+      // if(req.session.user && req.session.user._id){
+      //   userId = new ObjectId(req.session.user._id);
+      // } else {
+      //   userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      // }
         const docs = await userModel.aggregate([
           {$match: {_id: userId}},
           {$lookup: {from: "authentications",

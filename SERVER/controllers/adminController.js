@@ -262,13 +262,19 @@ module.exports = {
     deptCreate: async(req, res)=>{
         try {
             console.log("req.session admin", req.session.user);
-            const body = req.body;
+            const body = req.body.deptData;
+            const userId = req.body.userId;
+            if (!userId) {
+                res.status(400).json({ msg: "Session Expired!" });
+                return;
+            }
             if (!body.dept_id || !body.name || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // body.createdBy = req.session.user._id;
-            // body.createdBy = new ObjectId(body.createdBy);
+            // body.createdBy = new ObjectId(req.session.user._id);
+            body.createdBy = new ObjectId(userId);
+            body.updatedBy = new ObjectId(userId);
             const doc = await deptModel.create(body);
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {

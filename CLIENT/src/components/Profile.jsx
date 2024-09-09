@@ -9,8 +9,13 @@ export default function Profile(){
     const [response, setResponse] = useState("");
     const getUserProfileData = async () => {
         try {
-          const response = await fetch(`${HOST}:${PORT}/server/get-profile-details`, {
-            method: "GET",
+            const userId = sessionStorage.getItem('eiUserId');
+            const response = await fetch(`${HOST}:${PORT}/server/get-profile-details`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userId}`,
+                  }
           });
     
           if (response) {
