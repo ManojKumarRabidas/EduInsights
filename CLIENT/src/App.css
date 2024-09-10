@@ -119,7 +119,7 @@ a{
   background-color: #007bff;
   color: #fff !important;
   font-weight: 600;
-  padding: 0px 16px 2px;
+  padding: 2px 16px 2px;
   border-radius: 5px;;
 }
 
@@ -138,12 +138,20 @@ a{
 
 .main-section{
   margin-top: 3.5rem !important;
-  margin-left: 15rem !important;
   padding: 13px 0px 0px 18px !important;
+  max-width: 81vw !important;
+  margin-right: 0 !important;
+  margin-left: 16vw !important;
 }
-.main-section-unrestricted {
+.main-section-log-in {
   margin-top: 8rem !important;
   max-width: 28rem !important;
+}
+.main-section-registration {
+  margin-top: 4rem !important;
+}
+.main-section-registration input,.main-section-registration select{
+  width: 25vw !important;
 }
 .inner-navbar{
   padding-left:15px !important;

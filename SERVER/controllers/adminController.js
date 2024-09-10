@@ -4,11 +4,56 @@ const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
 const areaOfImprovementModel = require("../models/areaofimprovement");
+const authModel = require("../models/authentication");
+const bcrypt = require('bcryptjs');
 
 module.exports = {
     userList: async(req, res)=>{
         try {
-            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}});
+            const docs = await userModel.aggregate([
+                {
+                    $match: {
+                        user_type: { $nin: ["SUPPORT", "ADMIN"] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "authentications",
+                        localField: "_id",
+                        foreignField: "user_id",
+                        as: "auth"
+                    }
+                },
+                { $unwind: "$auth" },
+                {
+                    $lookup: {
+                        from: "departments",
+                        localField: "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                },
+                {
+                    $addFields: {
+                        department: { $arrayElemAt: ["$department", 0] }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        user_type: 1,
+                        name: 1,
+                        email: 1,
+                        phone: 1,
+                        address: 1,
+                        department: {$ifNull: ["$department.name", ""]},
+                        registration_year: 1,
+                        registration_number: 1,
+                        is_verified: "$auth.is_verified",
+                        active: "$auth.active"
+                    }
+                }
+            ]);
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -18,8 +63,153 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            console.log(params, body);
-            
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            // const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
+            const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
+            res.status(200).json({ message: "User updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+    userPendingVerificationList: async(req, res)=>{
+        try {
+            // const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}, is_verified: {$nin: [1, -1] }});
+            const docs = await userModel.aggregate([
+                {$match: {user_type: {$nin: ["SUPPORT", "ADMIN"]}}},
+                {$lookup: {from: "authentications",
+                        localField: "_id",
+                        foreignField: "user_id",
+                        as: "auth"}},
+                {$unwind: "$auth"},
+                {
+                    $lookup: {
+                        from: "departments",
+                        localField: "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                },
+                {$addFields: {department: { $arrayElemAt: ["$department", 0] }}},
+                {$project: { _id: 1,
+                        user_type: 1,
+                        name: 1,
+                        email: 1,
+                        phone: 1,
+                        address: 1,
+                        department: {$ifNull: ["$department.name", ""]},
+                        registration_year: 1,
+                        registration_number: 1,
+                        is_verified: "$auth.is_verified"}},
+                {$match: {is_verified: {$nin: [1, -1] }}},
+            ]);
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    userUpdateVerificationStatus: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            // body.updatedBy = req.session.user._id;
+            // body.updatedBy = new ObjectId(body.updatedBy);
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            params.id = new ObjectId(params.id);
+            body.is_verified = Number(body.is_verified);
+            const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
+            res.status(200).json({ message: "User status updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+
+    supportUserList: async(req, res)=>{
+        try {
+            // const docs = await userModel.find({user_type: {$in: ["SUPPORT", "ADMIN"]}});
+            const docs = await userModel.aggregate([
+                {$match: {user_type: {$in: ["SUPPORT", "ADMIN"]}}},
+                {$lookup: {from: "authentications",
+                        localField: "_id",
+                        foreignField: "user_id",
+                        as: "auth"}},
+                {$unwind: "$auth"},
+                {$project: { _id: 1,
+                        user_type: 1,
+                        employee_id: 1,
+                        name: 1,
+                        phone: 1,
+                        email: 1,
+                        login_id: "$auth.login_id",
+                        active: "$auth.active"}}
+            ]);
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    supportUserCreate: async(req, res)=>{
+        try {
+            const body = req.body;
+            if (!body.user_type || !body.employee_id || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            // body.createdBy = req.session.user._id;
+            // body.createdBy = new ObjectId(body.createdBy);
+            const is_verified = 1;
+            const active = body.active;
+            const password = body.password;
+            const login_id = body.login_id;
+            delete body.active;
+            delete body.password;
+            delete body.login_id;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            const userDoc = await userModel.create(body);
+            await authModel.create({
+              user_id: userDoc._id,
+              user_type: userDoc.user_type,
+              name: userDoc.name,
+              login_id: login_id,
+              password: hashedPassword,
+              is_verified: is_verified,
+              active: active,
+              last_log_in: null,
+            });
+            res.status(201).json({ status: true, msg: "Registered successfully.", doc:userDoc});
+        } catch (err) {
+            if(err.code==11000){
+                res.status(500).json({ status: false, msg: "Email Id must be unique." });
+                return
+            }
+            res.status(500).json({ status: false, msg: err.message });
+        }
+    },
+    supportUserDetails: async(req, res)=>{
+        try {
+            const params = req.params
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await userModel.findById({ _id: params.id });
+            res.status(200).json({ doc: doc });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    supportUserUpdate: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            // body.updatedBy = req.session.user._id;
+            // body.updatedBy = new ObjectId(body.updatedBy);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -30,29 +220,37 @@ module.exports = {
             res.status(500).json({ msg: err.message });
         }
     },
-    userPendingVerificationList: async(req, res)=>{
+    supportUserDelete: async(req, res)=>{
         try {
-            const docs = await userModel.find({user_type: {$nin: ["ADMIN", "SUPPORT"]}, is_verified: {$nin: [1, -1] }});
-            res.status(200).json({ docs: docs });
+            const params = req.params;
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            await userModel.findByIdAndDelete({ _id: params.id });
+            await authModel.deleteOne({ user_id: params.id });
+            res.status(200).json({ message: "Support User deleted successfully" });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
     },
-    userUpdateVerificationStatus: async(req, res)=>{
+    supportUserUpdateActive: async(req, res)=>{
         try {
             const params = req.params;
             const body = req.body;
-            console.log(params, body);
+            // body.updatedBy = req.session.user._id;
+            // body.updatedBy = new ObjectId(body.updatedBy);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await userModel.findByIdAndUpdate(params.id, body, {new: true});
-            res.status(200).json({ message: "Department updated successfully", doc: doc });
+            const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
+            res.status(200).json({ message: "Support User updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
     },
+
     deptList: async(req, res)=>{
         try {
             const docs = await deptModel.find();
@@ -64,13 +262,19 @@ module.exports = {
     deptCreate: async(req, res)=>{
         try {
             console.log("req.session admin", req.session.user);
-            const body = req.body;
+            const body = req.body.deptData;
+            const userId = req.body.userId;
+            if (!userId) {
+                res.status(400).json({ msg: "Session Expired!" });
+                return;
+            }
             if (!body.dept_id || !body.name || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // body.createdBy = req.session.user._id;
-            // body.createdBy = new ObjectId(body.createdBy);
+            // body.createdBy = new ObjectId(req.session.user._id);
+            body.createdBy = new ObjectId(userId);
+            body.updatedBy = new ObjectId(userId);
             const doc = await deptModel.create(body);
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {
@@ -125,7 +329,6 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            console.log(params, body);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -271,8 +474,6 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            console.log(req.params);
-            // const doc = await subjectModel.findById({ _id: params.id });
             const doc = await subjectModel.aggregate([
                 {$match: {_id: new ObjectId(params.id)}},
                 {$lookup: {from: "departments",

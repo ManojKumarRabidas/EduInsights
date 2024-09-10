@@ -30,33 +30,20 @@ function Student_feedback() {
   const [provide_study_material, setProvideStudyMaterial] = useState("");
   const [explain_with_supportive_analogy, setExplainWithSupportiveAnalogy] = useState("");
   const [use_of_media , setUseOfMedia] = useState("");
-  const [strength_of_teacher, setStrengthOfTeacher] = useState("");
   const [areas_for_improvement, setAreasForImprovement] = useState("");
   const [additional_comments, setAdditionalComments] = useState("");
   const [subjects, setSubjectsCode] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [strengths, setStrengths] = useState([]);
   const [improvement_area, setImprovementArea] = useState([]);
-  const [anonymous, setAnonymous] = useState(false); // Added state for anonymous toggle
-  // const [active, setActive] = useState(false);
+  const [anonymous, setAnonymous] = useState(false);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
   const navigate = useNavigate();
 
-  // const [selectedOptions, setSelectedOptions] = useState([]);
-
-    const options2 = [
-        { value: 'apple', label: 'Apple' },
-        { value: 'banana', label: 'Banana' },
-        { value: 'cherry', label: 'Cherry' },
-        { value: 'date', label: 'Date' },
-    ];
+  const [strengths_options, setStrengthOptions] = useState([]);
     
-    
-    
-    const options = [];
     useEffect(() => {
-    console.log("opt2", options2);
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
     const currentYear = new Date().getFullYear();
     const month_of_rating = `${currentMonth} ${currentYear}`;
@@ -97,19 +84,11 @@ function Student_feedback() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
-        console.log("abc", data);
         if (response.ok) {
-        //   options = (data.strengthsname).map(item => ({
-        //     value: item._id,
-        //     label: item.name
-        // }));
-        for (let i =0; i<(data.strengthsname).length; i++) {
-          const ref = {lebel: data.strengthsname[i].name, value: data.strengthsname[i].name}
-          options.push(ref)
-        }
-        console.log("opt", options);
-        
-          // setStrengthsName(options);
+          setStrengthOptions((data.docs).map(item => ({
+            value: item.name,
+            label: item.name
+          })));
         } else {
           setError("Failed to load strengths name.");
         }
@@ -138,17 +117,21 @@ function Student_feedback() {
     fetchImprovementArea();
   }, []);
   
-  const handleChange = (selected) => {
+  const handleStrengthChange = (selected) => {
     setStrengths(selected);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || !strength_of_teacher || !areas_for_improvement){
+      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || !strengths || !areas_for_improvement){
             setError("Please enter all the required values.");
             return;
         }
-        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strength_of_teacher, areas_for_improvement,  additional_comments};
+        const final_strengths = [];
+        for (let i =0; i<(strengths).length; i++) {
+          final_strengths.push(strengths[i].value)
+        }
+        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, areas_for_improvement,  additional_comments};
         const response = await fetch(`${HOST}:${PORT}/server/student-feedback`, {
           method: "POST",
           body: JSON.stringify(studentData),
@@ -385,34 +368,16 @@ function Student_feedback() {
         </div>   
 
         <div className="mb-3">
-                    <label htmlFor="strength_of_teacher">Choose Fruits</label>
-                    <Select
-                        isMulti
-                        name="strength_of_teacher"
-                        options={options}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={handleChange}
-                        value={strengths}
-                    />
-                </div>
-                <div className="mt-3">
-                    <strong>Selected Fruits:</strong> {strengths.map(option => option.label).join(', ')}
-                </div>
-
-        {/* <div className="mb-3">
-          <label className="form-label">Strength Of Teacher<span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="strength_of_teacher" value={strength_of_teacher} onChange={(e) => setStrengthOfTeacher(e.target.value)}>
-                <option defaultValue>--Select Strength --</option>
-                {strengths_name.map((name) => (
-              <option key={name.name} value={name.name}>
-                {name.name}
-              </option>
-            ))}
-            </select>
-        </div> */}
-
-
+          <label htmlFor="strength_of_teacher">Strengths:</label>
+          <Select
+              isMulti
+              options={strengths_options}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={handleStrengthChange}
+              value={strengths}
+            />
+        </div>
 
         <div className="mb-3">
           <label className="form-label">Areas For Improvement<span className="ei-col-red">*</span></label>

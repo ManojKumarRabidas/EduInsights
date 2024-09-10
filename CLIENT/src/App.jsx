@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import AdminDashboard from './components/AdminDashboard';
 import Users from './components/Users';
+import SupportUsers from './components/SupportUser';
 import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
 import Strength from './components/Strength';
@@ -14,6 +15,9 @@ import Teacher_feedback from './components/Teacher_feedback';
 import StudentFeedback from './components/StudentFeedback';
 import AllTeachersFeedback from './components/AllTeachersFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
+import Profile from './components/Profile';
+import UserManual from './components/UserManual';
+import Password from './components/Password';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -25,7 +29,7 @@ export default function App() {
 
   // Function to check session
   const checkSession = () => {
-    const session = sessionStorage.getItem('userSession');
+    const session = sessionStorage.getItem('eiUserSession');
     setIsAuthenticated(session === 'true');
   };
 
@@ -71,7 +75,7 @@ function AppContent({ isAuthenticated }) {
           {/* Conditionally Render Sidebar */}
           {isAuthenticated && !isRegistrationPage && !isLoginPage && <Sidebar />}
           {/* <main className={`main-section ${isRegistrationPage || isLoginPage ? 'col-12' : 'col-md-9 col-lg-10'}`}> */}
-          <main className={`${isRegistrationPage || isLoginPage ? 'col-12 main-section-unrestricted' : 'col-md-9 col-lg-10 main-section'}`}>
+          <main className={`${isRegistrationPage ? 'col-12 main-section-registration': (isLoginPage ? 'col-12 main-section-log-in': 'col-12 main-section')}`}>
             <Routes>
               <Route path='/' element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
               <Route path='/registration' element={<Registration />} />
@@ -79,6 +83,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/home' element={<Home />} />
               <Route path='/admin-dashboard' element={<AdminDashboard />} />
               <Route path='/users' element={<Users />} />
+              <Route path='/support-users/*' element={<SupportUsers />} />
               <Route path='/pending-verifications' element={<PendingVerifications />} />
               <Route path='/departments/*' element={<Department />} />
               <Route path='/strengths/*' element={<Strength />} />
@@ -87,6 +92,9 @@ function AppContent({ isAuthenticated }) {
               <Route path='/teacher-feedback' element={<Teacher_feedback/>} />
               <Route path='/student-feedback' element={<StudentFeedback/>} />
               <Route path='/all-teachers-feedback' element={<AllTeachersFeedback/>} />
+              <Route path='/profile' element={<Profile/>} />
+              <Route path='/user-manual' element={<UserManual/>} />
+              <Route path='/password/*' element={<Password/>} />
             </Routes>
           </main>
         </div>

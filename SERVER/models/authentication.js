@@ -27,6 +27,14 @@ const authenticationSchema = new mongoose.Schema({
   user_type: {
     type: String,
     default: null,
+  },
+  active: {
+    type: Number,
+    default: 0,
+  },
+  is_verified: {
+    type: Number,
+    default: 0,
   }
 });
 
