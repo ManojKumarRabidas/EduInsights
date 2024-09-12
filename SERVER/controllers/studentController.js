@@ -52,9 +52,9 @@ module.exports = {
 
     getImprovementArea: async(req, res)=>{
         try {
-            const improvement_area = await areaOfImprovementModel.find({active: 1, area_for:"TEACHER"}).sort({name: 1});
+            const improvements_area = await areaOfImprovementModel.find({active: 1, area_for:"TEACHER"}).sort({name: 1});
             // res.json({ departments });
-            res.status(200).json({ improvementarea: improvement_area });
+            res.status(200).json({ improvementarea: improvements_area });
           } catch (error) {
             res.status(500).json({ msg: "Failed to retrieve strengths name" });
           }
