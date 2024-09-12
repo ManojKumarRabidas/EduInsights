@@ -16,7 +16,7 @@ import StudentFeedback from './components/StudentFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
-import ChangePassword from './components/ChangePassword';
+import Password from './components/Password';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -28,7 +28,7 @@ export default function App() {
 
   // Function to check session
   const checkSession = () => {
-    const session = sessionStorage.getItem('userSession');
+    const session = sessionStorage.getItem('eiUserSession');
     setIsAuthenticated(session === 'true');
   };
 
@@ -92,7 +92,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/student-feedback' element={<StudentFeedback/>} />
               <Route path='/profile' element={<Profile/>} />
               <Route path='/user-manual' element={<UserManual/>} />
-              <Route path='/change-password' element={<ChangePassword/>} />
+              <Route path='/password/*' element={<Password/>} />
             </Routes>
           </main>
         </div>

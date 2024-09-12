@@ -1,9 +1,9 @@
-import "../App.css";
+// import "../App.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
-export default function ChangePassword(){
+export default function ForgotPassword(){
     const [old_password, setOldPassword] = useState("");
     const [new_password, setNewPassword] = useState("");
     const [confirm_password, setConfirmPassword] = useState("");
@@ -45,17 +45,24 @@ export default function ChangePassword(){
       };
     return(
         <div>
-            <main className="container my-2">
-                <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-                    <h5 className="mb-3">Change Password</h5>
+            <main className="container my-4">
+                <section className="">
                     {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
                     {response && (<div className="alert alert-success" role="alert">{response}</div>)}
                     <form onSubmit={handleSubmit}>
                         <div className=" justify-content-center">
+                          <div className="bg-light shadow-sm p-3 mb-3 bg-body-tertiary rounded">
+                            <div className="my-3">
+                              <small>Send Otp to registered mobile number</small>
+                              <button type="" className="btn btn-primary mx-2">Send</button>
+                            </div>
                             <div className="mb-3">
-                                <label className="form-label">Old Password <span className="ei-col-red">*</span></label>
+                                <label className="form-label">Enter OTP <span className="ei-col-red">*</span></label>
                                 <input name="old_password" type="text" className="form-control" aria-describedby="emailHelp" value={old_password} onChange={(e) => setOldPassword(e.target.value)}/>
                             </div>
+                            <button type="" className="btn btn-primary mx-2">Submit</button>
+                          </div>
+                          <div className="bg-light shadow-sm p-3 mb-3 bg-body-tertiary rounded">
                             <div className="mb-3">
                                 <label className="form-label">New Password <span className="ei-col-red">*</span></label>
                                 <input name="new_password" type="text" className="form-control" aria-describedby="emailHelp" value={new_password} onChange={(e) => setNewPassword(e.target.value)}/>
@@ -64,8 +71,8 @@ export default function ChangePassword(){
                                 <label className="form-label">Confirm Password <span className="ei-col-red">*</span></label>
                                 <input name="confirm_password" type="text" className="form-control" aria-describedby="emailHelp" value={confirm_password} onChange={(e) => setConfirmPassword(e.target.value)}/>
                             </div>
-                            <button type="submit" className="btn btn-primary mx-2">Change Password</button>
-                            <button type="" className="btn btn-primary mx-2">Forgot Password</button>
+                            <button type="submit" className="btn btn-primary mx-2">Change</button>
+                          </div>
                         </div>
                     </form>
                 </section>

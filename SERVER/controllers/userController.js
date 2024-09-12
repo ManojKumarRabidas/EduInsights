@@ -7,24 +7,20 @@ module.exports = {
   userCreate: async (req, res) => {
     try {
       const body = req.body;
-      if ( !body.user_type || !body.registration_number || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
+      if ( !body.user_type || !body.department || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-      if ((body.user_type == "TEACHER") && (!body.teacher_code || !body.employee_id)) {
+      if ((body.user_type == "TEACHER") && (!body.teacher_code || !body.employee_id || !body.specialization)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
       
-      if ((body.user_type == "STUDENT") && (!body.department || !body.registration_year)) {
+      if ((body.user_type == "STUDENT") && (!body.registration_number || !body.registration_year)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-      if (body.department) {
-        body.department = new ObjectId(body.department);
-      } else{
-        body.department=null;
-      };
+      body.department = new ObjectId(body.department);
       const is_verified = 0;
       const active = 1;
       const password = body.password;
@@ -85,7 +81,7 @@ module.exports = {
         return res.status(400).json({ msg: 'Your account is still not verified. Please contact with admin for verification.' });
       }
       if (authUser.is_verified == -1){
-        return res.status(400).json({ msg: 'Your account creation request is rejected. Please contact with admin for verification.' });
+        return res.status(400).json({ msg: 'Your account creation request is rejected. Please contact with admin for more information.' });
       }
       if (authUser.active == 0){
         return res.status(400).json({ msg: 'Your account is deactivated. Please contact with admin for activation.' });
@@ -144,12 +140,17 @@ module.exports = {
 
   profileDetails: async(req, res) =>{
     try {
-      var userId;
-      if(req.session.user && req.session.user._id){
-        userId = new ObjectId(req.session.user._id);
-      } else {
-        userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      var userId = req.headers.authorization?.split(' ')[1];
+      if (!userId) {
+        return res.status(400).json({ msg: 'User ID is missing' });
       }
+      userId = new ObjectId(userId);
+      // var userId;
+      // if(req.session.user && req.session.user._id){
+      //   userId = new ObjectId(req.session.user._id);
+      // } else {
+      //   userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      // }
         const docs = await userModel.aggregate([
           {$match: {_id: userId}},
           {$lookup: {from: "authentications",
@@ -195,5 +196,39 @@ module.exports = {
     } catch (err) {
         res.status(400).json({ msg: err.message });
     }
-  }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      const body = req.body;
+      console.log(body);
+      if ( !body.old_password || !body.new_password) {
+        res.status(400).json({ msg: "Missing Parameters!" });
+        return;
+      }
+      var userId;
+      if(req.session.user && req.session.user._id){
+        userId = new ObjectId(req.session.user._id);
+      } else {
+        userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
+      }
+
+      const user = await authModel.findOne({user_id: userId});
+      if (!user) {
+        return res.status(404).json({status: false, msg: 'User not found' });
+      }
+      const isMatch = await bcrypt.compare(body.old_password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ status: false, msg: 'Old password is incorrect' });
+      }
+      const hashedPassword = await bcrypt.hash(body.new_password, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      res.status(200).json({ status: true, msg: 'Password changed successfully' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ status: false, msg: "An error occurred while changing the password" });
+    }
+  },
 };

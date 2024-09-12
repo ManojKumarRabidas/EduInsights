@@ -11,6 +11,7 @@ function Registration() {
   const [registration_number, setRegistrationNumber] = useState("");
   const [teacher_code, setTeacherCode] = useState("");
   const [employee_id, setEmployeeId] = useState("");
+  const [specialization, setSpecialization] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -79,15 +80,34 @@ function Registration() {
       checkLoginIdAvailability(id);
     } else {
       setIsLoginIdInvalid(false);
-      setIsLoginIdAvailable(null); // Reset availability state if less than 3 characters
+      setIsLoginIdAvailable(null);
+    }
+  };
+
+  const changeUserType = async(value) => {
+    setUserType(value);
+    var element = document.getElementById("user-type-registration-row");
+    if (value == "TEACHER"){
+      element.classList.remove("registration-row");
+      element.classList.add("teacher-registration-row");
+    } else if (value == "STUDENT") {
+      element.classList.remove("teacher-registration-row");
+      element.classList.add("registration-row");
+    } else{
+      element.classList.remove("teacher-registration-row");
+      element.classList.add("registration-row");
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setTimeout(() => {
+      setResponse("");
+      setError("");
+    }, 5000);
     if (
       !user_type ||
-      !registration_number ||
+      !department ||
       !name ||
       !phone ||
       !email ||
@@ -100,11 +120,11 @@ function Registration() {
       setError("Please enter all the required values.");
       return;
     }
-    if (user_type === "TEACHER" && (!teacher_code || !employee_id)) {
+    if (user_type === "TEACHER" && (!teacher_code || !employee_id || !specialization)) {
       setError("Please enter all the required values.");
       return;
     }
-    if (user_type === "STUDENT" && (!department || !registration_year)) {
+    if (user_type === "STUDENT" && (!registration_number || !registration_year)) {
       setError("Please enter all the required values.");
       return;
     }
@@ -124,6 +144,7 @@ function Registration() {
       registration_number,
       teacher_code,
       employee_id,
+      specialization,
       name,
       phone,
       email,
@@ -153,10 +174,10 @@ function Registration() {
       setError("We are unable to process now. Please try again later.");
     }
 
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
+    // setTimeout(() => {
+    //   setResponse("");
+    //   setError("");
+    // }, 5000);
   };
 
   const clearForm = async()=>{
@@ -166,6 +187,7 @@ function Registration() {
     setRegistrationNumber("")
     setTeacherCode("")
     setEmployeeId("")
+    setSpecialization("")
     setName("")
     setPhone("")
     setEmail("")
@@ -174,7 +196,6 @@ function Registration() {
     setLoginId("")
     setPassword("")
     setRepeatPassword("")
-    // handleLoginIdChange()
   }
 
   return (
@@ -186,7 +207,7 @@ function Registration() {
       <form onSubmit={handleSubmit}>
         <div className="form-section ">
           <div className="registration-rows d-flex justify-content-center align-items-center">
-            <div className="registration-row m-2">
+            <div id="user-type-registration-row" className="registration-row m-2">
               <label className="form-label">User Type <span className="ei-col-red">*</span>
               </label>
               <select
@@ -194,7 +215,8 @@ function Registration() {
                 aria-label="Default select example"
                 name="user_type"
                 value={user_type}
-                onChange={(e) => setUserType(e.target.value)}
+                // onChange={(e) => setUserType(e.target.value)
+                onChange={(e) => changeUserType(e.target.value)}
               >
                 <option defaultValue>--Select user type--</option>
                 <option value="TEACHER">TEACHER</option>
@@ -205,23 +227,6 @@ function Registration() {
             {/* Conditional fields for STUDENT */}
             {user_type === "STUDENT" && (
               <>
-                <div className="registration-row m-2">
-                  <label className="form-label">
-                    Department <span className="ei-col-red">*</span>
-                  </label>
-                  <select
-                    className="form-select"
-                    aria-label="Default select example"
-                    name="department"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                  >
-                    <option defaultValue>--Select department--</option>
-                    {departments.map((dept) => (
-                      <option key={dept._id} value={dept._id}>{dept.name}</option>
-                    ))}
-                  </select>
-                </div>
                 <div className="registration-row m-2">
                   <label className="form-label">
                     Registration Year <span className="ei-col-red">*</span>
@@ -235,13 +240,27 @@ function Registration() {
                     onChange={(e) => setRegistrationYear(e.target.value)}
                   />
                 </div>
+                
+                <div className="registration-row m-2">
+                  <label className="form-label">
+                    Registration Number <span className="ei-col-red">*</span>
+                  </label>
+                  <input
+                    name="registration_number"
+                    type="text"
+                    maxLength={20}
+                    className="form-control"
+                    value={registration_number}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
+                  />
+                </div>
               </>
               )}
 
             {/* Conditional fields for TEACHER */}
             {user_type === "TEACHER" && (
               <>
-                <div className="registration-row m-2">
+                <div className="registration-row teacher-registration-row m-2">
                   <label className="form-label">
                     Teacher Code <span className="ei-col-red">*</span>
                   </label>
@@ -254,7 +273,7 @@ function Registration() {
                     onChange={(e) => setTeacherCode(e.target.value)}
                   />
                 </div>
-                <div className="registration-row m-2">
+                <div className="registration-row teacher-registration-row m-2">
                   <label className="form-label">
                     Employee Id <span className="ei-col-red">*</span>
                   </label>
@@ -267,6 +286,18 @@ function Registration() {
                     onChange={(e) => setEmployeeId(e.target.value)}
                   />
                 </div>
+                <div className="registration-row teacher-registration-row m-2">
+                  <label className="form-label">Specialization <span className="ei-col-red">*</span>
+                  </label>
+                  <input
+                    name="specialization"
+                    type="text"
+                    maxLength={20}
+                    className="form-control"
+                    value={specialization}
+                    onChange={(e) => setSpecialization(e.target.value)}
+                  />
+                </div>
               </>
             )}          
           </div>
@@ -274,16 +305,20 @@ function Registration() {
             {/* Common fields for both TEACHER and STUDENT */}
             <div className="registration-row m-2">
               <label className="form-label">
-                Registration Number <span className="ei-col-red">*</span>
+                Department <span className="ei-col-red">*</span>
               </label>
-              <input
-                name="registration_number"
-                type="text"
-                maxLength={20}
-                className="form-control"
-                value={registration_number}
-                onChange={(e) => setRegistrationNumber(e.target.value)}
-              />
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                name="department"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+              >
+                <option defaultValue>--Select department--</option>
+                {departments.map((dept) => (
+                  <option key={dept._id} value={dept._id}>{dept.name}</option>
+                ))}
+              </select>
             </div>
             <div className="registration-row m-2">
               <label className="form-label">

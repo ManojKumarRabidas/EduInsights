@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import {
   useReactTable,
   getCoreRowModel,
@@ -18,7 +17,7 @@ function Users() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
-  const [sorting, setSorting] = useState([]); // State to manage sorting
+  const [sorting, setSorting] = useState([]);
 
   async function getData() {
     try {
@@ -42,27 +41,6 @@ function Users() {
     getData();
   }, []);
 
-  // const handleDelete = async (id) => {
-  //   try {
-  //     const response = await fetch(`${HOST}:${PORT}/server/dept0-delete/${id}`, {
-  //       method: "DELETE",
-  //     });
-
-  //     const result = await response.json();
-  //     if (response.ok) {
-  //       setResponse("Department deleted successfully");
-  //       getData();
-  //     } else {
-  //       setError(result.error);
-  //     }
-  //   } catch (err) {
-  //     setError("We are unable to process now. Please try again later.");
-  //   }
-  //   setTimeout(() => {
-  //     setResponse("");
-  //     setError("");
-  //   }, 3000);
-  // };
 
   const handleActiveChange = async (id, isActive) => {
     console.log(id, isActive);
@@ -92,15 +70,8 @@ function Users() {
     }, 5000);
   };
 
-  // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
-      // {
-      //   header: "Sl No",
-      //   accessorFn: (row, i) => i + 1 + pageIndex * pageSize,
-      //   id: "slNo",
-      //   enableSorting: false,
-      // },
       {
         header: "User Type",
         accessorKey: "user_type",
@@ -153,14 +124,7 @@ function Users() {
         header: "Verification",
         accessorKey: "is_verified",
         sortingFn: "alphanumeric",
-        enableSorting: false,
-        cell: ({ row }) => (
-          <div>
-            
-              {(row.original.is_verified == 0) ? "Not Verified" : (row.original.is_verified == 1) ? "Verified" : "Rejected"}
-            
-          </div>
-        ),
+        enableSorting: true,
       },
       {
         header: "Active",
@@ -181,56 +145,28 @@ function Users() {
           </div>
         ),
       },
-      // {
-      //   header: "Action",
-      //   id: "action",
-      //   enableSorting: false,
-      //   headerClassName: "ei-text-center-imp",
-      //   cell: ({ row }) => (
-      //     <div style={{ textAlign: "center" }}>
-      //       <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
-      //         <Link
-      //           to={`/departments/dept-update/${row.original._id}`}
-      //           className="card-link m-2"
-      //         >
-      //           Edit
-      //         </Link>
-      //       </button>
-      //       <button
-      //         type="button"
-      //         className="btn btn-outline-light m-1"
-      //         style={{ color: "blue", backgroundColor: "ghostwhite" }}
-      //         onClick={() => handleDelete(row.original._id)}
-      //       >
-      //         Delete
-      //       </button>
-      //     </div>
-      //   ),
-      // },
     ],
-    [ pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
+    [ pageIndex, pageSize]
   );
 
-  // Apply global filtering before pagination
   const filteredData = useMemo(() => {
     if (!globalFilter) return data;
     return data.filter((row) => {
       const lowercasedFilter = globalFilter.toLowerCase();
       return (
-        row.user_type.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter) ||
-        row.email.toLowerCase().includes(lowercasedFilter) ||
-        row.phone.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.address.toLowerCase().includes(lowercasedFilter) ||
-        row.department.toLowerCase().includes(lowercasedFilter) ||
-        row.registration_year.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.registration_number.toString().toLowerCase().includes(lowercasedFilter) ||
-        row.is_verified.toString().toLowerCase().includes(lowercasedFilter)
+        (row.user_type && row.user_type.toLowerCase().includes(lowercasedFilter)) ||
+        (row.name && row.name.toLowerCase().includes(lowercasedFilter)) ||
+        (row.email && row.email.toLowerCase().includes(lowercasedFilter)) ||
+        (row.phone && row.phone.toString().toLowerCase().includes(lowercasedFilter)) ||
+        (row.address && row.address.toLowerCase().includes(lowercasedFilter)) ||
+        (row.department && row.department.toLowerCase().includes(lowercasedFilter)) ||
+        (row.registration_year && row.registration_year.toString().toLowerCase().includes(lowercasedFilter)) ||
+        (row.registration_number && row.registration_number.toString().toLowerCase().includes(lowercasedFilter)) ||
+        (row.is_verified && row.is_verified.toLowerCase().includes(lowercasedFilter))
       );
     });
   }, [data, globalFilter]);
 
-  // Apply sorting before pagination
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
     const [{ id, desc }] = sorting;
@@ -246,7 +182,6 @@ function Users() {
     });
   }, [filteredData, sorting]);
 
-  // Apply pagination after sorting
   const paginatedData = useMemo(() => {
     const startRow = pageIndex * pageSize;
     const endRow = startRow + pageSize;
@@ -291,7 +226,7 @@ function Users() {
         className="form-control mb-3"
       />
 
-      <table className="table table-striped" style={{ fontSize: "smaller" }}>
+      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -334,7 +269,6 @@ function Users() {
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
       <div className="d-flex justify-content-between my-3">
         <button
           className="btn btn-primary"
