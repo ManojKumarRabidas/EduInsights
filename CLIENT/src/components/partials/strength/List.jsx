@@ -228,10 +228,10 @@ function List() {
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
         placeholder="Search..."
-        className="form-control mb-3"
+        className="form-control my-3"
       />
 
-      <table className="table table-striped">
+      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

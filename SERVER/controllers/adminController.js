@@ -11,36 +11,18 @@ module.exports = {
     userList: async(req, res)=>{
         try {
             const docs = await userModel.aggregate([
-                {
-                    $match: {
-                        user_type: { $nin: ["SUPPORT", "ADMIN"] }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "authentications",
+                {$match: {user_type: { $nin: ["SUPPORT", "ADMIN"] }}},
+                {$lookup: {from: "authentications",
                         localField: "_id",
                         foreignField: "user_id",
-                        as: "auth"
-                    }
-                },
-                { $unwind: "$auth" },
-                {
-                    $lookup: {
-                        from: "departments",
+                        as: "auth"}},
+                {$unwind: "$auth"},
+                {$lookup: {from: "departments",
                         localField: "department",
                         foreignField: "_id",
-                        as: "department"
-                    }
-                },
-                {
-                    $addFields: {
-                        department: { $arrayElemAt: ["$department", 0] }
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
+                        as: "department"}},
+                {$addFields: {department: { $arrayElemAt: ["$department", 0]}}},
+                {$project: { _id: 1,
                         user_type: 1,
                         name: 1,
                         email: 1,
@@ -50,10 +32,14 @@ module.exports = {
                         registration_year: 1,
                         registration_number: 1,
                         is_verified: "$auth.is_verified",
-                        active: "$auth.active"
-                    }
-                }
+                        active: "$auth.active"}}
             ]);
+            if(docs.length>0){
+                for(let i=0; i<docs.length; i++){
+                    const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected")
+                    docs[i].is_verified = val;
+                }
+            }
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -244,7 +230,6 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // const doc = await authModel.findByIdAndUpdate(params.id, body, {new: true});
             const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
             res.status(200).json({ message: "Support User updated successfully", doc: doc });
         } catch (err) {
@@ -263,13 +248,19 @@ module.exports = {
     deptCreate: async(req, res)=>{
         try {
             console.log("req.session admin", req.session.user);
-            const body = req.body;
+            const body = req.body.deptData;
+            const userId = req.body.userId;
+            if (!userId) {
+                res.status(400).json({ msg: "Session Expired!" });
+                return;
+            }
             if (!body.dept_id || !body.name || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // body.createdBy = req.session.user._id;
-            // body.createdBy = new ObjectId(body.createdBy);
+            // body.createdBy = new ObjectId(req.session.user._id);
+            body.createdBy = new ObjectId(userId);
+            body.updatedBy = new ObjectId(userId);
             const doc = await deptModel.create(body);
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {

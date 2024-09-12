@@ -96,10 +96,8 @@ function Update() {
         </div>
       )}
 
-      <form onSubmit={handleEdit}>
+      <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
-          {/* <label className="form-label">Area For <span className="ei-col-red">*</span></label>
-          <input name="area" type="text" className="form-control" aria-describedby="emailHelp" value={area} onChange={(e) => setAreaFor(e.target.value)} />    */}
           <label className="form-label">Area For <span className="ei-col-red">*</span></label>
           <select className="form-select" aria-label="Default select example" name="area_for" value={area_for} onChange={(e) => setAreaFor(e.target.value)}>
               <option defaultValue>--Select area for--</option>

@@ -14,13 +14,15 @@ function Create() {
     event.preventDefault();
     // const deptData = { name, dept_id, active };
     const deptData = { name, dept_id, active: active ? "1" : "0" };
-    if ((deptData.name=="") || (deptData.dept_id=="")){
+    if ((!name || !dept_id)){
       setError("Please enter all the required values.");
       return;
     }
+    const userId = sessionStorage.getItem('eiUserId');
+    const payload = {userId: userId, deptData: deptData}
     const response = await fetch(`${HOST}:${PORT}/server/dept-create`, {
       method: "POST",
-      body: JSON.stringify(deptData),
+      body: JSON.stringify(payload),
       headers: {"Content-Type": "application/json"},
     });
     if (response){
@@ -49,7 +51,7 @@ function Create() {
       {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Department Id <span className="ei-col-red">*</span></label>
           <input name="dept_id" type="text" className="form-control" aria-describedby="emailHelp" value={dept_id} onChange={(e) => setDeptId(e.target.value)}/>
