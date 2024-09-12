@@ -151,7 +151,12 @@ a{
   margin-top: 4rem !important;
 }
 .main-section-registration input,.main-section-registration select{
-  width: 25vw !important;
+  max-width: 25vw !important;
+  min-width: 25vw !important;
+}
+.teacher-registration-row, .teacher-registration-row select, .teacher-registration-row input{
+  max-width: 18.5vw !important;
+  min-width: 18.5vw !important;
 }
 .inner-navbar{
   padding-left:15px !important;

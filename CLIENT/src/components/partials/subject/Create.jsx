@@ -77,7 +77,7 @@ function Create() {
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
           <input

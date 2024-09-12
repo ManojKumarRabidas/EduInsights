@@ -96,7 +96,7 @@ function Update() {
         </div>
       )}
 
-      <form onSubmit={handleEdit}>
+      <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Department Id <span className="ei-col-red">*</span></label>
           <input name="dept_id" type="text" className="form-control" aria-describedby="emailHelp" value={dept_id} onChange={(e) => setDeptId(e.target.value)} />   

@@ -40,7 +40,7 @@ function Login() {
     setTimeout(() => {
       setResponse("");
       setError("");
-    }, 3000);
+    }, 6000);
   };
 
   return (

@@ -7,24 +7,20 @@ module.exports = {
   userCreate: async (req, res) => {
     try {
       const body = req.body;
-      if ( !body.user_type || !body.registration_number || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
+      if ( !body.user_type || !body.department || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-      if ((body.user_type == "TEACHER") && (!body.teacher_code || !body.employee_id)) {
+      if ((body.user_type == "TEACHER") && (!body.teacher_code || !body.employee_id || !body.specialization)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
       
-      if ((body.user_type == "STUDENT") && (!body.department || !body.registration_year)) {
+      if ((body.user_type == "STUDENT") && (!body.registration_number || !body.registration_year)) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
-      if (body.department) {
-        body.department = new ObjectId(body.department);
-      } else{
-        body.department=null;
-      };
+      body.department = new ObjectId(body.department);
       const is_verified = 0;
       const active = 1;
       const password = body.password;
@@ -85,7 +81,7 @@ module.exports = {
         return res.status(400).json({ msg: 'Your account is still not verified. Please contact with admin for verification.' });
       }
       if (authUser.is_verified == -1){
-        return res.status(400).json({ msg: 'Your account creation request is rejected. Please contact with admin for verification.' });
+        return res.status(400).json({ msg: 'Your account creation request is rejected. Please contact with admin for more information.' });
       }
       if (authUser.active == 0){
         return res.status(400).json({ msg: 'Your account is deactivated. Please contact with admin for activation.' });
