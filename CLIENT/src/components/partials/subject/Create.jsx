@@ -98,7 +98,7 @@ function Create() {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 select-container">
           <label className="form-label">Department <span className="ei-col-red">*</span></label>
           <select
             name="department"
