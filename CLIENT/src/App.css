@@ -20,43 +20,43 @@ body {
 }
 a{
   text-decoration: none !important;
-  color: blue;
+  color: rgb(255, 0, 183);
 }
 button, button a{
-  background-color: darkslategrey !important;
+  background-color: #E1ACAC !important;
   color: white !important;
 }
 /* Override Bootstrap switch color */
 .form-check-input:checked {
-  background-color: darkslategrey !important; /* Background color when the switch is checked */
-  border-color: darkslategrey !important; /* Border color when the switch is checked */
+  background-color: #E1ACAC !important; /* Background color when the switch is checked */
+  border-color: #E1ACAC !important; /* Border color when the switch is checked */
 }
 
 .form-check-input:focus {
-  box-shadow: 0 0 0 0.25rem darkslategrey !important; /* Focus outline color */
+  box-shadow: 0 0 0 0.25rem #E1ACAC !important; /* Focus outline color */
 }
-/* Override Bootstrap dropdown blue color with darkslategrey */
+/* Override Bootstrap dropdown blue color with #E1ACAC */
 
 /* Change the border and background color of the dropdown when focused */
 .form-control:focus {
-  border-color: darkslategrey !important; /* Change border color on focus */
-  box-shadow: 0 0 0 0.2rem rgba(47, 79, 79, 0.25) !important; /* Shadow effect with darkslategrey tint */
+  border-color: #E1ACAC !important; /* Change border color on focus */
+  box-shadow: 0 0 0 0.2rem rgba(47, 79, 79, 0.25) !important; /* Shadow effect with #E1ACAC tint */
 }
 
 /* Change the color of the dropdown arrow when focused */
 .form-control:focus-visible {
-  border-color: darkslategrey !important; /* Change border color on focus-visible */
+  border-color: #E1ACAC !important; /* Change border color on focus-visible */
 }
 
 /* Change the background color of the selected option in dropdown */
 .form-control option:checked {
-  background-color: darkslategrey !important; /* Dark Slate Grey background for selected option */
+  background-color: #E1ACAC !important; /* Dark Slate Grey background for selected option */
   color: white !important; /* White text for selected option */
 }
 
 /* Change the color of the placeholder text */
 .form-control::placeholder {
-  color:  darkslategrey !important; /* Dark Slate Grey for placeholder text */
+  color:  #E1ACAC !important; /* Dark Slate Grey for placeholder text */
 }
 
 /*  Dropdown background color */
@@ -74,45 +74,46 @@ button, button a{
 /* Change the background color of options when the dropdown is focused */
 .select-container select:focus,
 .select-container select:hover {
-  border-color: darkslategrey !important; /* Change border color on hover or focus */
+  border-color: #E1ACAC !important; /* Change border color on hover or focus */
   outline: none;
-  box-shadow: 0 0 5px darkslategrey !important;
+  box-shadow: 0 0 5px #E1ACAC !important;
 }
 
 .select-container option:checked {
-  background-color: darkslategrey !important; /* Custom background color for option */
+  background-color: #E1ACAC !important; /* Custom background color for option */
   color: white !important; /* Text color for selected option */
 }
 .select-container option:hover {
-  background-color: darkslategrey !important; /* Custom background color for option */
+  background-color: #E1ACAC !important; /* Custom background color for option */
   color: white !important; /* Text color for selected option */
 }
 
 /* Navbar styles */
 .navbar {
   /* background-color: #ffffff; */
-  background-color: darkslategrey !important;
+  background-color: #E1ACAC !important;
   border-bottom: 1px solid #e7e7e7;
   padding: 0.5rem 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: #1c0808;
 }
 
 .navbar-nav .nav-link {
   /* color: #333; */
-  color: #000;
+  color: #1214036b;
   margin-right: 1rem;
   font-weight: 500;
 }
 
 .navbar-nav .nav-link:hover {
   /* color: #007bff; */
-  color: #0c0c0c;
+  color: #c02626;
 }
 
 .navbar-toggler {
@@ -135,7 +136,7 @@ button, button a{
 .dropdown-item:hover {
   background-color: #f1f1f1;
   /* color: #007bff; */
-  color: darkslategrey;
+  color: #E1ACAC;
 }
 
 .ei-row{
@@ -146,7 +147,7 @@ button, button a{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background-color: darkslategrey;
+  background-color: #E1ACAC;
   height: 100vh;
 }
 /* Sidebar styles */
@@ -179,19 +180,19 @@ button, button a{
 .sidebar a:hover {
   background-color: #f1f1f1;
   /* color: #007bff; */
-  color: darkslategrey;
+  color: #E1ACAC;
 }
 
 .sidebar a.active {
   /* background-color: #007bff; */
-  background-color: darkslategrey;
+  background-color: #E1ACAC;
   color: #fff;
   font-weight: 600;
 }
 
 .inner-navbar .active {
   /* background-color: #007bff; */
-  background-color: darkslategrey;
+  background-color: #E1ACAC;
   color: #fff !important;
   font-weight: 600;
   padding: 2px 16px 2px;
@@ -301,3 +302,19 @@ button, button a{
 .read-the-docs {
   color: #888;
 } */
+
+
+/* home heading */
+
+.text-gradient{
+  color: #c02626;
+}
+
+/* lead {
+  color: #b21b8283;
+  /* font-weight: bold; */
+
+.lead fw-light mb-4{
+  
+
+}
