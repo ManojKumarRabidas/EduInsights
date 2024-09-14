@@ -66,6 +66,9 @@ router.get("/get-teacher-code", studentController.getTeachersCode);
 router.get("/get-strength-name", studentController.getStrengthName);
 router.get("/get-improvement-area", studentController.getImprovementArea);
 
+router.get("/get-student-strength",teacherController.getStudentStrenghts );
+router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
+
 
 module.exports = router;
 
