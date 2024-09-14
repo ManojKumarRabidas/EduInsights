@@ -13,6 +13,8 @@ router.post('/logout', userController.userLogout);
 router.get("/user-list", adminController.userList);
 router.put("/user-update-active/:id", adminController.userUpdateActive);
 
+router.post("/change-password", userController.changePassword);
+
 router.get("/get-profile-details", userController.profileDetails);
 
 router.get("/pending-verification-user-list", adminController.userPendingVerificationList);

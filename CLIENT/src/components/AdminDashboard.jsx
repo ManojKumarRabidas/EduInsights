@@ -1,4 +1,46 @@
+import LineChartComponent from './partials/chartcomponents/LineChartComponent';
+import BarChartComponent from './partials/chartcomponents/BarChartComponent';
+import MultiBarChartComponent from './partials/chartcomponents/MultiBarChartComponent';
+import React, { useEffect, useState } from "react";
+const HOST = import.meta.env.VITE_HOST;
+const PORT = import.meta.env.VITE_PORT;
+
 function Home() {
+  // const [chartData, setChartData] = useState(null);
+  //   useEffect(() => {
+  //       const fetchData = async () => {
+  //           try {
+  //               const response = await fetch('/api/data');
+  //               const data = await response.json();
+  //               setChartData(data);
+  //           } catch (error) {
+  //               console.error('Error fetching data:', error);
+  //           }
+  //       };
+
+  //       fetchData();
+  //   }, []);
+
+  const [chartData] = useState({
+    lineGraphData: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        values: [65, 59, 80, 81, 56, 55],
+    },
+    singleBarData: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        values: [12, 19, 3, 5, 2, 3],
+    },
+    threeValuedBarData: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        values1: [10, 20, 30, 40, 50],
+        values2: [15, 25, 35, 45, 55],
+        values3: [20, 30, 40, 50, 60],
+    },
+});
+
+    if (!chartData) {
+      return <div>Loading...</div>;
+    }
     return (
       <div>
         <main className="container my-2">
@@ -65,24 +107,24 @@ function Home() {
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                Line Chart <br />
                 OVERALL STUDENT QUALITY / Current Year Average Overall Teaching Quality
+                <LineChartComponent data={chartData.lineGraphData} />
               </div>
             </div>
           </section>
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                Single Bar Chart <br />
                 LAST SEMESTER FEEDBACK / Last Month Average Feedback
+                <BarChartComponent data={chartData.singleBarData} />
               </div>
             </div>
           </section>
           <section className="bg-light py-5 my-2">
             <div className="container px-5">
               <div className="row gx-5 justify-content-center">
-                Multi Bar Chart <br />
                 LAST THREE SEMESTER FEEDBACK / Last Three Months Average Feedback
+                <MultiBarChartComponent data={chartData.threeValuedBarData} />
               </div>
             </div>
           </section>

@@ -1,6 +1,5 @@
 import "../App.css";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
@@ -10,8 +9,13 @@ export default function Profile(){
     const [response, setResponse] = useState("");
     const getUserProfileData = async () => {
         try {
-          const response = await fetch(`${HOST}:${PORT}/server/get-profile-details`, {
-            method: "GET",
+            const userId = sessionStorage.getItem('eiUserId');
+            const response = await fetch(`${HOST}:${PORT}/server/get-profile-details`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userId}`,
+                  }
           });
     
           if (response) {

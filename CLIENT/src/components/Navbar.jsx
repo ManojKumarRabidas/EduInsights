@@ -3,21 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [userName, setUserName] = useState('');
+  const [userType, setUserType] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     // Retrieve user name from session storage
-    const name = sessionStorage.getItem('userName');
+    const name = sessionStorage.getItem('eiUserName');
+    const userType = sessionStorage.getItem('eiUserType');
     if (name) {
       setUserName(name);
+    }
+    if (userType) {
+      setUserType(userType);
     }
   }, []);
 
   // Logout function
   const handleLogout = () => {
     // Clear session storage
-    sessionStorage.removeItem('userSession');
-    sessionStorage.removeItem('userName');
+    sessionStorage.removeItem('eiUserSession');
+    sessionStorage.removeItem('eiUserName');
+    sessionStorage.removeItem('eiUserId');
 
     // Trigger a storage event to update authentication state in other components
     window.dispatchEvent(new Event('storage'));
@@ -27,7 +33,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    // <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <nav className="navbar navbar-expand-lg fixed-top">
       <div className="container-fluid">
         {/* Navbar Brand */}
         <div className="navbar-brand">
@@ -50,8 +57,9 @@ function Navbar() {
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li><a className="dropdown-item" href="#">Settings</a></li>
                 <li><Link className="dropdown-item" to="/user-manual">User Manual</Link></li>
-                <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
-                <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
+                {(userType != "ADMIN") && <li><Link className="dropdown-item" to="/profile">Profile</Link></li>}
+                {/* <li><Link className="dropdown-item" to="/profile">Profile</Link></li> */}
+                <li><Link className="dropdown-item" to="/password">Change Password</Link></li>
                 <li><hr className="dropdown-divider" /></li>
                 <li><a className="dropdown-item" href="#" onClick={handleLogout}>Sign Out</a></li>
               </ul>

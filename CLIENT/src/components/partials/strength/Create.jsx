@@ -48,7 +48,7 @@ function Create() {
         {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
         {response && (<div className="alert alert-success" role="alert">{response}</div>)}
   
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
           <div className="mb-3">
             <label className="form-label">Strength For <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="strength_for" value={strength_for} onChange={(e) => setStrengthFor(e.target.value)}>
