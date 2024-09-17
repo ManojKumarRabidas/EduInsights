@@ -617,7 +617,14 @@ module.exports = {
     },
     getStudentNames:async(req, res)=>{
         try {
-            const student_names = await userModel.find({ user_type:"STUDENT"});
+            const body = req.body;
+            console.log(body)
+            if (!body || !body.student_reg_year || !body.department) {
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const student_names = await userModel.find({ user_type:"STUDENT",registration_year:body.student_reg_year, department:body.department});
+            console.log(student_names)
             // res.json({ departments });
             res.status(200).json({ student_names: student_names });
           } catch (error) {

@@ -484,14 +484,14 @@ const PORT = import.meta.env.VITE_PORT
 
 
 
-function Teacher_feedback() {
+function TeacherFeedback() {
   const [semester_of_rating, setSemesterOfRating] = useState("");
   const [date_of_rating, setDateOfRating] = useState("");
   const [teacher_name, setTeacherName] = useState("");
   const [student_name, setStudentName] = useState("");
   const [student_reg_year, setStudentRegYear] = useState("");
   const [department, setDepartment] = useState("");
-  const [subject_code, setSubjectCode] = useState("");
+  const [subject_code, setSubjectCode] = useState([]);
   const [class_participation, setClassParticipation] = useState("");
   const [homework_or_assignments, setHomeworkOrAssignments] = useState("");
   const [quality_of_work, setQualityOfWork] = useState("");
@@ -509,12 +509,17 @@ function Teacher_feedback() {
   const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const [subject_codes, setSubjectCodes] = useState([]);
+  const [subject_names, setSubjectNames] = useState([]);
   const [student_names, setStudentNames] = useState([]);
   const navigate = useNavigate();
 
   const [student_strengths, setStudentStrengths]= useState([]);
   const [areas_for_improvement,setAreasForImprovement] = useState([])
   const [years, setYears] = useState([]);
+
+  
+
+  
   
 
   useEffect(() => {
@@ -547,7 +552,7 @@ function Teacher_feedback() {
       }
     };
 
-    const fetchStudents = async () => {
+    const fetchStudentsOld = async () => {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-student-names`);
         const data = await response.json();
@@ -595,10 +600,24 @@ function Teacher_feedback() {
       }
     };
 
-    if (student_reg_year && department) {
-      fetchStudentList();
-    }
-    [student_reg_year, department];
+    const fetchSubjectNames =async () => {
+      try {
+        const response = await fetch(`${HOST}:${PORT}/server/get-subject-name`);
+        const data = await response.json();
+        if (response.ok) {
+          setSubjectNames((data.docs).map(subject=> ({
+            value:subject.name,
+            label:subject.name
+          })))
+        } else{
+          setError("Failed to load subjects name.");
+        }
+      } catch(err) {
+        setError("Failed to load subjects name.");
+      }
+    };
+
+    
 
     const currentYear = new Date().getFullYear();
     const pastFiftyYears = Array.from({ length: 50 }, (_, index) => currentYear - index);
@@ -610,9 +629,10 @@ function Teacher_feedback() {
 
     fetchDepartments();
     fetchSubjects();
-    fetchStudents();
+    // fetchStudentsOld();
     fetchStudentStrengths();
     fetchStudentImprovementArea();
+    fetchSubjectNames();
   }, []);
 
   const handleStrengthChange = (selected) =>{
@@ -622,6 +642,50 @@ function Teacher_feedback() {
   const handleAreaForImprovementChange = (selected) =>{
     setAreaOfImprovementNames(selected);
   }
+  const fetchStudents = async (student_reg_year, department) => {
+    try {
+      const payload = {student_reg_year:student_reg_year, department:department }
+      // const response = await fetch(`${HOST}:${PORT}/server/get-student-names`);
+      const response = await fetch(`${HOST}:${PORT}/server/get-student-names`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response) {
+        const result = await response.json();
+        if (response.ok) {
+          setStudentNames(data.student_names);
+        } else {
+          setError(result.msg);
+        }
+      } else {
+        setError("We are unable to process now. Please try again later.");
+      }
+    } catch (err) {
+      setError("Failed to load student names.");
+    }
+  };
+
+  const setStudentList =(value, type) =>{
+    console.log(value, type, student_reg_year, department );
+    if (type=="REGYEAR"){
+      setStudentRegYear(value)
+    } else if (type=="DEPARTMENT"){
+      setDepartment(value)
+    }
+    setTimeout(() => {
+      console.log("abcd",student_reg_year,department)
+    }, 5000);
+    if(student_reg_year && department){
+      fetchStudents(student_reg_year,department);
+    }
+       
+  }
+
+  
+
+  
 
 
   const handleSubmit = async (event) => {
@@ -642,8 +706,12 @@ function Teacher_feedback() {
           final_improvement.push(areas_for_improvement[i].value)
         }
 
+        const final_subject_name = [];
+        for (let i=0; i<(subject_names).length; i++){
+          final_subject_name.push(subject_names[i].value)
+        }
 
-        const teacherData = { semester_of_rating, date_of_rating, teacher_name, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments };
+        const teacherData = { semester_of_rating, date_of_rating, teacher_name, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments,subject_names: final_subject_name };
         const response = await fetch(`${HOST}:${PORT}/server/teacher-feedback`, {
           method: "POST",
           body: JSON.stringify(teacherData),
@@ -676,7 +744,8 @@ function Teacher_feedback() {
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
       <Link to="/"></Link>
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
+      <div className='row'>
+        <div className=" col mb-3">
         <label className="form-label">
          Date Of Rating <span className="ei-col-red">*</span>
          </label>
@@ -690,7 +759,7 @@ function Teacher_feedback() {
         onChange={(e) => setDateOfRating(e.target.value)}/>
         </div>
 
-      <div className="mb-3">
+      <div className="col mb-3">
           <label className="form-label">Semester Of Rating <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="semester_of_rating" value={semester_of_rating} onChange={(e) => setSemesterOfRating(e.target.value)}>
                 <option defaultValue>--Select semester_of_rating--</option>
@@ -710,12 +779,14 @@ function Teacher_feedback() {
 
 
          
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Teacher Name <span className="ei-col-red">*</span></label>
           <input name="teacher_name" type="text" className="form-control" aria-describedby="emailHelp" value={teacher_name} onChange={(e) => setTeacherName(e.target.value)}/>
         </div>
-
-        <div className="mb-3">
+        </div>
+        
+        <div className='row'>
+        <div className=" col mb-3">
       <label className="form-label">
         Student Registration Year<span className="ei-col-red">*</span>
       </label>
@@ -723,7 +794,8 @@ function Teacher_feedback() {
         name="student_reg_year"
         className="form-control"
         value={student_reg_year}
-        onChange={(e) => setStudentRegYear(e.target.value)}
+        // onChange={(e) => setStudentRegYear(e.target.value)}
+        onChange={(e) => setStudentList(e.target.value, "REGYEAR")}
       >
         <option value="" disabled>
           Select Year
@@ -735,13 +807,14 @@ function Teacher_feedback() {
         ))}
       </select>
     </div>
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Department <span className="ei-col-red">*</span></label>
           <select
             name="department"
             className="form-control"
             value={department}
-            onChange={(e) => setDepartment(e.target.value)}
+            // onChange={(e) => setDepartment(e.target.value)}
+            onChange={(e) => setStudentList(e.target.value, "DEPARTMENT")}
           >
             <option value="">Select Department</option>
             {departments.map((dept) => (
@@ -753,7 +826,7 @@ function Teacher_feedback() {
         </div>
 
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Student Name <span className="ei-col-red">*</span></label>
           <select
             name="student_name"
@@ -769,21 +842,22 @@ function Teacher_feedback() {
             ))}
           </select>
         </div>
-
-        <div className="mb-3">
+        </div>
+        <div className='row'>
+        <div className="col mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="subject_code" value={subject_code} onChange={(e) => setSubjectCode(e.target.value)}>
             <option value="">Select Subject Code</option>
             {subject_codes.map((subject) => (
               <option key={subject._id} value={subject._id}>
-                {subject.subject_code}
+                {subject.subject_code} - {subject.name}
               </option>
             ))}
             </select>
         </div>
 
         
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Class Participation <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="class_participation" value={class_participation} onChange={(e) => setClassParticipation(e.target.value)}>
                 <option defaultValue>--Select Your Class Participation--</option>
@@ -796,7 +870,7 @@ function Teacher_feedback() {
         </div>
 
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Homework Or Assignments <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="homework_or_assignments" value={homework_or_assignments} onChange={(e) => setHomeworkOrAssignments(e.target.value)}>
                 <option defaultValue>--Homework Or Assignments --</option>
@@ -807,9 +881,10 @@ function Teacher_feedback() {
                 <option value="1">Never Done</option>
             </select>
         </div>
+        </div>
 
-
-        <div className="mb-3">
+        <div className='row'>
+        <div className="col mb-3">
           <label className="form-label">Quality Of Work<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="quality_of_work" value={quality_of_work} onChange={(e) => setQualityOfWork(e.target.value)}>
                 <option defaultValue>--Quality Of Work --</option>
@@ -822,7 +897,7 @@ function Teacher_feedback() {
         </div>
 
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Timeliness<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="timeliness" value={timeliness} onChange={(e) => setTimeliness(e.target.value)}>
                 <option defaultValue>--Timeliness --</option>
@@ -836,7 +911,7 @@ function Teacher_feedback() {
 
 
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Probelm Solving Skills<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="probelm_solving_skills" value={problem_solving_skills} onChange={(e) => setProblemSolvingSkills(e.target.value)}>
                 <option defaultValue>--Probelm Solving Skills --</option>
@@ -847,9 +922,10 @@ function Teacher_feedback() {
                 <option value="1">Poor</option>
             </select>
         </div>
+        </div>
 
-
-        <div className="mb-3">
+        <div className='row'>
+        <div className="col mb-3">
           <label className="form-label">Behaviour And Attitude<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="behaviour_and_attitude" value={behaviour_and_attitude} onChange={(e) => setBehaviourAndAttitude(e.target.value)}>
                 <option defaultValue>--Behaviour And Attitude --</option>
@@ -862,7 +938,7 @@ function Teacher_feedback() {
         </div>
 
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Responsibility<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="responsibility" value={responsibility} onChange={(e) => setResponsibility(e.target.value)}>
                 <option defaultValue>--Responsibility --</option>
@@ -874,7 +950,7 @@ function Teacher_feedback() {
             </select>
         </div>
 
-        <div className="mb-3">
+        <div className="col mb-3">
           <label className="form-label">Participation And Engagement<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="participation_and_engagement" value={participation_and_engagement} onChange={(e) => setParticipationAndEngagement(e.target.value)}>
                 <option defaultValue>--Participation And Engagement --</option>
@@ -885,23 +961,30 @@ function Teacher_feedback() {
                 <option value="1">Poor</option>
             </select>
         </div>
-
-
-
-        <div className="mb-3">
-          <label className="form-label">Group Work <span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="group_work" value={group_work} onChange={(e) => setGroupWork(e.target.value)}>
-                <option defaultValue>--Select Group Work--</option>
-                <option value="5">Always Participates</option>
-                <option value="4">Oftenly Participates</option>
-                <option value="3">Sometimes Participates</option>
-                <option value="2">Rarely Participates</option>
-                <option value="1">Never Participates</option>
-            </select>
         </div>
 
 
-        <div className="mb-3">
+        <div className='row'>
+        <div className="col mb-3">
+        
+          <label className="form-label">Group Work <span className="ei-col-red">*</span></label>
+            <select className="form-select" aria-label="Default select example" name="group_work" value={group_work} onChange={(e) => setGroupWork(e.target.value)}>
+                <option defaultValue>--Select Group Work--</option>
+               
+                <option defaultValue>--Select Group Work--</option>
+                <option value="5" >Always Participates</option>
+                <option value="4" >Oftenly Participates</option>
+                <option value="3" >Sometimes Participates</option>
+                <option value="2" >Rarely Participates</option>
+                <option value="1" >Never Participates</option>
+              
+            </select>
+            
+            </div>
+        
+
+
+        <div className="col mb-3">
           <label className="form-label">Overall Student Quality<span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="overall_student_quality" value={overall_student_quality} onChange={(e) => setOverallStudentQuality(e.target.value)}>
                 <option defaultValue>--Overall Student Quality --</option>
@@ -912,10 +995,11 @@ function Teacher_feedback() {
                 <option value="1">Out Of Control</option>
             </select>
         </div>
+        </div>
 
 
         <div className="mb-3">
-          <label htmlFor="strength_of_student">Strengths</label>
+          <label htmlFor="strength_of_student" className='form-label'>Strengths<span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={student_strengths}
@@ -923,12 +1007,15 @@ function Teacher_feedback() {
               classNamePrefix="select"
               onChange={handleStrengthChange}
               value={strength_names}
+              
             />
+                 
+    <div/>
         </div>
 
 
         <div className="mb-3">
-          <label htmlFor="area_of_improvements">Area Of Improvement</label>
+          <label htmlFor="area_of_improvements" className='form-label'>Area Of Improvement<span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={areas_for_improvement}
@@ -942,11 +1029,15 @@ function Teacher_feedback() {
 
         <div className="mb-3">
           <label className="form-label">Additional Comments </label>
-          <input name="additional_comments" type="text" className="form-control" aria-describedby="emailHelp" value={additional_comments} onChange={(e) => setAdditionalComments(e.target.value)}/>
+          <textarea name="additional_comments" type="text" className="form-control" aria-describedby="emailHelp" value={additional_comments} onChange={(e) => setAdditionalComments(e.target.value)}/>
         </div>
+        
         <button type="submit" className="btn btn-primary">Save</button>
+
+         <button type="reset" className="btn btn-primary m-2" onClick={() => clearForm()}>Clear</button>
         </form>
         </div>
+        
       );
     }
-export default Teacher_feedback;
+export default TeacherFeedback;

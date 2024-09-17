@@ -5,6 +5,7 @@ const userController = require("../controllers/userController");
 const teacherController = require ("../controllers/teacherController")
 const studentController = require ("../controllers/studentController")
 
+  
 router.post("/user-create", userController.userCreate);
 router.get("/check-login-id/:login_id", userController.userCheckLoginIdAvailability);
 router.post('/login', userController.userLogin);
@@ -65,10 +66,10 @@ router.get("/get-subjects-code", studentController.getSubjectsCode);
 router.get("/get-teacher-code", studentController.getTeachersCode);
 router.get("/get-strength-name", studentController.getStrengthName);
 router.get("/get-improvement-area", studentController.getImprovementArea);
-
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
 router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
 
+router.get("/get-subject-name" , teacherController.getSubjectNames);
 
 module.exports = router;
 

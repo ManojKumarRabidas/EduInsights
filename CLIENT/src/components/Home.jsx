@@ -13,7 +13,7 @@ function Home() {
                   <p className="lead fw-light mb-4">
                     A Teacher and Student Review System.
                   </p>
-                  <p className="text-muted">
+                  <p className="text-muted" id="font">
                   The EduInsights System involves a verification process where college verify teachers and students using unique IDs, minimizing proxy users. Once verified, teachers and students gain full profiles. Teachers are rated by their college students on parameters like teaching ability and behavior, with additional fields like suggestions and comments. Ratings occur monthly, and the data generates graphical dashboards showing teacher performance trends, aiding college in evaluating teacher potential.
                   <br />
                   <br />

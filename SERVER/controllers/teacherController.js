@@ -3,7 +3,8 @@ const {ObjectId} = require('mongodb')
 const teacherModel = require("../models/teacher_feedback");
 const bcrypt = require ('bcryptjs');
 const userModel = require("../models/user");
-const strengthModel = require ("../models/strength")
+const strengthModel = require ("../models/strength");
+const subjectModel = require ("../models/subject");
 
 const { subjectDetails } = require("./adminController");
 const areaOfImprovementModel = require('../models/areaofimprovement');
@@ -68,6 +69,13 @@ module.exports = {
             res.status(500).json({ msg: "Failed to retrieve strengths name" });
           }
     },
-
+    getSubjectNames:async(req,res)=>{
+        try {
+            const docs = await subjectModel.find({active: 1, name:"STUDENT"}).sort({name: 1});
+            res.status(200).json({ docs: docs });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve subject name" });
+          }
+    }
     
 }
