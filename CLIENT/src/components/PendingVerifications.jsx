@@ -224,7 +224,7 @@ function List() {
         className="form-control my-3"
       />
 
-      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

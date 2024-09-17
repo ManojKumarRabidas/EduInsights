@@ -425,7 +425,7 @@ function Student_feedback() {
 
         <hr />
         <div className="mb-3">
-          <label htmlFor="strength_of_teacher">Strengths</label>
+          <label htmlFor="strength_of_teacher">Strengths <span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={strengths_options}
@@ -447,7 +447,7 @@ function Student_feedback() {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="areas_for_improvement">Areas For Improvement</label>
+          <label htmlFor="areas_for_improvement">Areas For Improvement <span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={areas_for_improvements_options}
