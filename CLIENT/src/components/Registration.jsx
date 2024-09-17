@@ -72,7 +72,7 @@ function Registration() {
     setLoginId(id);
 
     // Check login ID availability after user stops typing for a short duration (debounce)
-    if (id.length > 0 && (id.length < 4 || id.length>10)) { // Only check if the ID length is greater than 2
+    if (id.length > 0 && (id.length < 4 || id.length>20)) { // Only check if the ID length is greater than 2
       setIsLoginIdInvalid(true);
       setIsLoginIdAvailable(null);
     } else if(id.length >= 4){
