@@ -43,7 +43,9 @@ function Student_feedback() {
 
   const [strengths_options, setStrengthOptions] = useState([]);
   const [areas_for_improvements_options, setAreasForImprovementsOptions] = useState([]);
-    
+  
+
+ 
     useEffect(() => {
     const userName = sessionStorage.getItem("eiUserName")
     setStudentName(userName)
@@ -375,7 +377,7 @@ function Student_feedback() {
 
         <hr />
         <div className="mb-3">
-          <label htmlFor="strength_of_teacher">Strengths</label>
+          <label htmlFor="strength_of_teacher" className='form-label'>Strengths</label>
           <Select
               isMulti
               options={strengths_options}
@@ -387,7 +389,7 @@ function Student_feedback() {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="areas_for_improvement">Areas For Improvement</label>
+          <label htmlFor="areas_for_improvement" className='form-label'>Areas For Improvement</label>
           <Select
               isMulti
               options={areas_for_improvements_options}
