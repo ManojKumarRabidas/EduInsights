@@ -619,16 +619,30 @@ module.exports = {
         try {
             const body = req.body;
             console.log(body)
-            if (!body || !body.student_reg_year || !body.department) {
+            if (!body || !body.registration_year || !body.department) {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const student_names = await userModel.find({ user_type:"STUDENT",registration_year:body.student_reg_year, department:body.department});
-            console.log(student_names)
-            // res.json({ departments });
-            res.status(200).json({ student_names: student_names });
+
+            body.registration_year = Number(body.registration_year);
+            body.department = new ObjectId(body.department);
+            const docs = await userModel.aggregate([
+                {$match: {user_type:"STUDENT", registration_year:body.registration_year, department:body.department}},
+                {$lookup: {from: "authentications",
+                        localField: "_id",
+                        foreignField: "user_id",
+                        as: "auth"}},
+                {$unwind: "$auth"},
+                {$project: { _id: 1,
+                        name: 1,
+                        registration_number: 1,
+                        is_verified: "$auth.is_verified",
+                        active: "$auth.active"}},
+                {$match: {active: 1, is_verified: 1}}
+            ]);
+            res.status(200).json({status: true, docs: docs });
           } catch (error) {
-            res.status(500).json({ msg: "Failed to retrieve student names" });
+            res.status(500).json({status: false, msg: "Failed to retrieve student names" });
           }
     },
 }
