@@ -13,9 +13,9 @@ function Sidebar() {
         <NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>
         <NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strengths</NavLink>
         <NavLink to="/areas-of-improvement" className={({ isActive }) => (isActive ? 'active' : '')}>Areas of Improvement</NavLink>
-        <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher_Feedback</NavLink>
-        <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Student_Feedback</NavLink>
-        <NavLink to="/all-teachers-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All_Teachers_Feedback</NavLink>
+        <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher Feedback</NavLink>
+        <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Student Feedback</NavLink>
+        <NavLink to="/all-teachers-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All Teachers Feedback</NavLink>
     </div>
   );
 }
