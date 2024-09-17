@@ -61,7 +61,7 @@ router.get("/get-departments", adminController.getDepartments);
 router.get("/get-subjects", adminController.getSubjects);
 router.get("/get-student-names", adminController.getStudentNames);
 router.post("/student-feedback", studentController.studentFeedback);
-router.get("/get-subjects-code", studentController.getSubjectsCode);
+router.get("/get-subjects-code/:id", studentController.getSubjectsCode);
 router.get("/get-teacher-code", studentController.getTeachersCode);
 router.get("/get-strength-name", studentController.getStrengthName);
 router.get("/get-improvement-area", studentController.getImprovementArea);

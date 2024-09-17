@@ -5,7 +5,7 @@ const student_feedbackSchema = new mongoose.Schema({
     date_of_rating: {type: 'date', required: true},
     teacher_id:{type: 'ObjectId', required: true},
     subject_id:{type: 'ObjectId', required: true},
-    student_name: {type: 'string', required: true},
+    student_id: {type: 'ObjectId', required: true},
     clarity_of_explanation: {type: 'string', required: true},
     subject_knowledge: {type:'string', required: true},
     encouragement_of_question: {type: 'string', required: true},
@@ -19,11 +19,12 @@ const student_feedbackSchema = new mongoose.Schema({
     explain_with_supportive_analogy: {type: 'string', required: true},
     use_of_media: {type: 'string', required: true},
     strengths: {type: [String], required: true},
-    improvements_area: {type: 'string', required: true},
+    improvements_area: {type: [String], required: true},
     additional_comments: {type: 'string'},
     anonymous: {type: 'boolean'},
 
 },{timestamps: true});
 
+student_feedbackSchema.index({ month_of_rating:1, teacher_id: 1, student_id: 1 }, { unique: true });
 const Student_feedback = mongoose.model('student_feedback',student_feedbackSchema)
 module.exports = Student_feedback

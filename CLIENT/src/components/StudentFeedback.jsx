@@ -13,7 +13,6 @@ function Student_feedback() {
   //   startDate: new Date()
   // };
   const [month_of_rating, setMonthOfRating] = useState("");
-  // const [month_of_rating, setMonthOfRating] = useState(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
   const [date_of_rating, setDateOfRating] = useState("");
   const [teacher_code, setTeacherCode] = useState("");
   const [subject_code, setSubjectCode] = useState("");
@@ -43,10 +42,14 @@ function Student_feedback() {
 
   const [strengths_options, setStrengthOptions] = useState([]);
   const [areas_for_improvements_options, setAreasForImprovementsOptions] = useState([]);
-    
+  
+  const [customStrength, setCustomStrength] = useState(""); // New state for custom strength
+  const [customImprovement, setCustomImprovement] = useState(""); // New state for custom improvement
+  const userId = sessionStorage.getItem("eiUserId")
+
     useEffect(() => {
     const userName = sessionStorage.getItem("eiUserName")
-    setStudentName(userName)
+    setStudentName(userName) 
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
     const currentYear = new Date().getFullYear();
     const month_of_rating = `${currentMonth} ${currentYear}`;
@@ -57,15 +60,22 @@ function Student_feedback() {
 
     const fetchSubjectsCode = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subjects-code`);
-        const data = await response.json();
-        if (response.ok) {
-          setSubjectsCode(data.subjects);
+        const response = await fetch(`${HOST}:${PORT}/server/get-subjects-code/${userId}`, {
+          method: "GET",
+        });
+  
+        if (response) {
+          const result = await response.json();
+          if (response.ok) {
+            setSubjectsCode(result.subjects);
+          } else {
+            setError(result.msg);
+          }
         } else {
-          setError("Failed to load departments.");
+          setError("We are unable to process now. Please try again later.");
         }
-      } catch (err) {
-        setError("Failed to load departments.");
+      } catch (error) {
+        setError("We are unable to process now. Please try again later.");
       }
     };
 
@@ -88,10 +98,12 @@ function Student_feedback() {
         const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
         if (response.ok) {
-          setStrengthOptions((data.docs).map(item => ({
+          const options = ((data.docs).map(item => ({
             value: item.name,
             label: item.name
           })));
+          options.push({ value: 'Other', label: 'Other' }); // Add "Other" option
+          setStrengthOptions(options);
         } else {
           setError("Failed to load strengths name.");
         }
@@ -105,10 +117,12 @@ function Student_feedback() {
         const response = await fetch(`${HOST}:${PORT}/server/get-improvement-area`);
         const data = await response.json();
         if (response.ok) {
-          setAreasForImprovementsOptions((data.improvementarea).map(item => ({
+          const options = ((data.improvementarea).map(item => ({
             value: item.name,
             label: item.name
           })));
+          options.push({ value: 'Other', label: 'Other' }); // Add "Other" option
+          setAreasForImprovementsOptions(options);
         } else {
           setError("Failed to load area of improvement.");
         }
@@ -131,21 +145,57 @@ function Student_feedback() {
     setImprovementArea(selected);
   };
 
+  const handleClear = () => {
+    setTeacherCode("");
+    setSubjectCode("");
+    setClarityOfExplanation("");
+    setSubjectKnowledge("");
+    setEncouragementOfQuestion("");
+    setMaintainsDiscipline("");
+    setFairnessInTreatment("");
+    setApproachability("");
+    setBehaviourAndAttitude("");
+    setEncouragementAndSupport("");
+    setOverallTeachingQuality("");
+    setProvideStudyMaterial("");
+    setExplainWithSupportiveAnalogy("");
+    setUseOfMedia("");
+    setStrengths([]);
+    setImprovementArea([]);
+    setAdditionalComments("");
+    setAnonymous(false);
+    setError("");
+    setResponse("");
+  }; 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || !strengths || !improvements_area){
+      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || strengths.length === 0 ||  improvements_area.length === 0){
             setError("Please enter all the required values.");
             return;
         }
-        const final_strengths = [];
-        for (let i =0; i<(strengths).length; i++) {
-          final_strengths.push(strengths[i].value)
-        }
-        const final_AreasForImprovements = [];
-        for (let i =0; i<(improvements_area).length; i++) {
-          final_AreasForImprovements.push(improvements_area[i].value)
-        }
-        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, improvements_area:final_AreasForImprovements,  additional_comments};
+        // const final_strengths = [];
+        // for (let i =0; i<(strengths).length; i++) {
+        //   final_strengths.push(strengths[i].value)
+        // }
+        // const final_AreasForImprovements = [];
+        // for (let i =0; i<(improvements_area).length; i++) {
+        //   final_AreasForImprovements.push(improvements_area[i].value)
+        // }
+
+    const final_strengths = strengths.map(item => item.value);
+    if (customStrength) {
+      final_strengths.push(customStrength); // Add custom strength
+    }
+
+    const final_AreasForImprovements = improvements_area.map(item => item.value);
+    if (customImprovement) {
+      final_AreasForImprovements.push(customImprovement); // Add custom improvement
+    }
+
+
+
+        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name:userId, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, improvements_area:final_AreasForImprovements,  additional_comments};
         const response = await fetch(`${HOST}:${PORT}/server/student-feedback`, {
           method: "POST",
           body: JSON.stringify(studentData),
@@ -218,7 +268,7 @@ function Student_feedback() {
               <option value="">--Select--</option>
               {subjects.map((subject) => (
                 <option key={subject._id} value={subject._id}>
-                  {subject.subject_code}
+                  {subject.subject_code} - {subject.name}
                 </option>
               ))}
               </select>
@@ -375,7 +425,7 @@ function Student_feedback() {
 
         <hr />
         <div className="mb-3">
-          <label htmlFor="strength_of_teacher">Strengths</label>
+          <label htmlFor="strength_of_teacher">Strengths <span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={strengths_options}
@@ -384,10 +434,20 @@ function Student_feedback() {
               onChange={handleStrengthChange}
               value={strengths}
             />
+             {/* Show input field for custom strength if "Other" is selected */}
+          {strengths.some(strength => strength.value === "Other") && (
+            <input
+              type="text"
+              className="form-control mt-2"
+              placeholder="Please specify other strength"
+              value={customStrength}
+              onChange={(e) => setCustomStrength(e.target.value)}
+            />
+          )}
         </div>
 
         <div className="mb-3">
-          <label htmlFor="areas_for_improvement">Areas For Improvement</label>
+          <label htmlFor="areas_for_improvement">Areas For Improvement <span className="ei-col-red">*</span></label>
           <Select
               isMulti
               options={areas_for_improvements_options}
@@ -396,6 +456,16 @@ function Student_feedback() {
               onChange={handleAreasForImprovementChange}
               value={improvements_area}
             />
+             {/* Show input field for custom improvement if "Other" is selected */}
+          {improvements_area.some(area => area.value === "Other") && (
+            <input
+              type="text"
+              className="form-control mt-2"
+              placeholder="Please specify other improvement"
+              value={customImprovement}
+              onChange={(e) => setCustomImprovement(e.target.value)}
+            />
+          )}
         </div>
 
         <div className="mb-3">
@@ -403,7 +473,8 @@ function Student_feedback() {
           <textarea  name="additional_comments" type="text" className="form-control" aria-describedby="emailHelp" value={additional_comments} onChange={(e) => setAdditionalComments(e.target.value)}></textarea>
         </div>
         <button type="submit" className="btn btn-primary">Save</button>
-        <button type="reset" className="btn btn-primary ms-4 ">Clear</button>
+        <button type="button" className="btn btn-primary ms-4" onClick={handleClear}>Clear</button>
+        
         
         </form>
         </div>
