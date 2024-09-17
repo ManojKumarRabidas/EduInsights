@@ -3,8 +3,7 @@ const mongoose = require ('mongoose');
 const teacher_feedbackSchema = new mongoose.Schema({
     semester_of_rating: {type: 'string', required: true},
     date_of_rating: {type: 'date', required: true},
-    // teacher_id:{type: 'ObjectId', required: true},
-    teacher_id:{type: 'string', required: true},
+    teacher_id:{type: 'ObjectId', required: true},
     student_id: {type: 'ObjectId', required: true},
     student_reg_year: {type: 'number', required: true},
     department_id: {type:'ObjectId', required: true},

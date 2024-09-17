@@ -224,12 +224,20 @@ function List() {
       {error && <div className="alert alert-danger">{error}</div>}
       {response && <div className="alert alert-success">{response}</div>}
 
-      <input
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="Search..."
-        className="form-control my-3"
-      />
+      <div className="row my-3">
+        <div className="col">
+          <input value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search by any value of table" className="form-control"/>
+        </div>
+        <div className="col">
+          <div className="">
+              <select className="form-select" aria-label="Default select example" name="globalFilter" value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)}>
+                  <option defaultValue value="">-- Filter by "Area For" --</option>
+                  <option value="TEACHER">TEACHER</option>
+                  <option value="STUDENT">STUDENT</option>
+              </select>        
+            </div>
+        </div>
+      </div>
 
       <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded">
         <thead>

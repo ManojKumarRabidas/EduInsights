@@ -11,7 +11,7 @@ import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
-import Teacher_feedback from './components/Teacher_feedback';
+import Teacher_feedback from './components/TeacherFeedback';
 import StudentFeedback from './components/StudentFeedback';
 import AllTeachersFeedback from './components/AllTeachersFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
