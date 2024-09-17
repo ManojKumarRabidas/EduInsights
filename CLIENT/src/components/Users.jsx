@@ -18,7 +18,7 @@ function Users() {
   const [userTypeFilter, setUserTypeFilter] = useState("");  // State for user type filter
   const [verificationFilter, setVerificationFilter] = useState("");  // State for verification status filter
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState([]);
 
   async function getData() {
@@ -292,23 +292,24 @@ function Users() {
       </table>
 
       <div className="d-flex justify-content-between mb-3">
+        <select
+          className="form-select mx-2"
+          style={{maxWidth: "fit-content"}}
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          {[10, 20, 30, 40, 50].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
         <span className="text-nowrap mx-2 text-center">
           Page{" "}
           <strong>
             {pageIndex + 1} of {table.getPageCount()}
           </strong>
         </span>
-        <select
-          className="form-select mx-2"
-          value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
-        >
-          {[5, 10, 15, 20, 25, 30].map((size) => (
-            <option key={size} value={size}>
-              Show {size}
-            </option>
-          ))}
-        </select>
         <div className="btn-group mx-2">
           <button
             className="btn btn-secondary"

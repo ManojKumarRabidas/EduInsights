@@ -125,17 +125,17 @@ function List() {
         enableSorting: false,
         headerClassName: "ei-text-center-imp",
         cell: ({ row }) => (
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center"}}>
             <button
               type="button"
               className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              style={{padding: "2px 10px !important"}}
               onClick={() => handleVerification(row.original._id, "1")}
             >Accept </button>
             <button
               type="button"
               className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              style={{ padding: "2px 10px !important" }}
               onClick={() => handleVerification(row.original._id, "-1")}
             > Reject</button>
           </div>

@@ -28,7 +28,7 @@ module.exports = {
                         email: 1,
                         phone: 1,
                         address: 1,
-                        department: {$ifNull: ["$department.name", ""]},
+                        department: {$ifNull: ["$department.dept_id", ""]},
                         registration_year: 1,
                         registration_number: 1,
                         is_verified: "$auth.is_verified",
@@ -36,8 +36,12 @@ module.exports = {
             ]);
             if(docs.length>0){
                 for(let i=0; i<docs.length; i++){
-                    const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected")
+                    const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected");
+                    const val2 = docs[i].registration_number == null ? "N/A": (docs[i].registration_number == ""? "N/A": docs[i].registration_number);
+                    const val3 = docs[i].registration_year == null ? "N/A": (docs[i].registration_year == ""? "N/A": docs[i].registration_year);
                     docs[i].is_verified = val;
+                    docs[i].registration_number = val2;
+                    docs[i].registration_year = val3;
                 }
             }
             res.status(200).json({ docs: docs });

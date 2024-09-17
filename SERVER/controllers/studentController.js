@@ -91,7 +91,7 @@ module.exports = {
             res.status(201).json({ status: true, msg: "Feedback Recorded successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
-                res.status(500).json({ status: false, msg: "not match" });
+                res.status(500).json({ status: false, msg: "Feedback already given to this teacher for current month." });
                 return
             }
             res.status(500).json({ status: false, msg: err.message });
