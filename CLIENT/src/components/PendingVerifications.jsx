@@ -128,14 +128,12 @@ function List() {
           <div style={{ textAlign: "center"}}>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{padding: "2px 10px !important"}}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "1")}
             >Accept </button>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{ padding: "2px 10px !important" }}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "-1")}
             > Reject</button>
           </div>

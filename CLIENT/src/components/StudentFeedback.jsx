@@ -1,7 +1,7 @@
 import '../App.css'
 import React, { useEffect, useState} from "react";
 
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
@@ -9,9 +9,6 @@ const PORT = import.meta.env.VITE_PORT
 
 
 function Student_feedback() {
-  // const  state = {
-  //   startDate: new Date()
-  // };
   const [month_of_rating, setMonthOfRating] = useState("");
   const [date_of_rating, setDateOfRating] = useState("");
   const [teacher_code, setTeacherCode] = useState("");
@@ -29,7 +26,6 @@ function Student_feedback() {
   const [provide_study_material, setProvideStudyMaterial] = useState("");
   const [explain_with_supportive_analogy, setExplainWithSupportiveAnalogy] = useState("");
   const [use_of_media , setUseOfMedia] = useState("");
-  // const [areas_for_improvement, setAreasForImprovement] = useState("");
   const [additional_comments, setAdditionalComments] = useState("");
   const [subjects, setSubjectsCode] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -45,6 +41,8 @@ function Student_feedback() {
   
   const [customStrength, setCustomStrength] = useState(""); // New state for custom strength
   const [customImprovement, setCustomImprovement] = useState(""); // New state for custom improvement
+  const [custom_strengths_options, setCustomStrengthOptions] = useState([]);
+  const [custom_areas_for_improvements_options, setCustomAreasForImprovementsOptions] = useState([]);
   const userId = sessionStorage.getItem("eiUserId")
 
     useEffect(() => {
@@ -98,12 +96,8 @@ function Student_feedback() {
         const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
         if (response.ok) {
-          const options = ((data.docs).map(item => ({
-            value: item.name,
-            label: item.name
-          })));
-          options.push({ value: 'Other', label: 'Other' }); // Add "Other" option
-          setStrengthOptions(options);
+          const options = data.docs.map(item => ({ value: item.name, label: item.name }));
+          setStrengthOptions([...options, { value: 'Other', label: 'Other' }]);
         } else {
           setError("Failed to load strengths name.");
         }
@@ -117,12 +111,8 @@ function Student_feedback() {
         const response = await fetch(`${HOST}:${PORT}/server/get-improvement-area`);
         const data = await response.json();
         if (response.ok) {
-          const options = ((data.improvementarea).map(item => ({
-            value: item.name,
-            label: item.name
-          })));
-          options.push({ value: 'Other', label: 'Other' }); // Add "Other" option
-          setAreasForImprovementsOptions(options);
+          const options = data.improvementarea.map(item => ({ value: item.name, label: item.name }));
+          setAreasForImprovementsOptions([...options, { value: 'Other', label: 'Other' }]);
         } else {
           setError("Failed to load area of improvement.");
         }
@@ -143,6 +133,23 @@ function Student_feedback() {
 
   const handleAreasForImprovementChange = (selected) => {
     setImprovementArea(selected);
+  };
+
+
+  const handleAddCustomStrength = () => {
+    if (customStrength && !strengths.some(s => s.value === customStrength)) {
+      setStrengths([...strengths, { value: customStrength, label: customStrength }]);
+      setCustomStrengthOptions([...custom_strengths_options, { name: customStrength, strength_for: "TEACHER", active: 1 }]);
+      setCustomStrength("");
+    }
+  };
+
+  const handleAddCustomImprovement = () => {
+    if (customImprovement && !improvements_area.some(i => i.value === customImprovement)) {
+      setImprovementArea([...improvements_area, { value: customImprovement, label: customImprovement }]);
+      setCustomAreasForImprovementsOptions([...custom_areas_for_improvements_options, { name: customImprovement, area_for: "TEACHER", active: 1 }]);
+      setCustomImprovement("");
+    }
   };
 
   const handleClear = () => {
@@ -174,24 +181,9 @@ function Student_feedback() {
             setError("Please enter all the required values.");
             return;
         }
-        // const final_strengths = [];
-        // for (let i =0; i<(strengths).length; i++) {
-        //   final_strengths.push(strengths[i].value)
-        // }
-        // const final_AreasForImprovements = [];
-        // for (let i =0; i<(improvements_area).length; i++) {
-        //   final_AreasForImprovements.push(improvements_area[i].value)
-        // }
 
-    const final_strengths = strengths.map(item => item.value);
-    if (customStrength) {
-      final_strengths.push(customStrength); // Add custom strength
-    }
-
-    const final_AreasForImprovements = improvements_area.map(item => item.value);
-    if (customImprovement) {
-      final_AreasForImprovements.push(customImprovement); // Add custom improvement
-    }
+        const final_strengths = strengths.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
+        const final_AreasForImprovements = improvements_area.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
 
 
 
@@ -204,10 +196,26 @@ function Student_feedback() {
         if (response){
           const result = await response.json();
           if (response.ok){
+            console.log("custom_strengths_options", custom_strengths_options);
+            console.log("custom_areas_for_improvements_options", custom_areas_for_improvements_options);
+            
+            if (custom_strengths_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/strength-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_strengths_options),
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+        
+            if (custom_areas_for_improvements_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_areas_for_improvements_options),
+                headers: { "Content-Type": "application/json" },
+              });
+            }
             setResponse(result.msg);
             setError("");
-            // setDeptId("");
-            // setName("");
             navigate("/home");
           } else{
             setError(result.msg);
@@ -317,7 +325,7 @@ function Student_feedback() {
               </select>
           </div>
           <div className="col mb-3">
-            <label className="form-label">Maintains Discipline<span className="ei-col-red">*</span></label>
+            <label className="form-label">Maintains Discipline <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="maintains_discipline" value={maintains_discipline} onChange={(e) => setMaintainsDiscipline(e.target.value)}>
                   <option defaultValue>--Select--</option>
                   <option value="5">Excellent</option>
@@ -331,7 +339,7 @@ function Student_feedback() {
 
         <div className="row"> 
           <div className="col mb-3">
-            <label className="form-label">Fairness In Treatment<span className="ei-col-red">*</span></label>
+            <label className="form-label">Fairness In Treatment <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="fairness_in_treatment" value={fairness_in_treatment} onChange={(e) => setFairnessInTreatment(e.target.value)}>
                   <option defaultValue>--Select--</option>
                   <option value="5">Very fair </option>
@@ -342,7 +350,7 @@ function Student_feedback() {
               </select>
           </div>
           <div className="col mb-3">
-            <label className="form-label">Approachability<span className="ei-col-red">*</span></label>
+            <label className="form-label">Approachability <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="approachability" value={approachability} onChange={(e) => setApproachability(e.target.value)}>
                   <option defaultValue>--Select--</option>
                   <option value="5">Excellent</option>
@@ -353,7 +361,7 @@ function Student_feedback() {
               </select>
           </div>
           <div className="col mb-3">
-            <label className="form-label">Behaviour And Attitude<span className="ei-col-red">*</span></label>
+            <label className="form-label">Behaviour And Attitude <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="behaviour_and_attitude" value={behaviour_and_attitude} onChange={(e) => setBehaviourAndAttitude(e.target.value)}>
                   <option defaultValue>--Select--</option>
                   <option value="5">Very respectful </option>
@@ -364,7 +372,7 @@ function Student_feedback() {
               </select>
           </div>
           <div className="col mb-3">
-            <label className="form-label">Encouragement And Support<span className="ei-col-red">*</span></label>
+            <label className="form-label">Encouragement And Support <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="encouragement_and_support" value={encouragement_and_support} onChange={(e) => setEncouragementAndSupport(e.target.value)}>
                   <option defaultValue>--Select--</option>
                   <option value="5">Always encourages </option>
@@ -378,7 +386,7 @@ function Student_feedback() {
 
         <div className="row">
           <div className="col mb-3">
-            <label className="form-label">Use Of Media (audio, video, ppt)<span className="ei-col-red">*</span></label>
+            <label className="form-label">Use Of Media (audio, video, ppt) <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="use_of_media" value={use_of_media} onChange={(e) => setUseOfMedia(e.target.value)}>
                   <option defaultValue>--Select --</option>
                   <option value="5">Always </option>
@@ -389,7 +397,7 @@ function Student_feedback() {
               </select>
           </div> 
           <div className="col mb-3">
-            <label className="form-label">Provide Study Material<span className="ei-col-red">*</span></label>
+            <label className="form-label">Provide Study Material <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="provide_study_material" value={provide_study_material} onChange={(e) => setProvideStudyMaterial(e.target.value)}>
                   <option defaultValue>--Select --</option>
                   <option value="5">Always </option>
@@ -400,7 +408,7 @@ function Student_feedback() {
               </select>
           </div>
           <div className="col mb-3">
-            <label className="form-label">Explain With Supportive Analogy<span className="ei-col-red">*</span></label>
+            <label className="form-label">Explain With Supportive Analogy <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="explain_with_supportive_analogy" value={explain_with_supportive_analogy} onChange={(e) => setExplainWithSupportiveAnalogy(e.target.value)}>
                   <option defaultValue>--Select --</option>
                   <option value="5">Always </option>
@@ -424,49 +432,38 @@ function Student_feedback() {
         </div>
 
         <hr />
-        <div className="mb-3">
-          <label htmlFor="strength_of_teacher">Strengths <span className="ei-col-red">*</span></label>
-          <Select
-              isMulti
-              options={strengths_options}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={handleStrengthChange}
-              value={strengths}
-            />
-             {/* Show input field for custom strength if "Other" is selected */}
-          {strengths.some(strength => strength.value === "Other") && (
-            <input
-              type="text"
-              className="form-control mt-2"
-              placeholder="Please specify other strength"
-              value={customStrength}
-              onChange={(e) => setCustomStrength(e.target.value)}
-            />
-          )}
-        </div>
+        <div className="mb-3 row">
+          <div className="col">
+            <label>Strengths <span className="ei-col-red">*</span></label>
+            <Select isMulti options={strengths_options} value={strengths} onChange={handleStrengthChange}/>
+          </div>
+        {strengths.some(s => s.value === "Other") && (
+          <div className="col">
+            <label htmlFor=""></label>
+            <div className="row">
+              <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom strength" value={customStrength} onChange={(e) => setCustomStrength(e.target.value)}/></div>
+              <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomStrength}>Add </button></div>
+            </div>
+          </div>
+        )}
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="areas_for_improvement">Areas For Improvement <span className="ei-col-red">*</span></label>
-          <Select
-              isMulti
-              options={areas_for_improvements_options}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={handleAreasForImprovementChange}
-              value={improvements_area}
-            />
-             {/* Show input field for custom improvement if "Other" is selected */}
-          {improvements_area.some(area => area.value === "Other") && (
-            <input
-              type="text"
-              className="form-control mt-2"
-              placeholder="Please specify other improvement"
-              value={customImprovement}
-              onChange={(e) => setCustomImprovement(e.target.value)}
-            />
-          )}
+      {/* Areas for Improvement Section */}
+      <div className="mb-3 row">
+        <div className="col">
+          <label>Areas for Improvement <span className="ei-col-red">*</span></label>
+          <Select isMulti options={areas_for_improvements_options} value={improvements_area} onChange={handleAreasForImprovementChange}/>
         </div>
+        {improvements_area.some(a => a.value === "Other") && (
+        <div className="col">
+          <label htmlFor=""></label>
+          <div className="row">
+            <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control mt-2" placeholder="Enter custom improvement" value={customImprovement} onChange={(e) => setCustomImprovement(e.target.value)}/></div>
+            <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomImprovement}> Add </button></div>
+          </div>
+        </div>
+        )}
+      </div>
 
         <div className="mb-3">
           <label className="form-label">Additional Comments </label>

@@ -15,9 +15,10 @@ function List() {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");  // State for search box filter
+  const [userTypeFilter, setUserTypeFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(5);
   const [sorting, setSorting] = useState([]); // State to manage sorting
 
   async function getData() {
@@ -158,19 +159,22 @@ function List() {
     [handleDelete, pageIndex, pageSize] // Include pageIndex and pageSize as dependencies
   );
 
-  // Apply global filtering before pagination
   const filteredData = useMemo(() => {
-    if (!globalFilter) return data;
     return data.filter((row) => {
-      const lowercasedFilter = globalFilter.toLowerCase();
-      return (
-        row.area_for.toLowerCase().includes(lowercasedFilter) ||
-        row.name.toLowerCase().includes(lowercasedFilter)
-      );
-    });
-  }, [data, globalFilter]);
+      const matchesSearchFilter = searchFilter
+        ? Object.values(row).some((value) =>
+            value?.toString().toLowerCase().includes(searchFilter.toLowerCase())
+          )
+        : true;
 
-  // Apply sorting before pagination
+      const matchesUserTypeFilter = userTypeFilter
+        ? row.area_for === userTypeFilter
+        : true;
+
+      return matchesSearchFilter && matchesUserTypeFilter;
+    });
+  }, [data, searchFilter, userTypeFilter]);
+
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
     const [{ id, desc }] = sorting;
@@ -186,7 +190,6 @@ function List() {
     });
   }, [filteredData, sorting]);
 
-  // Apply pagination after sorting
   const paginatedData = useMemo(() => {
     const startRow = pageIndex * pageSize;
     const endRow = startRow + pageSize;
@@ -198,14 +201,12 @@ function List() {
     columns,
     pageCount: Math.ceil(filteredData.length / pageSize),
     state: {
-      globalFilter,
       pagination: {
         pageIndex,
         pageSize,
       },
       sorting,
     },
-    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: (updater) => {
       const newState =
         typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater;
@@ -226,11 +227,11 @@ function List() {
 
       <div className="row my-3">
         <div className="col">
-          <input value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search by any value of table" className="form-control"/>
+          <input value={searchFilter || ""} onChange={(e) => setSearchFilter(e.target.value)} placeholder="Search by any value of table" className="form-control"/>
         </div>
         <div className="col">
           <div className="">
-              <select className="form-select" aria-label="Default select example" name="globalFilter" value={globalFilter || ""} onChange={(e) => setGlobalFilter(e.target.value)}>
+              <select className="form-select" aria-label="Default select example" name="globalFilter" value={userTypeFilter || ""} onChange={(e) => setUserTypeFilter(e.target.value)}>
                   <option defaultValue value="">-- Filter by "Area For" --</option>
                   <option value="TEACHER">TEACHER</option>
                   <option value="STUDENT">STUDENT</option>
@@ -282,26 +283,41 @@ function List() {
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
-      <div className="d-flex justify-content-between my-3">
-        <button
-          className="btn btn-primary"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+      <div className="d-flex justify-content-between mb-3">
+        <select
+          className="form-select mx-2"
+          style={{maxWidth: "fit-content"}}
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
         >
-          Previous
-        </button>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          {[5, 10, 15 , 20, 25].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
+        <span className="text-nowrap mx-2 text-center">
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {table.getPageCount()}
+          </strong>
         </span>
-        <button
-          className="btn btn-primary"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </button>
+        <div className="btn-group mx-2">
+          <button
+            className="btn btn-secondary"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

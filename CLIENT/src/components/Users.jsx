@@ -14,9 +14,11 @@ function Users() {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
-  const [searchFilter, setSearchFilter] = useState("");  // State for search box filter
-  const [userTypeFilter, setUserTypeFilter] = useState("");  // State for user type filter
-  const [verificationFilter, setVerificationFilter] = useState("");  // State for verification status filter
+  const [searchFilter, setSearchFilter] = useState("");
+  const [userTypeFilter, setUserTypeFilter] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [verificationFilter, setVerificationFilter] = useState(""); 
+  const [departments, setDepartments] = useState([]); 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState([]);
@@ -30,6 +32,13 @@ function Users() {
       const result = await response.json();
       if (response.ok) {
         setData(result.docs);
+      const uniqueDepartments = new Set();
+      result.docs.forEach((doc) => {
+        if (doc.department) {
+          uniqueDepartments.add(doc.department);
+        }
+      });
+      setDepartments(Array.from(uniqueDepartments));
         setError("");
       } else {
         setError(result.msg);
@@ -163,9 +172,13 @@ function Users() {
         ? row.is_verified === verificationFilter
         : true;
 
-      return matchesSearchFilter && matchesUserTypeFilter && matchesVerificationFilter;
+      const matchesDepartmentFilter = departmentFilter
+        ? row.department === departmentFilter
+        : true;
+
+      return matchesSearchFilter && matchesUserTypeFilter && matchesVerificationFilter && matchesDepartmentFilter;
     });
-  }, [data, searchFilter, userTypeFilter, verificationFilter]);
+  }, [data, searchFilter, userTypeFilter, verificationFilter, departmentFilter]);
 
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
@@ -243,6 +256,20 @@ function Users() {
           <div>
             <select
               className="form-select"
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+            >
+              <option value="">-- Filter by "Department" --</option>
+                {departments.map((dept) => (
+                  <option value={dept}>{dept}</option>
+                ))}
+            </select>
+          </div>
+        </div>
+        <div className="col">
+          <div>
+            <select
+              className="form-select"
               value={verificationFilter}
               onChange={(e) => setVerificationFilter(e.target.value)}
             >
@@ -288,6 +315,13 @@ function Users() {
               ))}
             </tr>
           ))}
+          {table.getRowModel().rows.length === 0 && (
+            <tr>
+              <td colSpan="10" className="text-center">
+                No data available
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
