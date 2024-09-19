@@ -315,6 +315,7 @@ function TeacherFeedback() {
           <select
             name="department"
             className="form-control"
+            aria-label="Default select example"
             value={department}
             onChange={(e) => setStudentList(e.target.value, "DEPARTMENT")}
           >
@@ -491,7 +492,7 @@ function TeacherFeedback() {
         </div>
         </div>
 
-
+            <hr />
         <div className="mb-3">
           <label htmlFor="strength_of_student" className='form-label'>Strengths<span className="ei-col-red">*</span></label>
           <Select

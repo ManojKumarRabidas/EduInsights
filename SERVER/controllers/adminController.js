@@ -28,7 +28,7 @@ module.exports = {
                         email: 1,
                         phone: 1,
                         address: 1,
-                        department: {$ifNull: ["$department.name", ""]},
+                        department: {$ifNull: ["$department.dept_id", ""]},
                         registration_year: 1,
                         registration_number: 1,
                         is_verified: "$auth.is_verified",
@@ -36,8 +36,12 @@ module.exports = {
             ]);
             if(docs.length>0){
                 for(let i=0; i<docs.length; i++){
-                    const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected")
+                    const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected");
+                    const val2 = docs[i].registration_number == null ? "N/A": (docs[i].registration_number == ""? "N/A": docs[i].registration_number);
+                    const val3 = docs[i].registration_year == null ? "N/A": (docs[i].registration_year == ""? "N/A": docs[i].registration_year);
                     docs[i].is_verified = val;
+                    docs[i].registration_number = val2;
+                    docs[i].registration_year = val3;
                 }
             }
             res.status(200).json({ docs: docs });
@@ -85,12 +89,20 @@ module.exports = {
                         email: 1,
                         phone: 1,
                         address: 1,
-                        department: {$ifNull: ["$department.name", ""]},
+                        department: {$ifNull: ["$department.dept_id", ""]},
                         registration_year: 1,
                         registration_number: 1,
                         is_verified: "$auth.is_verified"}},
                 {$match: {is_verified: {$nin: [1, -1] }}},
             ]);
+            if(docs.length>0){
+                for(let i=0; i<docs.length; i++){
+                    const val2 = docs[i].registration_number == null ? "N/A": (docs[i].registration_number == ""? "N/A": docs[i].registration_number);
+                    const val3 = docs[i].registration_year == null ? "N/A": (docs[i].registration_year == ""? "N/A": docs[i].registration_year);
+                    docs[i].registration_number = val2;
+                    docs[i].registration_year = val3;
+                }
+            }
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -108,6 +120,7 @@ module.exports = {
             }
             params.id = new ObjectId(params.id);
             body.is_verified = Number(body.is_verified);
+            body.active = body.is_verified == 1 ? 1 : 0;
             const doc = await authModel.updateOne({user_id: params.id},{$set: body}, {new: true});
             res.status(200).json({ message: "User status updated successfully", doc: doc });
         } catch (err) {
@@ -337,14 +350,24 @@ module.exports = {
     strengthCreate: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.name || !body.strength_for || !body.active){
-                res.status(400).json({ msg: "Missing Parameters!" });
-                return;
+            let bodyArray = []
+            let bool =  Array.isArray(body);
+            if(!bool){
+                bodyArray.push(body)
+            } else{
+                bodyArray = body;
             }
-            // const doc = await strengthModel.create({ name: body.name, strength_for: body.strength_for, active: body.active,});
-            const doc = await strengthModel.create(body);
+            for (let i=0; i<bodyArray.length; i++){
+                const ref = bodyArray[i]
+                if (!ref.name || !ref.strength_for || !ref.active){
+                    res.status(400).json({ msg: "Missing Parameters!" });
+                    return;
+                }
+            }
+            const doc = await strengthModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
         } catch (err) {
+            console.log("err", err);
             if(err.code==11000){
                 res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
                 return
@@ -532,12 +555,21 @@ module.exports = {
     areaOfImprovementCreate: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.area_for || !body.name || !body.active){
-                res.status(400).json({ msg: "Missing Parameters!" });
-                return;
+            let bodyArray = []
+            let bool =  Array.isArray(body);
+            if(!bool){
+                bodyArray.push(body)
+            } else{
+                bodyArray = body;
             }
-            // const doc = await areaOfImprovementModel.create({ name: body.name, area_for: body.area_for, active: body.active,});
-            const doc = await areaOfImprovementModel.create(body);
+            for (let i=0; i<bodyArray.length; i++){
+                const ref = bodyArray[i]
+                if (!ref.name || !ref.area_for || !ref.active){
+                    res.status(400).json({ msg: "Missing Parameters!" });
+                    return;
+                }
+            }
+            const doc = await areaOfImprovementModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
