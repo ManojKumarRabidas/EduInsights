@@ -33,7 +33,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    // <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <nav className="navbar navbar-expand-lg fixed-top">
       <div className="container-fluid">
         {/* Navbar Brand */}
         <div className="navbar-brand">

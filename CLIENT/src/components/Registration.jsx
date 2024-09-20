@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
@@ -72,10 +73,10 @@ function Registration() {
     setLoginId(id);
 
     // Check login ID availability after user stops typing for a short duration (debounce)
-    if (id.length > 0 && (id.length < 4 || id.length>10)) { // Only check if the ID length is greater than 2
+    if (id.length > 0 && (id.length < 4 || id.length>20)) { // Only check if the ID length is greater than 2
       setIsLoginIdInvalid(true);
       setIsLoginIdAvailable(null);
-    } else if(id.length >= 4){
+    } else if (id.length >= 4) {
       setIsLoginIdInvalid(false);
       checkLoginIdAvailability(id);
     } else {
@@ -84,16 +85,16 @@ function Registration() {
     }
   };
 
-  const changeUserType = async(value) => {
+  const changeUserType = async (value) => {
     setUserType(value);
     var element = document.getElementById("user-type-registration-row");
-    if (value == "TEACHER"){
+    if (value === "TEACHER") {
       element.classList.remove("registration-row");
       element.classList.add("teacher-registration-row");
-    } else if (value == "STUDENT") {
+    } else if (value === "STUDENT") {
       element.classList.remove("teacher-registration-row");
       element.classList.add("registration-row");
-    } else{
+    } else {
       element.classList.remove("teacher-registration-row");
       element.classList.add("registration-row");
     }
@@ -173,30 +174,25 @@ function Registration() {
     } else {
       setError("We are unable to process now. Please try again later.");
     }
-
-    // setTimeout(() => {
-    //   setResponse("");
-    //   setError("");
-    // }, 5000);
   };
 
-  const clearForm = async()=>{
-    setUserType("")
-    setDepartment("")
-    setRegistrationYear("")
-    setRegistrationNumber("")
-    setTeacherCode("")
-    setEmployeeId("")
-    setSpecialization("")
-    setName("")
-    setPhone("")
-    setEmail("")
-    setAddress("")
-    setPin("")
-    setLoginId("")
-    setPassword("")
-    setRepeatPassword("")
-  }
+  const clearForm = async () => {
+    setUserType("");
+    setDepartment("");
+    setRegistrationYear("");
+    setRegistrationNumber("");
+    setTeacherCode("");
+    setEmployeeId("");
+    setSpecialization("");
+    setName("");
+    setPhone("");
+    setEmail("");
+    setAddress("");
+    setPin("");
+    setLoginId("");
+    setPassword("");
+    setRepeatPassword("");
+  };
 
   return (
     <div className="container my-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded">
@@ -205,17 +201,15 @@ function Registration() {
       {response && (<div className="alert alert-success" role="alert">{response}</div>)}
 
       <form onSubmit={handleSubmit}>
-        <div className="form-section ">
+        <div className="form-section">
           <div className="registration-rows d-flex justify-content-center align-items-center">
             <div id="user-type-registration-row" className="registration-row m-2">
-              <label className="form-label">User Type <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">User Type <span className="ei-col-red">*</span></label>
               <select
                 className="form-select"
                 aria-label="Default select example"
                 name="user_type"
                 value={user_type}
-                // onChange={(e) => setUserType(e.target.value)
                 onChange={(e) => changeUserType(e.target.value)}
               >
                 <option defaultValue>--Select user type--</option>
@@ -228,9 +222,7 @@ function Registration() {
             {user_type === "STUDENT" && (
               <>
                 <div className="registration-row m-2">
-                  <label className="form-label">
-                    Registration Year <span className="ei-col-red">*</span>
-                  </label>
+                  <label className="form-label">Registration Year <span className="ei-col-red">*</span></label>
                   <input
                     name="registration_year"
                     type="text"
@@ -240,11 +232,8 @@ function Registration() {
                     onChange={(e) => setRegistrationYear(e.target.value)}
                   />
                 </div>
-                
                 <div className="registration-row m-2">
-                  <label className="form-label">
-                    Registration Number <span className="ei-col-red">*</span>
-                  </label>
+                  <label className="form-label">Registration Number <span className="ei-col-red">*</span></label>
                   <input
                     name="registration_number"
                     type="text"
@@ -255,15 +244,13 @@ function Registration() {
                   />
                 </div>
               </>
-              )}
+            )}
 
             {/* Conditional fields for TEACHER */}
             {user_type === "TEACHER" && (
               <>
                 <div className="registration-row teacher-registration-row m-2">
-                  <label className="form-label">
-                    Teacher Code <span className="ei-col-red">*</span>
-                  </label>
+                  <label className="form-label">Teacher Code <span className="ei-col-red">*</span></label>
                   <input
                     name="teacher_code"
                     type="text"
@@ -274,9 +261,7 @@ function Registration() {
                   />
                 </div>
                 <div className="registration-row teacher-registration-row m-2">
-                  <label className="form-label">
-                    Employee Id <span className="ei-col-red">*</span>
-                  </label>
+                  <label className="form-label">Employee Id <span className="ei-col-red">*</span></label>
                   <input
                     name="employee_id"
                     type="text"
@@ -287,8 +272,7 @@ function Registration() {
                   />
                 </div>
                 <div className="registration-row teacher-registration-row m-2">
-                  <label className="form-label">Specialization <span className="ei-col-red">*</span>
-                  </label>
+                  <label className="form-label">Specialization <span className="ei-col-red">*</span></label>
                   <input
                     name="specialization"
                     type="text"
@@ -299,14 +283,12 @@ function Registration() {
                   />
                 </div>
               </>
-            )}          
+            )}
           </div>
           <div className="registration-rows d-flex justify-content-center align-items-center">
             {/* Common fields for both TEACHER and STUDENT */}
             <div className="registration-row m-2">
-              <label className="form-label">
-                Department <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Department <span className="ei-col-red">*</span></label>
               <select
                 className="form-select"
                 aria-label="Default select example"
@@ -321,9 +303,7 @@ function Registration() {
               </select>
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                Name <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Name <span className="ei-col-red">*</span></label>
               <input
                 name="name"
                 type="text"
@@ -334,9 +314,7 @@ function Registration() {
               />
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                Phone <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Phone <span className="ei-col-red">*</span></label>
               <input
                 name="phone"
                 type="text"
@@ -349,9 +327,7 @@ function Registration() {
           </div>
           <div className="registration-rows d-flex justify-content-center align-items-center">
             <div className="registration-row m-2">
-              <label className="form-label">
-                Email <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Email <span className="ei-col-red">*</span></label>
               <input
                 name="email"
                 type="email"
@@ -362,9 +338,7 @@ function Registration() {
               />
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                Address <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Address <span className="ei-col-red">*</span></label>
               <input
                 name="address"
                 type="text"
@@ -375,9 +349,7 @@ function Registration() {
               />
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                PIN <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">PIN <span className="ei-col-red">*</span></label>
               <input
                 name="pin"
                 type="text"
@@ -390,9 +362,7 @@ function Registration() {
           </div>
           <div className="registration-rows d-flex justify-content-center align-items-center">
             <div className="registration-row m-2">
-              <label className="form-label">
-                Login Id <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Login Id <span className="ei-col-red">*</span></label>
               <input
                 name="login_id"
                 type="text"
@@ -402,20 +372,18 @@ function Registration() {
                 onChange={handleLoginIdChange}
               />
               {isLoginIdAvailable !== null && (
-                <small className={isLoginIdAvailable ? "text-success" : "text-danger"}> 
+                <small className={isLoginIdAvailable ? "text-success" : "text-danger"}>
                   {isLoginIdAvailable ? "Login ID is available" : "Login ID is not available"}
                 </small>
               )}
               {isLoginIdInvalid !== null && (
-                <small className={isLoginIdInvalid ? "text-danger" : "text-success"}> 
-                  {isLoginIdInvalid ? "Login ID must contain at least 4 and maximum 20 character" : ""}
+                <small className={isLoginIdInvalid ? "text-danger" : "text-success"}>
+                  {isLoginIdInvalid ? "Login ID must contain at least 4 and maximum 20 characters" : ""}
                 </small>
               )}
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                Password <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Password <span className="ei-col-red">*</span></label>
               <input
                 name="password"
                 type="password"
@@ -426,9 +394,7 @@ function Registration() {
               />
             </div>
             <div className="registration-row m-2">
-              <label className="form-label">
-                Repeat Password <span className="ei-col-red">*</span>
-              </label>
+              <label className="form-label">Repeat Password <span className="ei-col-red">*</span></label>
               <input
                 name="repeat_password"
                 type="password"
@@ -441,9 +407,9 @@ function Registration() {
           </div>
         </div>
         <div className="buttons-div d-flex justify-content-center align-items-center">
-          <Link to="/login"><button className="btn btn-primary m-2">Back to log in</button></Link>
+          <Link to="/login"><button type="button" className="btn btn-primary m-2">Back to log in</button></Link>
           <button type="submit" className="btn btn-primary m-2">Save</button>
-          <button type="reset" className="btn btn-primary m-2" onClick={() => clearForm()}>Clear</button>
+          <button type="button" className="btn btn-primary m-2" onClick={() => clearForm()}>Clear</button>
         </div>
       </form>
     </div>

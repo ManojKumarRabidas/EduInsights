@@ -125,17 +125,15 @@ function List() {
         enableSorting: false,
         headerClassName: "ei-text-center-imp",
         cell: ({ row }) => (
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center"}}>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "1")}
             >Accept </button>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "-1")}
             > Reject</button>
           </div>
@@ -224,7 +222,7 @@ function List() {
         className="form-control my-3"
       />
 
-      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

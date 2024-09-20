@@ -11,8 +11,9 @@ import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
-import Teacher_feedback from './components/Teacher_feedback';
+import Teacher_feedback from './components/TeacherFeedback';
 import StudentFeedback from './components/StudentFeedback';
+import AllTeachersFeedback from './components/AllTeachersFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
@@ -90,6 +91,7 @@ function AppContent({ isAuthenticated }) {
               <Route path='/subjects/*' element={<Subject />} />
               <Route path='/teacher-feedback' element={<Teacher_feedback/>} />
               <Route path='/student-feedback' element={<StudentFeedback/>} />
+              <Route path='/all-teachers-feedback' element={<AllTeachersFeedback/>} />
               <Route path='/profile' element={<Profile/>} />
               <Route path='/user-manual' element={<UserManual/>} />
               <Route path='/password/*' element={<Password/>} />

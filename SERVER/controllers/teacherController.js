@@ -1,17 +1,30 @@
+const {ObjectId} = require('mongodb')
 const teacherModel = require("../models/teacher_feedback");
-const bcrypt = require ('bcryptjs');
-const { subjectDetails } = require("./adminController");
+const strengthModel = require ("../models/strength");
+const subjectModel = require ("../models/subject");
+
+const areaOfImprovementModel = require('../models/areaofimprovement');
 
 module.exports = {
     teacherFeedback: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.semester_of_rating || !body.date_of_rating || !body.teacher_name || !body.student_name || !body.student_reg_no || !body.department || !body.subject_code || !body.class_participation || !body.homework_or_assignments || !body.quality_of_work || !body.timeliness || !body.problem_solving_skills || !body.behaviour_and_attitude || !body.responsibility || !body.participation_and_engagement || !body.group_work || !body.overall_student_quality || !body.strength_names || !body.area_of_improvement_names || !body.additional_comments){
+            if (!body.semester_of_rating || !body.date_of_rating || !body.teacher_name || !body.student_name || !body.student_reg_year || !body.department || !body.subject_code || !body.class_participation || !body.homework_or_assignments || !body.quality_of_work || !body.timeliness || !body.problem_solving_skills || !body.behaviour_and_attitude || !body.responsibility || !body.participation_and_engagement || !body.group_work || !body.overall_student_quality || !body.strength_names ||  !body.area_of_improvement_names){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            console.log(body);
-            // const doc = await teacherModel.create({ semester_of_rating: body.semester_of_rating, date_of_rating: body.date_of_rating, teacher_name: body.teacher_name, student_name: body.student_name,  student_reg_no: body.student_reg_no,department: body.department, subject_code: body.subject_code,class_participation: body.class_participation, homework_or_assignments: body.homework_or_assignments, quality_of_work: body.quality_of_work, timeliness: body.timeliness, problem_solving_skills: body.problem_solving_skills, behaviour_and_attitude: body.behaviour_and_attitude, responsibility: body.responsibility, participation_and_engagement: body.participation_and_engagement, group_work: body.group_work, overall_student_quality: body.overall_student_quality, strength_names: body.strength_names,area_of_improvement_names: body.area_of_improvement_names,additional_comments: body.additional_comments});
+            body.date_of_rating = new Date(body.date_of_rating);
+            body.teacher_id = new ObjectId(body.teacher_name);
+            body.subject_id = new ObjectId(body.subject_code);
+            body.department_id = new ObjectId(body.department);
+            body.student_id = new ObjectId(body.student_name);
+            // body.createdBy = new ObjectId(req.session.user._id);
+            // body.updatedBy = new ObjectId(req.session.user._id);
+            
+            delete body.teacher_name
+            delete body.subject_code
+            delete body.department
+            delete body.student_name
             const doc = await teacherModel.create(body)
 
             res.status(201).json({ status: true, msg: "Feedback Recorded successfully.", doc: doc });
@@ -23,6 +36,40 @@ module.exports = {
             res.status(500).json({ status: false, msg: err.message });
         }
     },
+    
+    // getStudentStrenghts: async(req, res)=>{
+    //     try {
+    //         const docs = await strengthModel.find({active: 1, strength_for:"STUDENT"}).sort({name: 1});
+    //         res.status(200).json({ docs: docs });
+    //       } catch (error) {
+    //         res.status(500).json({ msg: "Failed to retrieve strengths name" });
+    //       }
+    // },
 
+    getStudentStrenghts: async(req, res)=>{
+        try {
+            const docs = await strengthModel.find({active: 1, strength_for:"STUDENT"}).sort({name: 1});
+            res.status(200).json({ docs: docs });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve strengths name" });
+          }
+    },
+
+    getAreaForImprovement:async(req, res)=>{
+        try {
+            const docs = await areaOfImprovementModel.find({active: 1, area_for:"STUDENT"}).sort({name: 1});
+            res.status(200).json({ docs: docs });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve strengths name" });
+          }
+    },
+    getSubjectNames:async(req,res)=>{
+        try {
+            const docs = await subjectModel.find({active: 1, name:"STUDENT"}).sort({name: 1});
+            res.status(200).json({ docs: docs });
+          } catch (error) {
+            res.status(500).json({ msg: "Failed to retrieve subject name" });
+          }
+    }
     
 }

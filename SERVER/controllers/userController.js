@@ -7,6 +7,7 @@ module.exports = {
   userCreate: async (req, res) => {
     try {
       const body = req.body;
+      console.log(body);
       if ( !body.user_type || !body.department || !body.name || !body.phone || !body.email || !body.address || !body.pin || !body.login_id || !body.password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
@@ -44,6 +45,7 @@ module.exports = {
 
       res.status(201).json({ status: true, msg: "Registered successfully. Please wait, We are redirecting you to log in page."});
     } catch (err) {
+      console.log(err);
       if (err.code == 11000) {
         res.status(500).json({ status: false, msg: "Login Id is not available. Please try something else." });
         return;
