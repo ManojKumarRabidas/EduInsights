@@ -59,7 +59,7 @@ router.put("/area-of-improvement-update-active/:id", adminController.areaOfImpro
 
 router.post("/teacher-feedback", teacherController.teacherFeedback);
 router.get("/get-departments", adminController.getDepartments);
-router.get("/get-subjects", adminController.getSubjects);
+router.patch("/get-subjects", adminController.getSubjects);
 router.patch("/get-student-names", adminController.getStudentNames);
 router.post("/student-feedback", studentController.studentFeedback);
 router.get("/get-subjects-code/:id", studentController.getSubjectsCode);
