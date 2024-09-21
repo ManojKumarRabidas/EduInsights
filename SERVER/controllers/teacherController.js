@@ -18,6 +18,21 @@ module.exports = {
             body.subject_id = new ObjectId(body.subject_code);
             body.department_id = new ObjectId(body.department);
             body.student_id = new ObjectId(body.student_name);
+            body.semester_of_rating = Number(body.semester_of_rating);
+            body.class_participation = Number(body.class_participation);
+            body.homework_or_assignments = Number(body.homework_or_assignments);
+            body.quality_of_work  = Number(body.quality_of_work );
+            body.timeliness = Number(body.timeliness);
+            body.problem_solving_skills = Number(body.problem_solving_skills);
+            body.behaviour_and_attitude = Number(body.behaviour_and_attitude);
+            body.responsibility = Number(body.responsibility);
+            body.participation_and_engagement = Number(!body.participation_and_engagement);
+            body.group_work = Number(body.group_work);
+            body.overall_student_quality = Number (body.overall_student_quality);
+            
+
+
+
             // body.createdBy = new ObjectId(req.session.user._id);
             // body.updatedBy = new ObjectId(req.session.user._id);
             

@@ -1,10 +1,9 @@
 const {ObjectId} = require('mongodb')
-const studentModel = require("../models/student_feedback");
+const studentFeedbackModel = require("../models/student_feedback");
 const subjectModel = require("../models/subject");
 const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const areaOfImprovementModel = require("../models/areaofimprovement");
-const bcrypt = require ('bcryptjs');
 
 module.exports = {
 
@@ -77,6 +76,18 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
+            body.clarity_of_explanation = Number(body.clarity_of_explanation)
+            body.subject_knowledge = Number(body.subject_knowledge)
+            body.encouragement_of_question = Number(body.encouragement_of_question)
+            body.maintains_discipline = Number(body.maintains_discipline)
+            body.fairness_in_treatment = Number(body.fairness_in_treatment)
+            body.approachability = Number(body.approachability)
+            body.behaviour_and_attitude = Number(body.behaviour_and_attitude)
+            body.encouragement_and_support = Number(body.encouragement_and_support)
+            body.overall_teaching_quality = Number(body.overall_teaching_quality)
+            body.provide_study_material = Number(body.provide_study_material)
+            body.explain_with_supportive_analogy = Number(body.explain_with_supportive_analogy)
+            body.use_of_media = Number(body.use_of_media)
             body.date_of_rating = new Date(body.date_of_rating);
             body.teacher_id = new ObjectId(body.teacher_code);
             body.subject_id = new ObjectId(body.subject_code);
@@ -86,7 +97,7 @@ module.exports = {
             delete body.student_name
             // body.createdBy = new ObjectId(req.session.user._id);
             // body.updatedBy = new ObjectId(req.session.user._id);
-            const doc = await studentModel.create(body)
+            const doc = await studentFeedbackModel.create(body)
 
             res.status(201).json({ status: true, msg: "Feedback Recorded successfully.", doc: doc });
         } catch (err) {

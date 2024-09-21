@@ -458,7 +458,7 @@ function Student_feedback() {
         <div className="col">
           <label htmlFor=""></label>
           <div className="row">
-            <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control mt-2" placeholder="Enter custom improvement" value={customImprovement} onChange={(e) => setCustomImprovement(e.target.value)}/></div>
+            <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom improvement" value={customImprovement} onChange={(e) => setCustomImprovement(e.target.value)}/></div>
             <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomImprovement}> Add </button></div>
           </div>
         </div>

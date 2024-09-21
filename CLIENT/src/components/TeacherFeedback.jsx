@@ -64,7 +64,7 @@ function TeacherFeedback() {
       }
     };
 
-    const fetchSubjects = async () => {
+    const fetchSubjectsOld = async () => {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-subjects`);
         const data = await response.json();
@@ -136,7 +136,7 @@ function TeacherFeedback() {
     setDateOfRating(today);
 
     fetchDepartments();
-    fetchSubjects();
+    // fetchSubjects();
     fetchStudentStrengths();
     fetchStudentImprovementArea();
     fetchSubjectNames();
@@ -183,6 +183,7 @@ function TeacherFeedback() {
     } else if (type === "DEPARTMENT") {
       newDepartment = value;
       setDepartment(value);
+      fetchSubjects(value);
     }
   
     if (newRegYear && newDepartment) {
@@ -190,6 +191,29 @@ function TeacherFeedback() {
     }
   };
 
+  const fetchSubjects = async (department) => {
+    try {
+      const response = await fetch(`${HOST}:${PORT}/server/get-subjects`, {
+        method: "PATCH",
+        body: JSON.stringify({department:department}),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response) {
+        const result = await response.json();
+        if (response.ok) {
+          setSubjectCodes(result.docs);
+        } else {
+          setError(result.msg);
+        }
+      } else {
+        setError("We are unable to process now. Please try again later.");
+      }
+      
+    } catch (err) {
+      setError("Failed to load subjects.");
+    }
+  };
   
 
   
@@ -465,8 +489,6 @@ function TeacherFeedback() {
           <label className="form-label">Group Work <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="group_work" value={group_work} onChange={(e) => setGroupWork(e.target.value)}>
                 <option defaultValue>-- Select --</option>
-               
-                <option defaultValue>--Select Group Work--</option>
                 <option value="5" >Always Participates</option>
                 <option value="4" >Oftenly Participates</option>
                 <option value="3" >Sometimes Participates</option>
