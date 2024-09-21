@@ -71,6 +71,8 @@ router.get("/get-student-area-of-improvement",teacherController.getAreaForImprov
 
 router.get("/get-subject-name" , teacherController.getSubjectNames);
 
+router.patch("/teachers-feedback-list", teacherController.teachersFeedbackList);
+
 module.exports = router;
 
 

@@ -70,6 +70,78 @@ module.exports = {
           } catch (error) {
             res.status(500).json({ msg: "Failed to retrieve subject name" });
           }
+    },
+    teachersFeedbackList: async(req, res) =>{
+      try {
+        if (!req.body || !req.body.student_id){
+          res.status(400).json({ msg: "Missing Parameters!" });
+          return;
+        }
+        const student_id = new ObjectId(req.body.student_id);
+        const docs = await teacherModel.aggregate([
+            {$match: {student_id: student_id}},
+            {$lookup: {from: "users",
+                    localField: "teacher_id",
+                    foreignField: "_id",
+                    as: "teacher"}},
+            {$unwind: "$teacher"}, 
+            
+            {$lookup: {from: "departments",
+                    localField: "department_id",
+                    foreignField: "_id",
+                    as: "department"}},
+            {$unwind: "$department"}, 
+            
+            {$lookup: {from: "users",
+                    localField: "student_id",
+                    foreignField: "_id",
+                    as: "student"}},
+            {$unwind: "$student"}, 
+            
+            {$lookup: {from: "subjects",
+                    localField: "subject_id",
+                    foreignField: "_id",
+                    as: "subject"}},
+            {$unwind: "$subject"}, 
+            
+            {$project: { 
+                    semester_of_rating: 1,
+                    date_of_rating: 1,
+                    teacher: "$teacher.name",
+                    student: "$student.name",
+                    student_reg_year: 1, 
+                    department: "$department.dept_id",
+                    subject: "$subject.subject_code",
+                    class_participation: 1,
+                    homework_or_assignments: 1,
+                    quality_of_work: 1,
+                    timeliness: 1,
+                    problem_solving_skills: 1,
+                    behaviour_and_attitude: 1,
+                    responsibility: 1,
+                    participation_and_engagement: 1,
+                    group_work: 1,
+                    overall_student_quality: 1,
+                    strength_names: 1,
+                    area_of_improvement_names: 1,
+                    additional_comments: 1}}
+        ]);
+        // if(docs.length>0){
+        //     for(let i=0; i<docs.length; i++){
+        //         const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected");
+        //         const val2 = docs[i].registration_number == null ? "N/A": (docs[i].registration_number == ""? "N/A": docs[i].registration_number);
+        //         const val3 = docs[i].registration_year == null ? "N/A": (docs[i].registration_year == ""? "N/A": docs[i].registration_year);
+        //         docs[i].is_verified = val;
+        //         docs[i].registration_number = val2;
+        //         docs[i].registration_year = val3;
+        //     }
+        // }
+        console.log(docs);
+        res.status(200).json({ docs: docs });
+    } catch (err) {
+      console.log(err);
+        res.status(400).json({ msg: err.message });
+    }
     }
     
 }
