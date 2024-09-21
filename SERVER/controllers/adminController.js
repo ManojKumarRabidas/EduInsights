@@ -640,10 +640,19 @@ module.exports = {
 
     getSubjects: async(req, res)=>{
         try {
-            const subjects = await subjectModel.find({active:1});
-            // res.json({ departments });
-            res.status(200).json({ subjects: subjects });
+            const body = req.body;
+            console.log(body)
+            if (!body || !body.department) {
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+
+            body.department = new ObjectId(body.department);
+            const docs = await subjectModel.find({department:body.department, active:1});
+            console.log(docs)
+            res.status(200).json({ docs : docs });
           } catch (error) {
+            console.log(error)
             res.status(500).json({ msg: "Failed to retrieve subjects" });
           }
     },
