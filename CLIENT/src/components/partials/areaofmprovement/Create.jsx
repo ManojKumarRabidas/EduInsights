@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+const token = sessionStorage.getItem('token');
 
 function Create() {
   const [area_for, setAreaFor] = useState("");
@@ -21,7 +22,10 @@ function Create() {
     const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
       method: "POST",
       body: JSON.stringify(areaOfImprovementData),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
+      }
     });
     if (response){
       const result = await response.json();

@@ -1,13 +1,10 @@
 import '../App.css'
 import React, { useEffect, useState} from "react";
-
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
-
-
-
+const token = sessionStorage.getItem('token');
 function Student_feedback() {
   const [month_of_rating, setMonthOfRating] = useState("");
   const [date_of_rating, setDateOfRating] = useState("");
@@ -43,9 +40,10 @@ function Student_feedback() {
   const [customImprovement, setCustomImprovement] = useState(""); // New state for custom improvement
   const [custom_strengths_options, setCustomStrengthOptions] = useState([]);
   const [custom_areas_for_improvements_options, setCustomAreasForImprovementsOptions] = useState([]);
-  const userId = sessionStorage.getItem("eiUserId")
+  // const userId = sessionStorage.getItem("eiUserId")
 
     useEffect(() => {
+      
     const userName = sessionStorage.getItem("eiUserName")
     setStudentName(userName) 
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
@@ -55,11 +53,12 @@ function Student_feedback() {
 
     const today = new Date().toISOString().split('T')[0];
     setDateOfRating(today);
-
+      
     const fetchSubjectsCode = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subjects-code/${userId}`, {
+        const response = await fetch(`${HOST}:${PORT}/server/get-conditional-subjects-code/`, {
           method: "GET",
+          headers: {'authorization': `Bearer ${token}`},
         });
   
         if (response) {
@@ -187,11 +186,14 @@ function Student_feedback() {
 
 
 
-        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, student_name:userId, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, improvements_area:final_AreasForImprovements,  additional_comments};
+        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, improvements_area:final_AreasForImprovements,  additional_comments};
         const response = await fetch(`${HOST}:${PORT}/server/student-feedback`, {
           method: "POST",
           body: JSON.stringify(studentData),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          },
         });
         if (response){
           const result = await response.json();
@@ -203,7 +205,10 @@ function Student_feedback() {
               await fetch(`${HOST}:${PORT}/server/strength-create`, {
                 method: "POST",
                 body: JSON.stringify(custom_strengths_options),
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                },
               });
             }
         
@@ -211,7 +216,10 @@ function Student_feedback() {
               await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
                 method: "POST",
                 body: JSON.stringify(custom_areas_for_improvements_options),
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                }
               });
             }
             setResponse(result.msg);

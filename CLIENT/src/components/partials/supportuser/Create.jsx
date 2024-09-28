@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+const token = sessionStorage.getItem('token');
 
 function Create() {
   const [user_type, setUserType] = useState("");
@@ -81,7 +82,10 @@ function Create() {
     const response = await fetch(`${HOST}:${PORT}/server/support-user-create`, {
       method: "POST",
       body: JSON.stringify(supportUserData),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
+      }
     });
     if (response){
       const result = await response.json();
@@ -107,7 +111,7 @@ function Create() {
               <label className="form-label">User Type <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="user_type" value={user_type} onChange={(e) => setUserType(e.target.value)}>
                   <option defaultValue>--Select user type--</option>
-                  <option value="ADMIN">ADMIN</option>
+                  {/* <option value="ADMIN">ADMIN</option> */}
                   <option value="SUPPORT">SUPPORT</option>
               </select>
           </div>

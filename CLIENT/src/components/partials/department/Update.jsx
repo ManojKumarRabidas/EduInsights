@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Update() {
   const [dept_id, setDeptId] = useState("");
@@ -16,6 +17,7 @@ function Update() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-details/${id}`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       if (response) {
@@ -31,6 +33,8 @@ function Update() {
         setError("We are unable to process now. Please try again later.");
       }
     } catch (error) {
+      console.log(error);
+      
       setError("We are unable to process now. Please try again later.");
     }
 
@@ -55,7 +59,10 @@ function Update() {
       const response = await fetch(`${HOST}:${PORT}/server/dept-update/${id}`, {
         method: "PATCH",
         body: JSON.stringify(updateDept),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        }
       });
 
       if (response) {

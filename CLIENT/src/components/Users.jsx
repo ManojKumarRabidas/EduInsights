@@ -9,6 +9,7 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Users() {
   const [data, setData] = useState([]);
@@ -27,6 +28,7 @@ function Users() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/user-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -57,7 +59,10 @@ function Users() {
       const response = await fetch(`${HOST}:${PORT}/server/user-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${token}`
+        },
       });
 
       const result = await response.json();

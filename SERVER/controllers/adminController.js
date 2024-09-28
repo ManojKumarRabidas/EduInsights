@@ -6,6 +6,7 @@ const subjectModel = require("../models/subject");
 const areaOfImprovementModel = require("../models/areaofimprovement");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     userList: async(req, res)=>{
@@ -53,6 +54,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -112,8 +114,10 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            // body.updatedBy = req.session.user._id;
-            // body.updatedBy = new ObjectId(body.updatedBy);
+            body.verifiedBy = new ObjectId(req.user.id);
+            body.verifiedAt = new Date();
+            console.log("verification", body);
+            
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -130,9 +134,8 @@ module.exports = {
 
     supportUserList: async(req, res)=>{
         try {
-            // const docs = await userModel.find({user_type: {$in: ["SUPPORT", "ADMIN"]}});
             const docs = await userModel.aggregate([
-                {$match: {user_type: {$in: ["SUPPORT", "ADMIN"]}}},
+                {$match: {user_type: {$in: ["SUPPORT"]}}},
                 {$lookup: {from: "authentications",
                         localField: "_id",
                         foreignField: "user_id",
@@ -159,8 +162,8 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // body.createdBy = req.session.user._id;
-            // body.createdBy = new ObjectId(body.createdBy);
+            body.createdBy = new ObjectId(req.user.id);
+            body.updatedBy = new ObjectId(req.user.id);
             const is_verified = 1;
             const active = body.active;
             const password = body.password;
@@ -207,8 +210,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            // body.updatedBy = req.session.user._id;
-            // body.updatedBy = new ObjectId(body.updatedBy);
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -237,8 +239,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
-            // body.updatedBy = req.session.user._id;
-            // body.updatedBy = new ObjectId(body.updatedBy);
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -259,10 +260,8 @@ module.exports = {
         }
     },
     deptCreate: async(req, res)=>{
-        try {
-            console.log("req.session admin", req.session.user);
-            const body = req.body.deptData;
-            const userId = req.body.userId;
+        try {  
+            const body = req.body;
             if (!userId) {
                 res.status(400).json({ msg: "Session Expired!" });
                 return;
@@ -271,9 +270,8 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            // body.createdBy = new ObjectId(req.session.user._id);
-            body.createdBy = new ObjectId(userId);
-            body.updatedBy = new ObjectId(userId);
+            body.createdBy = new ObjectId(req.user.id);
+            body.updatedBy = new ObjectId(req.user.id);
             const doc = await deptModel.create(body);
             res.status(201).json({ status: true, msg: "Department created successfully.", doc: doc });
         } catch (err) {
@@ -301,6 +299,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -328,6 +327,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -363,6 +363,8 @@ module.exports = {
                     res.status(400).json({ msg: "Missing Parameters!" });
                     return;
                 }
+                ref.createdBy = new ObjectId(req.user.id);
+                ref.updatedBy = new ObjectId(req.user.id);
             }
             const doc = await strengthModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
@@ -392,6 +394,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -419,6 +422,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -452,7 +456,6 @@ module.exports = {
     getDepartments: async(req, res)=>{
         try {
             const departments = await deptModel.find({active: 1}).sort({name: 1});
-            // res.json({ departments });
             res.status(200).json({ departments: departments });
           } catch (error) {
             res.status(500).json({ msg: "Failed to retrieve departments" });
@@ -461,6 +464,8 @@ module.exports = {
     subjectCreate: async(req, res)=>{
         try {
             const body = req.body;
+            body.createdBy = new ObjectId(req.user.id);
+            body.updatedBy = new ObjectId(req.user.id);
             if (!body.subject_code || !body.name || !body.department || !body.active){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -506,6 +511,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -533,6 +539,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -555,6 +562,7 @@ module.exports = {
     areaOfImprovementCreate: async(req, res)=>{
         try {
             const body = req.body;
+            console.log("area", req.user)
             let bodyArray = []
             let bool =  Array.isArray(body);
             if(!bool){
@@ -568,7 +576,11 @@ module.exports = {
                     res.status(400).json({ msg: "Missing Parameters!" });
                     return;
                 }
+                ref.createdBy = new ObjectId(req.user.id);
+                ref.updatedBy = new ObjectId(req.user.id);
             }
+            console.log("bodyArray", bodyArray);
+            
             const doc = await areaOfImprovementModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
         } catch (err) {
@@ -596,6 +608,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -627,6 +640,7 @@ module.exports = {
         try {
             const params = req.params;
             const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
@@ -641,12 +655,10 @@ module.exports = {
     getSubjects: async(req, res)=>{
         try {
             const body = req.body;
-            console.log(body)
             if (!body || !body.department) {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-
             body.department = new ObjectId(body.department);
             const docs = await subjectModel.find({department:body.department, active:1});
             console.log(docs)

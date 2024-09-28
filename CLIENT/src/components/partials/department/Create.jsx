@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+const token = sessionStorage.getItem('token');
 
 function Create() {
   const [dept_id, setDeptId] = useState("");
@@ -18,12 +19,13 @@ function Create() {
       setError("Please enter all the required values.");
       return;
     }
-    const userId = sessionStorage.getItem('eiUserId');
-    const payload = {userId: userId, deptData: deptData}
     const response = await fetch(`${HOST}:${PORT}/server/dept-create`, {
       method: "POST",
-      body: JSON.stringify(payload),
-      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(deptData),
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
+      }
     });
     if (response){
       const result = await response.json();

@@ -4,7 +4,7 @@ import Create from './partials/department/Create';
 import Update from './partials/department/Update';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {Route, Routes, Link, Navigate, NavLink} from 'react-router-dom';
+import {Route, Routes, Navigate, NavLink} from 'react-router-dom';
 
 export default function Department() {
 

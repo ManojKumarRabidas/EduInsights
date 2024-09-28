@@ -5,6 +5,8 @@ const subjectSchema = new mongoose.Schema({
     name: {type: 'string', required: true},
     department: {type: mongoose.Schema.Types.ObjectId, ref: 'Department', required: true},
     active: {type: 'number'},
+    createdBy: {type: 'ObjectId'},
+    updatedBy: {type: 'ObjectId'}
 }, { timestamps: true });
 
 subjectSchema.index({ subject_code: 1 }, { unique: true });

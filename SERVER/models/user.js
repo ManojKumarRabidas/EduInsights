@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     email: {type: 'string', required: true},
     address: {type: 'string', required: true},
     pin: {type: 'number', required: true},
+    createdBy: {type: 'ObjectId'},
+    updatedBy: {type: 'ObjectId'}
 }, { timestamps: true });
 
 userSchema.index({ email: 1 }, { unique: true });

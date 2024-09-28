@@ -10,6 +10,7 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function List() {
   const [data, setData] = useState([]);
@@ -24,6 +25,7 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/pending-verification-user-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -47,12 +49,13 @@ function List() {
       const response = await fetch(`${HOST}:${PORT}/server/user-update-verificaton/${id}`, {
         method: "PUT",
         body: JSON.stringify({ is_verified: status }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${token}`
+        },
       });
 
       const result = await response.json();
-      console.log(result);
-      
       if (response.ok) {
         setResponse("User verification status updated successfully");
         getData();
@@ -68,7 +71,6 @@ function List() {
     }, 5000);
   };
 
-  // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
         {

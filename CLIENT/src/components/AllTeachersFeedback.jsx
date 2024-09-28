@@ -10,6 +10,7 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Users() {
   const [data, setData] = useState([]);
@@ -26,23 +27,23 @@ function Users() {
 
   async function getData() {
     try {
-      const student_id = sessionStorage.getItem("eiUserId");
-      const payload = {student_id:student_id}
       const response = await fetch(`${HOST}:${PORT}/server/teachers-feedback-list`, {
         method: "PATCH",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${token}` 
+        },
       });
 
       if (response) {
         const result = await response.json();
         if (response.ok) {
           setData(result.docs);
-        const uniqueDepartments = new Set();
-        result.docs.forEach((doc) => {
-        if (doc.department) {
-          uniqueDepartments.add(doc.department);
-        }
+          const uniqueDepartments = new Set();
+          result.docs.forEach((doc) => {
+          if (doc.department) {
+            uniqueDepartments.add(doc.department);
+          }
       });
       setDepartments(Array.from(uniqueDepartments));
         setError("");
@@ -53,7 +54,8 @@ function Users() {
         setError("We are unable to process now. Please try again later.");
       }
     } catch (err) {
-      setError("Failed to load student names.");
+      console.log(err);
+      setError("We are unable to process now. Please try again later.");
     }
   }
 
@@ -184,30 +186,10 @@ function Users() {
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
-      // {
-      //   header: "Active",
-      //   accessorKey: "active",
-      //   enableSorting: false,
-      //   cell: ({ row }) => (
-      //     <div className="form-switch">
-      //       <input
-      //         className="form-check-input cursor-pointer"
-      //         type="checkbox"
-      //         role="switch"
-      //         id={`activeSwitch-${row.id}`}
-      //         checked={row.original.active == 1}
-      //         onChange={(e) =>
-      //           handleActiveChange(row.original._id, e.target.checked)
-      //         }
-      //       />
-      //     </div>
-      //   ),
-      // },
     ],
     [pageIndex, pageSize]
   );
 
-  // Apply all filters together using useMemo
   const filteredData = useMemo(() => {
     return data.filter((row) => {
       const matchesSearchFilter = searchFilter

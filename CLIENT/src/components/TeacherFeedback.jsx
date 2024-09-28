@@ -1,13 +1,10 @@
 import '../App.css'
 import React, {useState, useEffect} from "react";
-
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
-
-
-
+const token = sessionStorage.getItem('token');
 function TeacherFeedback() {
   const [semester_of_rating, setSemesterOfRating] = useState("");
   const [date_of_rating, setDateOfRating] = useState("");
@@ -33,7 +30,7 @@ function TeacherFeedback() {
   const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const [subject_codes, setSubjectCodes] = useState([]);
-  const [subject_names, setSubjectNames] = useState([]);
+  // const [subject_names, setSubjectNames] = useState([]);
   const [student_names, setStudentNames] = useState([]);
   const navigate = useNavigate();
 
@@ -61,20 +58,6 @@ function TeacherFeedback() {
         }
       } catch (err) {
         setError("Failed to load departments.");
-      }
-    };
-
-    const fetchSubjectsOld = async () => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subjects`);
-        const data = await response.json();
-        if (response.ok) {
-          setSubjectCodes(data.subjects);
-        } else {
-          setError("Failed to load subjects.");
-        }
-      } catch (err) {
-        setError("Failed to load subjects.");
       }
     };
 
@@ -112,22 +95,22 @@ function TeacherFeedback() {
       }
     };
 
-    const fetchSubjectNames =async () => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subject-name`);
-        const data = await response.json();
-        if (response.ok) {
-          setSubjectNames((data.docs).map(subject=> ({
-            value:subject.name,
-            label:subject.name
-          })))
-        } else{
-          setError("Failed to load subjects name.");
-        }
-      } catch(err) {
-        setError("Failed to load subjects name.");
-      }
-    };
+    // const fetchSubjectNames =async () => {
+    //   try {
+    //     const response = await fetch(`${HOST}:${PORT}/server/get-subject-name`);
+    //     const data = await response.json();
+    //     if (response.ok) {
+    //       setSubjectNames((data.docs).map(subject=> ({
+    //         value:subject.name,
+    //         label:subject.name
+    //       })))
+    //     } else{
+    //       setError("Failed to load subjects name.");
+    //     }
+    //   } catch(err) {
+    //     setError("Failed to load subjects name.");
+    //   }
+    // };
 
     const currentYear = new Date().getFullYear();
     const pastFiftyYears = Array.from({ length: 50 }, (_, index) => currentYear - index);
@@ -139,7 +122,7 @@ function TeacherFeedback() {
     // fetchSubjects();
     fetchStudentStrengths();
     fetchStudentImprovementArea();
-    fetchSubjectNames();
+    // fetchSubjectNames();
   }, []);
 
   const handleStrengthChange = (selected) =>{
@@ -193,7 +176,7 @@ function TeacherFeedback() {
 
   const fetchSubjects = async (department) => {
     try {
-      const response = await fetch(`${HOST}:${PORT}/server/get-subjects`, {
+      const response = await fetch(`${HOST}:${PORT}/server/get-conditional-subjects`, {
         method: "PATCH",
         body: JSON.stringify({department:department}),
         headers: { "Content-Type": "application/json" },
@@ -237,17 +220,20 @@ function TeacherFeedback() {
           final_improvement.push(areas_for_improvement[i].value)
         }
 
-        const final_subject_name = [];
-        for (let i=0; i<(subject_names).length; i++){
-          final_subject_name.push(subject_names[i].value)
-        }
+        // const final_subject_name = [];
+        // for (let i=0; i<(subject_names).length; i++){
+        //   final_subject_name.push(subject_names[i].value)
+        // }
 
         const userId = sessionStorage.getItem("eiUserId")
-        const teacherData = { semester_of_rating, date_of_rating, teacher_name: userId, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments,subject_names: final_subject_name };
+        const teacherData = { semester_of_rating, date_of_rating, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments };
         const response = await fetch(`${HOST}:${PORT}/server/teacher-feedback`, {
           method: "POST",
           body: JSON.stringify(teacherData),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          },
         });
         if (response){
           const result = await response.json();
@@ -256,9 +242,6 @@ function TeacherFeedback() {
             setResponse(result.msg);
             setError("");
             navigate("/home")
-            // setDeptId("");
-            // setName("");
-            // navigate("/login");
           } else{
             setError(result.msg);
           }

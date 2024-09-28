@@ -22,6 +22,8 @@ const student_feedbackSchema = new mongoose.Schema({
     improvements_area: {type: [String], required: true},
     additional_comments: {type: 'string'},
     anonymous: {type: 'boolean'},
+    createdBy: {type: 'ObjectId'},
+    updatedBy: {type: 'ObjectId'}
 
 },{timestamps: true});
 

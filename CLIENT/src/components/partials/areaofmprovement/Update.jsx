@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Update() {
   const [area_for, setAreaFor] = useState("");
@@ -16,6 +17,7 @@ function Update() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-details/${id}`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       if (response) {
@@ -55,7 +57,7 @@ function Update() {
       const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-update/${id}`, {
         method: "PATCH",
         body: JSON.stringify(updateAreaOfImprovement),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", 'authorization': `Bearer ${token}` },
       });
 
       if (response) {

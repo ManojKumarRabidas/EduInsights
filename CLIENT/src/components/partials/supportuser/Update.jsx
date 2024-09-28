@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Update() {
     const [user_type, setUserType] = useState("");
@@ -21,6 +22,7 @@ function Update() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/support-user-details/${id}`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
       if (response) {
         const result = await response.json();
@@ -69,7 +71,10 @@ function Update() {
       const response = await fetch(`${HOST}:${PORT}/server/support-user-update/${id}`, {
         method: "PATCH",
         body: JSON.stringify(updateSupportUser),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        },
       });
 
       if (response) {

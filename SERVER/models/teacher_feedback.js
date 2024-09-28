@@ -21,6 +21,8 @@ const teacher_feedbackSchema = new mongoose.Schema({
     strength_names: {type: [String], required: true},
     area_of_improvement_names: {type: [String], required: true},
     additional_comments: {type: 'string'},
+    createdBy: {type: 'ObjectId'},
+    updatedBy: {type: 'ObjectId'}
 
 },{timestamps: true});
 

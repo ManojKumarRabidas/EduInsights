@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-
+const token = sessionStorage.getItem('token');
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
@@ -24,6 +24,7 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -46,6 +47,7 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-delete/${id}`, {
         method: "DELETE",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -69,7 +71,10 @@ function List() {
       const response = await fetch(`${HOST}:${PORT}/server/dept-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        }
       });
 
       const result = await response.json();

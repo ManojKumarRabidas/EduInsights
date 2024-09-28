@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+const token = sessionStorage.getItem('token');
 
 function Update() {
   const [name, setName] = useState("");
@@ -16,8 +17,10 @@ function Update() {
   const getStrengthData = async () => {
     try {
       const response = await fetch(
-        `${HOST}:${PORT}/server/strength-details/${id}`,
-        {method: "GET",}
+        `${HOST}:${PORT}/server/strength-details/${id}`,{
+          method: "GET",
+          headers: { 'authorization': `Bearer ${token}` },
+        }
       );
       if (response){
         const result = await response.json();
@@ -58,7 +61,10 @@ function Update() {
         {
           method: "PATCH",
           body: JSON.stringify(updateStrength),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          }
         }
       );
   

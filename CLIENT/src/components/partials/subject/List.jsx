@@ -10,6 +10,7 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function List() {
   const [data, setData] = useState([]);
@@ -24,6 +25,7 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/subject-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -46,6 +48,7 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/subject-delete/${id}`, {
         method: "DELETE",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -69,7 +72,10 @@ function List() {
       const response = await fetch(`${HOST}:${PORT}/server/subject-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        }
       });
 
       const result = await response.json();

@@ -1,6 +1,7 @@
 import './App.css';
 import Registration from "./components/Registration";
 import Login from "./components/Login";
+import Unauthorized from "./components/Unauthorized";
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Home from './components/Home';
@@ -11,7 +12,7 @@ import PendingVerifications from './components/PendingVerifications';
 import Department from './components/Department';
 import Strength from './components/Strength';
 import Subject from './components/Subject';
-import Teacher_feedback from './components/TeacherFeedback';
+import TeacherFeedback from './components/TeacherFeedback';
 import StudentFeedback from './components/StudentFeedback';
 import AllTeachersFeedback from './components/AllTeachersFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
@@ -23,22 +24,39 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+const HOST = import.meta.env.VITE_HOST
+const PORT = import.meta.env.VITE_PORT
 
+let user_type_globle;
 export default function App() {
+    const getUserType = async (token) => {
+      const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response){
+        const result = await response.json();
+        console.log(result);
+        
+        if (response.ok){
+          user_type_globle = result.doc.user_type
+        } else{
+          setError(result.msg);
+        }
+      } else{
+        setError("We are unable to process now. Please try again later.")
+      }
+    }
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Function to check session
   const checkSession = () => {
-    const session = sessionStorage.getItem('eiUserSession');
-    setIsAuthenticated(session === 'true');
+    const session = sessionStorage.getItem('token');
+    if (session){getUserType(session)}
+    setIsAuthenticated(session);
   };
 
-  // Check session on component mount
   useEffect(() => {
-    checkSession(); // Initial check for session
-    window.addEventListener('storage', checkSession); // Listen for session changes
-
-    // Clean up the event listener
+    checkSession();
+    window.addEventListener('storage', checkSession);
     return () => window.removeEventListener('storage', checkSession);
   }, []);
 
@@ -52,47 +70,43 @@ export default function App() {
 }
 
 function AppContent({ isAuthenticated }) {
+  const user_type = user_type_globle;
   const location = useLocation();
   const isRegistrationPage = location.pathname === '/registration';
   const isLoginPage = location.pathname === '/login';
 
-  // Redirect logic
   if (!isAuthenticated && !isLoginPage && !isRegistrationPage) {
     return <Navigate to='/login' replace />;
   }
 
-  // If the user is authenticated, redirect from login or registration to home
   if (isAuthenticated && (isLoginPage || isRegistrationPage)) {
     return <Navigate to='/home' replace />;
   }
 
   return (
     <>
-      {/* Conditionally Render Navbar and Sidebar */}
       {isAuthenticated && !isRegistrationPage && !isLoginPage && <Navbar />}
       <div className="container-fluid">
         <div className={`${isRegistrationPage || isLoginPage ? 'row ei-row-unrestricted' : 'row ei-row'}`}>
-          {/* Conditionally Render Sidebar */}
           {isAuthenticated && !isRegistrationPage && !isLoginPage && <Sidebar />}
-          {/* <main className={`main-section ${isRegistrationPage || isLoginPage ? 'col-12' : 'col-md-9 col-lg-10'}`}> */}
           <main className={`${isRegistrationPage ? 'col-12 main-section-registration': (isLoginPage ? 'col-12 main-section-log-in': 'col-12 main-section')}`}>
             <Routes>
               <Route path='/' element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
               <Route path='/registration' element={<Registration />} />
               <Route path='/login' element={<Login />} />
               <Route path='/home' element={<Home />} />
-              <Route path='/admin-dashboard' element={<AdminDashboard />} />
-              <Route path='/users' element={<Users />} />
-              <Route path='/support-users/*' element={<SupportUsers />} />
-              <Route path='/pending-verifications' element={<PendingVerifications />} />
-              <Route path='/departments/*' element={<Department />} />
-              <Route path='/strengths/*' element={<Strength />} />
-              <Route path='/areas-of-improvement/*' element={<AreaOfImprovement />} />
-              <Route path='/subjects/*' element={<Subject />} />
-              <Route path='/teacher-feedback' element={<Teacher_feedback/>} />
-              <Route path='/student-feedback' element={<StudentFeedback/>} />
-              <Route path='/all-teachers-feedback' element={<AllTeachersFeedback/>} />
-              <Route path='/profile' element={<Profile/>} />
+              <Route path='/admin-dashboard' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AdminDashboard /> : <Unauthorized />} />
+              <Route path='/users' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Users /> : <Unauthorized />} />
+              <Route path='/support-users/*' element={user_type === 'ADMIN' ? <SupportUsers /> : <Unauthorized />} />
+              <Route path='/pending-verifications' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <PendingVerifications /> : <Unauthorized />} />
+              <Route path='/departments/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Department /> : <Unauthorized />} />
+              <Route path='/strengths/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Strength /> : <Unauthorized />} />
+              <Route path='/areas-of-improvement/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AreaOfImprovement /> : <Unauthorized />} />
+              <Route path='/subjects/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Subject /> : <Unauthorized />} />
+              <Route path='/teacher-feedback' element={user_type === 'TEACHER' ? <TeacherFeedback /> : <Unauthorized />} />
+              <Route path='/student-feedback' element={user_type === 'STUDENT' ? <StudentFeedback /> : <Unauthorized />} />
+              <Route path='/all-teachers-feedback' element={user_type != 'TEACHER' ? <AllTeachersFeedback /> : <Unauthorized />} />
+              <Route path='/profile' element={user_type != 'ADMIN' ? <Profile /> : <Unauthorized />} />
               <Route path='/user-manual' element={<UserManual/>} />
               <Route path='/password/*' element={<Password/>} />
             </Routes>
