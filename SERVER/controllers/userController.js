@@ -233,14 +233,15 @@ module.exports = {
 
   changePassword: async (req, res) => {
     try {
+      const tempUser = req.user;
       const body = req.body;
       if ( !body.old_password || !body.new_password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
       var userId;
-      if(req.session.user && req.session.user._id){
-        userId = new ObjectId(req.session.user._id);
+      if(tempUser && tempUser.id){
+        userId = new ObjectId(tempUser.id);
       } else {
         userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
       }

@@ -1,59 +1,60 @@
 // import "../App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toastr from 'toastr';
+
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+let token;
 export default function ChangePassword(){
     const [old_password, setOldPassword] = useState("");
     const [new_password, setNewPassword] = useState("");
     const [confirm_password, setConfirmPassword] = useState("");
-    const [error, setError] = useState("");
-    const [response, setResponse] = useState("");
     const navigate = useNavigate();
+    useEffect(() => {
+      token = sessionStorage.getItem('token');
+    }, []);
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!new_password || !confirm_password){
           if (new_password != confirm_password){
-            setError("New password and confirm password must be same.");
+            toastr.error("New password and confirm password must be same.");
             return;
           }
         }
         const passwordData = { old_password, new_password};
         if (!old_password || !new_password){
-          setError("Please enter all the required values.");
+          toastr.error("Please enter all the required values.");
           return;
         }
         const response = await fetch(`${HOST}:${PORT}/server/change-password`, {
           method: "POST",
           body: JSON.stringify(passwordData),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          },
         });
         if (response){
           const result = await response.json();
           if (response.ok){
-            setResponse(result.msg);
-            setError("");
+            toastr.success('Your action was successful!', 'Success');
+            toastr.error("");
             setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");
             navigate("/password/change-password");
           } else{
-            setError(result.msg);
+            toastr.error(result.msg);
           }
         } else{
-          setError("We are unable to process now. Please try again later.")
+          toastr.error("We are unable to process now. Please try again later.")
         }
-        setTimeout(() => {
-          setResponse("");
-          setError("");
-        }, 3000);
       };
     return(
         <div>
             <main className="container my-4">
                 <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-                    {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-                    {response && (<div className="alert alert-success" role="alert">{response}</div>)}
                     <form onSubmit={handleSubmit}>
                         <div className=" justify-content-center">
                             <div className="mb-3">

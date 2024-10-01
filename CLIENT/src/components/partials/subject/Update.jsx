@@ -3,14 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
 const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 
 function Update() {
   const [subject_code, setSubjectCode] = useState("");
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("");
   const [active, setActive] = useState("");
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const [subjectData, setSubjectData] = useState("");
   const navigate = useNavigate();
@@ -24,10 +23,10 @@ function Update() {
         if (response.ok) {
           setDepartments(data.departments);
         } else {
-          setError("Failed to load departments.");
+          toastr.error("Failed to load departments.");
         }
       } catch (err) {
-        setError("Failed to load departments.");
+        toastr.error("Failed to load departments.");
       }
     };
 
@@ -51,18 +50,14 @@ function Update() {
           setDepartment(result.doc.department._id);
           setActive(result.doc.active === 1);
         } else{
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else{
-        setError("We are unable to process now. Please try again later.")
+        toastr.error("We are unable to process now. Please try again later.")
       }
     } catch(err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   useEffect(() => {
@@ -73,7 +68,7 @@ function Update() {
     event.preventDefault();
     const updateSubject = { subject_code, name, department, active: active ? 1 : 0 };
     if (!subject_code || !name || !department){
-      setError("Please enter all the required values.");
+      toastr.error("Please enter all the required values.");
       return;
     }
     try {
@@ -92,33 +87,25 @@ function Update() {
       if (response){
         const result = await response.json();
         if (response.ok){
-          setResponse(result.message);
-          setError("");
+          toastr.success(result.message);
           setSubjectCode("");
           setName("");
           setDepartment("");
           setActive("");
           navigate("/subjects/subject-list");
         } else{
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else{
-        setError("We are unable to process now. Please try again later.")
+        toastr.error("We are unable to process now. Please try again later.")
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   return (
     <div className="container my-2">
-      {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-      {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-
       <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>

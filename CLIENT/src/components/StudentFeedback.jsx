@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+import toastr from 'toastr';
 const token = sessionStorage.getItem('token');
 function Student_feedback() {
   const [month_of_rating, setMonthOfRating] = useState("");
@@ -29,8 +30,6 @@ function Student_feedback() {
   const [strengths, setStrengths] = useState([]);
   const [improvements_area, setImprovementArea] = useState([]);
   const [anonymous, setAnonymous] = useState(false);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const navigate = useNavigate();
 
   const [strengths_options, setStrengthOptions] = useState([]);
@@ -66,13 +65,13 @@ function Student_feedback() {
           if (response.ok) {
             setSubjectsCode(result.subjects);
           } else {
-            setError(result.msg);
+            toastr.error(result.msg);
           }
         } else {
-          setError("We are unable to process now. Please try again later.");
+          toastr.error("We are unable to process now. Please try again later.");
         }
       } catch (error) {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     };
 
@@ -83,10 +82,10 @@ function Student_feedback() {
         if (response.ok) {
           setTeachers(data.teachers);
         } else {
-          setError("Failed to load departments.");
+          toastr.error("Failed to load departments.");
         }
       } catch (err) {
-        setError("Failed to load departments.");
+        toastr.error("Failed to load departments.");
       }
     };
 
@@ -98,10 +97,10 @@ function Student_feedback() {
           const options = data.docs.map(item => ({ value: item.name, label: item.name }));
           setStrengthOptions([...options, { value: 'Other', label: 'Other' }]);
         } else {
-          setError("Failed to load strengths name.");
+          toastr.error("Failed to load strengths name.");
         }
       } catch (err) {
-        setError("Failed to load strengths name.");
+        toastr.error("Failed to load strengths name.");
       }
     };
 
@@ -113,10 +112,10 @@ function Student_feedback() {
           const options = data.improvementarea.map(item => ({ value: item.name, label: item.name }));
           setAreasForImprovementsOptions([...options, { value: 'Other', label: 'Other' }]);
         } else {
-          setError("Failed to load area of improvement.");
+          toastr.error("Failed to load area of improvement.");
         }
       } catch (err) {
-        setError("Failed to load area of improvement.");
+        toastr.error("Failed to load area of improvement.");
       }
     };
 
@@ -170,14 +169,12 @@ function Student_feedback() {
     setImprovementArea([]);
     setAdditionalComments("");
     setAnonymous(false);
-    setError("");
-    setResponse("");
   }; 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
       if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || strengths.length === 0 ||  improvements_area.length === 0){
-            setError("Please enter all the required values.");
+            toastr.error("Please enter all the required values.");
             return;
         }
 
@@ -222,28 +219,20 @@ function Student_feedback() {
                 }
               });
             }
-            setResponse(result.msg);
-            setError("");
+            toastr.success(result.msg);
             navigate("/home");
           } else{
-            setError(result.msg);
+            toastr.error(result.msg);
           }
         } else{
-          setError("We are unable to process now. Please try again later.")
+          toastr.error("We are unable to process now. Please try again later.")
         }
-        setTimeout(() => {
-          setResponse("");
-          setError("");
-        }, 3000);
       };
 
 
       return(
         <div className="container my-2">
-          {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-          {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-      
-      <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
         <h4 className='my-4'>Rate your teachers here. For guide and more clarity about giving feedback please visit "User Manual".</h4>
         <hr />
         <div className="row">

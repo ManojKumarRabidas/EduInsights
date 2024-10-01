@@ -8,13 +8,12 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
 function List() {
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [searchFilter, setSearchFilter] = useState("");  // State for search box filter
   const [userTypeFilter, setUserTypeFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
@@ -31,12 +30,11 @@ function List() {
       const result = await response.json();
       if (response.ok) {
         setData(result.docs);
-        setError("");
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   }
 
@@ -53,18 +51,14 @@ function List() {
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Area of improvement deleted successfully");
+        toastr.success("Area of improvement deleted successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   const handleActiveChange = async (id, isActive) => {
@@ -80,18 +74,14 @@ function List() {
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Area of improvement status updated successfully");
+        toastr.success("Area of improvement status updated successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
   };
 
   // Define table columns with proper accessorKeys
@@ -227,9 +217,6 @@ function List() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
-
       <div className="row my-3">
         <div className="col">
           <input value={searchFilter || ""} onChange={(e) => setSearchFilter(e.target.value)} placeholder="Search by any value of table" className="form-control"/>

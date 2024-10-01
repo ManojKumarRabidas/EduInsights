@@ -16,7 +16,7 @@ router.get("/auth/user", userController.getUserType);
 router.get("/user-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userList);
 router.put("/user-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userUpdateActive);
 
-router.post("/change-password", userController.changePassword);
+router.post("/change-password", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), userController.changePassword);
 
 router.get("/get-profile-details",userController.verifyToken, userController.profileDetails);
 

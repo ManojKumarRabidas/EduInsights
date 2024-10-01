@@ -261,6 +261,7 @@ module.exports = {
     },
     deptCreate: async(req, res)=>{
         try {  
+            const userId = req.user;
             const body = req.body;
             if (!userId) {
                 res.status(400).json({ msg: "Session Expired!" });

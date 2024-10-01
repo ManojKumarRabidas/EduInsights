@@ -24,11 +24,29 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
 
 let user_type_globle;
 export default function App() {
+  toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": true,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
     const getUserType = async (token) => {
       const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
         method: 'GET',

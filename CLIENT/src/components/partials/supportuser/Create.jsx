@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+import toastr from 'toastr';
 const token = sessionStorage.getItem('token');
 
 function Create() {
@@ -18,8 +19,6 @@ function Create() {
   const [isLoginIdInvalid, setIsLoginIdInvalid] = useState(null);
   const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(null);
   const [active, setActive] = useState(false);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const navigate = useNavigate();
 
   const checkLoginIdAvailability = async (id) => {
@@ -34,7 +33,7 @@ function Create() {
       if (response.ok) {
         setIsLoginIdAvailable(result.available); // Assuming the API returns { available: true/false }
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
         setIsLoginIdAvailable(null); // Reset availability state in case of error
       }
     } catch (error) {
@@ -62,21 +61,17 @@ function Create() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
     const supportUserData = {user_type, employee_id, name, phone, email, address, pin, login_id, password, active: active ? "1" : "0" };
     if (!user_type || !employee_id || !name || !phone || !email || !address || !pin || !login_id || !password || !repeat_password){
-      setError("Please enter all the required values.");
+      toastr.error("Please enter all the required values.");
       return;
     }
     if (password !== repeat_password) {
-        setError("Please enter the same password.");
+        toastr.error("Please enter the same password.");
         return;
       }
       if (isLoginIdAvailable === false) {
-        setError("Login ID is not available. Please choose another.");
+        toastr.error("Login ID is not available. Please choose another.");
         return;
       }
     const response = await fetch(`${HOST}:${PORT}/server/support-user-create`, {
@@ -90,29 +85,26 @@ function Create() {
     if (response){
       const result = await response.json();
       if (response.ok){
-        setResponse(result.msg);
+        toastr.success("Support user created successfully.");
         navigate("/support-users/support-user-list");
       } else{
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } else{
-      setError("We are unable to process now. Please try again later.")
+      toastr.error("We are unable to process now. Please try again later.")
     }
   };
 
   return (
     <div className="container my-2">
-      {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-      {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-
       <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="row">
           <div className="col mb-3">
               <label className="form-label">User Type <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="user_type" value={user_type} onChange={(e) => setUserType(e.target.value)}>
-                  <option defaultValue>--Select user type--</option>
+                  <option>--Select user type--</option>
                   {/* <option value="ADMIN">ADMIN</option> */}
-                  <option value="SUPPORT">SUPPORT</option>
+                  <option defaultValue value="SUPPORT">SUPPORT</option>
               </select>
           </div>
           <div className="col mb-3">

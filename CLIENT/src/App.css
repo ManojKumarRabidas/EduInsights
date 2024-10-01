@@ -18,6 +18,30 @@
 table tbody tr{
   vertical-align:middle;
 }
+/* Success Toastr Background */
+.toast-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+/* Error Toastr Background */
+.toast-error {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Warning Toastr Background */
+.toast-warning {
+  background-color: #ffc107 !important;
+  color: black !important;
+}
+
+/* Info Toastr Background */
+.toast-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
 /* General styles */
 body {
   /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
