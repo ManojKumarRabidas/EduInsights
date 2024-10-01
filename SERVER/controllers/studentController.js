@@ -1,4 +1,5 @@
 const {ObjectId} = require('mongodb')
+const moment = require('moment');
 const teacherFeedbackModel = require("../models/teacher_feedback");
 const studentFeedbackModel = require("../models/student_feedback");
 const subjectModel = require("../models/subject");
@@ -40,7 +41,6 @@ module.exports = {
                         }},
                   {$match: {active:1}},
                 ]);
-            console.log(teachers);
             res.status(200).json({ teachers: teachers });
           } catch (error) {
             res.status(500).json({ msg: "Failed to retrieve teacher code" });
@@ -106,14 +106,19 @@ module.exports = {
     },
     teachersFeedbackList: async(req, res) =>{
       try {
-        console.log("feedback", req.user);
-        
+        console.log(req.body)
         let student_id;
         if (req.user.user_type == "STUDENT"){
           student_id = new ObjectId(req.user.id);
         } else{
           //
         }
+        if (!req.body || !req.body.startDate || !req.body.endDate){
+          res.status(500).json({ msg: "Failed to retrieve subject code" });
+        }
+        const startDate = new Date(req.body.startDate)
+        const endDate = new Date(req.body.endDate)
+        cosnole.log(startDate, endDate)
         const docs = await teacherFeedbackModel.aggregate([
             {$match: {student_id: student_id}},
             {$lookup: {from: "users",
@@ -165,48 +170,40 @@ module.exports = {
        
         if(docs.length>0){
           for(let i=0; i<docs.length; i++){
-            console.log(docs[i].semester_of_rating)
-            switch (docs[i].semester_of_rating) {
+            const ref = docs[i];
+            ref.date_of_rating = moment(ref.date_of_rating).format('DD/MM/YYYY');
+            ref.semester_of_rating = Number(ref.semester_of_rating);
+            switch (ref.semester_of_rating) {
               case 1:
-                docs[i].semester_of_rating = "1st";
+                ref.semester_of_rating = "1st";
                 break;
               case 2:
-                docs[i].semester_of_rating = "1st";
+                ref.semester_of_rating = "1st";
                 break;
               case 3:
-                docs[i].semester_of_rating = "3rd";
+                ref.semester_of_rating = "3rd";
                 break;
               case "4":
-                docs[i].semester_of_rating = "4th";
+                ref.semester_of_rating = "4th";
                 break;
               case "5":
-                docs[i].semester_of_rating = "5th";
+                ref.semester_of_rating = "5th";
                 break;
               case "6":
-                docs[i].semester_of_rating = "6th";
+                ref.semester_of_rating = "6th";
                 break;
               case "7":
-                docs[i].semester_of_rating = "7th";
+                ref.semester_of_rating = "7th";
                 break;
               case "8":
-                docs[i].semester_of_rating = "8th";
+                ref.semester_of_rating = "8th";
                 break;
+              default:
+                ref.semester_of_rating = "N/A";
            }
           } 
         }
-     
-        // if(docs.length>0){
-        //     for(let i=0; i<docs.length; i++){
-        //         const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected");
-        //         const val2 = docs[i].registration_number == null ? "N/A": (docs[i].registration_number == ""? "N/A": docs[i].registration_number);
-        //         const val3 = docs[i].registration_year == null ? "N/A": (docs[i].registration_year == ""? "N/A": docs[i].registration_year);
-        //         docs[i].is_verified = val;
-        //         docs[i].registration_number = val2;
-        //         docs[i].registration_year = val3;
-        //     }
-        // }
-        console.log(docs);
-        res.status(200).json({ docs: docs });
+        res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
     } catch (err) {
       console.log(err);
         res.status(400).json({ msg: err.message });

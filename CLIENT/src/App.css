@@ -18,6 +18,30 @@
 table tbody tr{
   vertical-align:middle;
 }
+.max-min-300{
+  max-width: 300px;
+  min-width: 300px;
+}
+/* Hide scrollbar but keep scroll behavior */
+.scroll-hidden {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+/* For Chrome, Safari, and other WebKit browsers */
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.scroll-hidden {
+  scrollbar-width: none; /* Hide scrollbar */
+}
+
+/* Optional: Ensure elements inside don't break */
+.scroll-hidden td {
+  white-space: nowrap;
+}
 /* Success Toastr Background */
 .toast-success {
   background-color: #28a745 !important;

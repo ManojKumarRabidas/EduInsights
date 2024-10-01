@@ -7,25 +7,28 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { subMonths } from "date-fns";
+import moment from "moment";
+import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 const token = sessionStorage.getItem('token');
 
 function Users() {
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
   const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
-  const [departmentFilter, setDepartmentFilter] = useState("");
-  const [verificationFilter, setVerificationFilter] = useState(""); 
-  const [departments, setDepartments] = useState([]); 
+  const [teacherFilter, setTeacherFilter] = useState("");
+  const [teachers, setTeachers] = useState([]); 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState([]);
+  const [dateRange, setDateRange] = useState([subMonths(new Date(), 6), new Date()]);
 
-  async function getData() {
+
+  async function getData(startDate, endDate) {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/teachers-feedback-list`, {
         method: "PATCH",
@@ -33,47 +36,46 @@ function Users() {
           "Content-Type": "application/json",
           'authorization': `Bearer ${token}` 
         },
+        body: JSON.stringify({ startDate, endDate })
       });
 
       if (response) {
         const result = await response.json();
         if (response.ok) {
           setData(result.docs);
-          const uniqueDepartments = new Set();
+          const uniqueTeachers = new Set();
           result.docs.forEach((doc) => {
-          if (doc.department) {
-            uniqueDepartments.add(doc.department);
+          if (doc.teacher) {
+            uniqueTeachers.add(doc.teacher);
           }
       });
-      setDepartments(Array.from(uniqueDepartments));
-        setError("");
+      setTeachers(Array.from(uniqueTeachers));
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     } catch (err) {
-      console.log(err);
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(dateRange[0], dateRange[1]);
+  }, [dateRange]);
 
 
   const columns = useMemo(
     () => [
       {
-        header: "Semester Of Rating",
+        header: "Semester",
         accessorKey: "semester_of_rating",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
       {
-        header: "Date Of Rating",
+        header: "Date",
         accessorKey: "date_of_rating",
         sortingFn: "alphanumeric",
         enableSorting: true,
@@ -91,7 +93,7 @@ function Users() {
         enableSorting: true,
       },
       {
-        header: "Student Registration No",
+        header: "Student Reg Year",
         accessorKey: "student_reg_year",
         sortingFn: "alphanumeric",
         enableSorting: true,
@@ -173,12 +175,16 @@ function Users() {
         accessorKey: "strength_names",
         sortingFn: "alphanumeric",
         enableSorting: true,
+        headerClassName: "max-min-300",
+        cellClassName: "scroll-hidden max-min-300 text-nowrap"
       },
       {
         header: "Area Of Improvement",
         accessorKey: "area_of_improvement_names",
         sortingFn: "alphanumeric",
         enableSorting: true,
+        headerClassName: "max-min-300",
+        cellClassName: "scroll-hidden max-min-300 text-nowrap"
       },
       {
         header: "Additional Comments",
@@ -202,17 +208,13 @@ function Users() {
         ? row.semester_of_rating === semesterOfRatingFilter
         : true;
 
-      const matchesVerificationFilter = verificationFilter
-        ? row.is_verified === verificationFilter
+      const matchesTeacherFilter = teacherFilter
+        ? row.teacher === teacherFilter
         : true;
 
-      const matchesDepartmentFilter = departmentFilter
-        ? row.department === departmentFilter
-        : true;
-
-      return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesVerificationFilter && matchesDepartmentFilter;
+      return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter;
     });
-  }, [data, searchFilter, semesterOfRatingFilter, verificationFilter, departmentFilter]);
+  }, [data, searchFilter, semesterOfRatingFilter, teacherFilter]);
 
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
@@ -261,9 +263,6 @@ function Users() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
-
       <div className="row my-3">
         <div className="col">
           <input
@@ -280,7 +279,7 @@ function Users() {
               value={semesterOfRatingFilter}
               onChange={(e) => setSemesterOfRatingFilter(e.target.value)}
             >
-              <option value="">-- Filter by "Semester Of Rating" --</option>
+              <option value="">-- Filter by "Semester" --</option>
               <option value="1st">1st sem</option>
                 <option value="2nd">2nd sem</option>
                 <option value="3rd">3rd sem</option>
@@ -296,74 +295,68 @@ function Users() {
           <div>
             <select
               className="form-select"
-              value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
+              value={teacherFilter}
+              onChange={(e) => setTeacherFilter(e.target.value)}
             >
-              <option value="">-- Filter by "Department" --</option>
-                {departments.map((dept) => (
-                  <option value={dept}>{dept}</option>
+              <option value="">-- Filter by "Teacher" --</option>
+                {teachers.map((val) => (
+                  <option value={val}>{val}</option>
                 ))}
             </select>
           </div>
         </div>
         <div className="col">
-          <div>
-            <select
-              className="form-select"
-              value={verificationFilter}
-              onChange={(e) => setVerificationFilter(e.target.value)}
-            >
-              <option value="">-- Filter by "Verification Status" --</option>
-              <option value="Verified">Verified</option>
-              <option value="Not Verified">Not Verified</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-          </div>
+        <DatePicker
+          selectsRange
+          startDate={dateRange[0]}
+          endDate={dateRange[1]}
+          onChange={(update) => setDateRange(update)}
+          dateFormat="yyyy/MM/dd"
+          className="form-control"
+        />
         </div>
       </div>
-
-      <table
-        className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded"
-        style={{ fontSize: "smaller" }}
-      >
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  className={header.column.columnDef.headerClassName}
-                >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                  {{
-                    asc: " 🔼",
-                    desc: " 🔽",
-                  }[header.column.getIsSorted()] ?? null}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+      <div className="scroll-hidden">
+        <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
+          <thead style={{textWrap: "nowrap"}}>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className={header.column.columnDef.headerClassName}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {{
+                      asc: " 🔼",
+                      desc: " 🔽",
+                    }[header.column.getIsSorted()] ?? null}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className="text-center">
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={cell.column.columnDef.cellClassName}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td colSpan="20" className="text-center">
+                  No data available
                 </td>
-              ))}
-            </tr>
-          ))}
-          {table.getRowModel().rows.length === 0 && (
-            <tr>
-              <td colSpan="10" className="text-center">
-                No data available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>        
 
       <div className="d-flex justify-content-between mb-3">
         <select
