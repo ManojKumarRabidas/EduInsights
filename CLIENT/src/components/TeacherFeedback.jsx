@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
+import toastr from 'toastr';
 const token = sessionStorage.getItem('token');
 function TeacherFeedback() {
   const [semester_of_rating, setSemesterOfRating] = useState("");
@@ -26,8 +27,6 @@ function TeacherFeedback() {
   const [strength_names, setStrengthNames] = useState([]);
   const [area_of_improvement_names, setAreaOfImprovementNames] = useState([]);
   const [additional_comments, setAdditionalComments] = useState("");
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const [subject_codes, setSubjectCodes] = useState([]);
   // const [subject_names, setSubjectNames] = useState([]);
@@ -38,7 +37,10 @@ function TeacherFeedback() {
   const [areas_for_improvement,setAreasForImprovement] = useState([])
   const [years, setYears] = useState([]);
 
-  
+  const [customStrength, setCustomStrength] = useState(""); // New state for custom strength
+  const [customImprovement, setCustomImprovement] = useState(""); // New state for custom improvement
+  const [custom_strengths_options, setCustomStrengthOptions] = useState([]);
+  const [custom_areas_for_improvements_options, setCustomAreasForImprovementsOptions] = useState([]);
 
   
   
@@ -63,35 +65,31 @@ function TeacherFeedback() {
 
     const fetchStudentStrengths = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-student-strength`);
+        const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
         if (response.ok) {
-          setStudentStrengths((data.docs).map(item=> ({
-            value:item.name,
-            label:item.name
-          })))
-        } else{
-          setError("Failed to load strengths name.");
+          const options = data.docs.map(item => ({ value: item.name, label: item.name }));
+          setStudentStrengths([...options, { value: 'Other', label: 'Other' }]);
+        } else {
+          toastr.error("Failed to load strengths name.");
         }
-      } catch(err) {
-        setError("Failed to load strengths name.");
+      } catch (err) {
+        toastr.error("Failed to load strengths name.");
       }
     };
 
     const fetchStudentImprovementArea = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-student-area-of-improvement`);
+        const response = await fetch(`${HOST}:${PORT}/server/get-improvement-area`);
         const data = await response.json();
         if (response.ok) {
-          setAreasForImprovement((data.docs).map(area=> ({
-            value:area.name,
-            label:area.name
-          })))
-        } else{
-          setError("Failed to load strengths name.");
+          const options = data.improvementarea.map(item => ({ value: item.name, label: item.name }));
+          setAreasForImprovement([...options, { value: 'Other', label: 'Other' }]);
+        } else {
+          toastr.error("Failed to load area of improvement.");
         }
-      } catch(err) {
-        setError("Failed to load strengths name.");
+      } catch (err) {
+        toastr.error("Failed to load area of improvement.");
       }
     };
 
@@ -132,6 +130,8 @@ function TeacherFeedback() {
   const handleAreaForImprovementChange = (selected) =>{
     setAreaOfImprovementNames(selected);
   }
+  
+
   const fetchStudents = async (student_reg_year, department) => {
     try {
       const payload = {registration_year:student_reg_year, department:department }
@@ -197,6 +197,22 @@ function TeacherFeedback() {
       setError("Failed to load subjects.");
     }
   };
+
+  const handleAddCustomStrength = () => {
+    if (customStrength && !strength_names.some(s => s.value === customStrength)) {
+      setStrengthNames([...strength_names, { value: customStrength, label: customStrength }]);
+      setCustomStrengthOptions([...custom_strengths_options, { name: customStrength, strength_for: "STUDENT", active: 1 }]);
+      setCustomStrength("");
+    }
+  };
+
+  const handleAddCustomImprovement = () => {
+    if (customImprovement && !area_of_improvement_names.some(i => i.value === customImprovement)) {
+      setAreaOfImprovementNames([...area_of_improvement_names, { value: customImprovement, label: customImprovement }]);
+      setCustomAreasForImprovementsOptions([...custom_areas_for_improvements_options, { name: customImprovement, area_for: "STUDENT", active: 1 }]);
+      setCustomImprovement("");
+    }
+  };
   
 
   
@@ -204,15 +220,13 @@ function TeacherFeedback() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_year || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names || !area_of_improvement_names ){
-            setError("Please enter all the required values.");
+      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_year || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names.length ===0 || !area_of_improvement_names.length ===0 ){
+        toastr.error("Please enter all the required values.");
             return;
         }
-        const final_strengths = [];
-        for (let i=0; i<(student_strengths).length; i++)
-        {
-          final_strengths.push(student_strengths[i].value)
-        }
+        const final_strengths = strengths.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
+        const final_AreasForImprovements = improvements_area.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
+
 
         const final_improvement = [];
         for (let i=0; i<(areas_for_improvement).length; i++)
@@ -226,7 +240,7 @@ function TeacherFeedback() {
         // }
 
         const userId = sessionStorage.getItem("eiUserId")
-        const teacherData = { semester_of_rating, date_of_rating, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments };
+        const teacherData = { semester_of_rating, date_of_rating, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:area_of_improvement_names,  additional_comments };
         const response = await fetch(`${HOST}:${PORT}/server/teacher-feedback`, {
           method: "POST",
           body: JSON.stringify(teacherData),
@@ -237,26 +251,47 @@ function TeacherFeedback() {
         });
         if (response){
           const result = await response.json();
-          console.log(result);
           if (response.ok){
-            setResponse(result.msg);
-            setError("");
-            navigate("/home")
+            console.log("custom_strengths_options", custom_strengths_options);
+            console.log("custom_areas_for_improvements_options", custom_areas_for_improvements_options);
+            
+            if (custom_strengths_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/strength-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_strengths_options),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                },
+              });
+            }
+            
+        
+            if (custom_areas_for_improvements_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_areas_for_improvements_options),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                }
+              });
+            }
+            toastr.success(result.msg);
+            navigate("/home");
           } else{
-            setError(result.msg);
+            toastr.error(result.msg);
           }
         } else{
-          setError("We are unable to process now. Please try again later.")
+          toastr.error("We are unable to process now. Please try again later.")
         }
-        setTimeout(() => {
-          setResponse("");
-          setError("");
-        }, 3000);
       };
+
+        
+
+
       return(
-        <div className="container my-2">
-          {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-          {response && (<div className="alert alert-success" role="alert">{response}</div>)}
+      <div className="container my-2">
       <form onSubmit={handleSubmit}>
       <h4 className='my-4'>Rate your students here. For guide and more clarity about giving feedback please visit "User Manual".</h4>
       <hr />
@@ -498,7 +533,8 @@ function TeacherFeedback() {
         </div>
 
             <hr />
-        <div className="mb-3">
+        <div className="mb-3 row">
+        <div className="col">
           <label htmlFor="strength_of_student" className='form-label'>Strengths<span className="ei-col-red">*</span></label>
           <Select
               isMulti
@@ -506,14 +542,23 @@ function TeacherFeedback() {
               className="basic-multi-select"
               classNamePrefix="select"
               onChange={handleStrengthChange}
-              value={strength_names}
-              
-            />      
+              value={strength_names}/>
+              </div> 
+              {strength_names.some(s => s.value === "Other") && (
+          <div className="col">
+            <label htmlFor=""></label>
+            <div className="row">
+              <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom strength" value={customStrength} onChange={(e) => setCustomStrength(e.target.value)}/></div>
+              <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomStrength}>Add </button></div>
+            </div>
+          </div>
+        )}     
         <div/>
         </div>
 
 
-        <div className="mb-3">
+        <div className="mb-3 row">
+        <div className="col">
           <label htmlFor="area_of_improvements" className='form-label'>Area Of Improvement<span className="ei-col-red">*</span></label>
           <Select
               isMulti
@@ -521,8 +566,17 @@ function TeacherFeedback() {
               className="basic-multi-select"
               classNamePrefix="select"
               onChange={handleAreaForImprovementChange}
-              value={area_of_improvement_names}
-            />
+              value={area_of_improvement_names} />
+              {area_of_improvement_names.some(a => a.value === "Other") && (
+        <div className="col">
+          <label htmlFor=""></label>
+          <div className="row">
+            <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom improvement" value={customImprovement} onChange={(e) => setCustomImprovement(e.target.value)}/></div>
+            <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomImprovement}> Add </button></div>
+          </div>
+        </div>
+        )}
+            </div>
         </div>
 
 
