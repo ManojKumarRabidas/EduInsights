@@ -30,6 +30,10 @@ function Users() {
 
   async function getData(startDate, endDate) {
     try {
+      if (!startDate || !endDate){
+        toastr.warning("Both start date and end date must be entered");
+        return;
+      }
       const response = await fetch(`${HOST}:${PORT}/server/teachers-feedback-list`, {
         method: "PATCH",
         headers: { 
@@ -42,6 +46,7 @@ function Users() {
       if (response) {
         const result = await response.json();
         if (response.ok) {
+          toastr.info("Data retrieved for the mentioned date range.");
           setData(result.docs);
           const uniqueTeachers = new Set();
           result.docs.forEach((doc) => {

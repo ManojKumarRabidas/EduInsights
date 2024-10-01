@@ -114,13 +114,14 @@ module.exports = {
           //
         }
         if (!req.body || !req.body.startDate || !req.body.endDate){
-          res.status(500).json({ msg: "Failed to retrieve subject code" });
+          res.status(500).json({ msg: "Date of ratting is mandetory" });
         }
         const startDate = new Date(req.body.startDate)
         const endDate = new Date(req.body.endDate)
-        cosnole.log(startDate, endDate)
+        console.log(startDate, endDate)
         const docs = await teacherFeedbackModel.aggregate([
-            {$match: {student_id: student_id}},
+            {$match: {student_id: student_id, date_of_rating: { $gte: startDate, $lte: endDate }}},
+            // {$match: {student_id: student_id}},
             {$lookup: {from: "users",
                     localField: "teacher_id",
                     foreignField: "_id",
@@ -203,6 +204,7 @@ module.exports = {
            }
           } 
         }
+        console.log(docs)
         res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
     } catch (err) {
       console.log(err);
