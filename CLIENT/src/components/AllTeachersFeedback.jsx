@@ -17,7 +17,7 @@ function Users() {
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
-  const [userTypeFilter, setUserTypeFilter] = useState("");
+  const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [verificationFilter, setVerificationFilter] = useState(""); 
   const [departments, setDepartments] = useState([]); 
@@ -198,8 +198,8 @@ function Users() {
           )
         : true;
 
-      const matchesUserTypeFilter = userTypeFilter
-        ? row.user_type === userTypeFilter
+      const matchesSemesterOfRatingFilter = semesterOfRatingFilter
+        ? row.semester_of_rating === semesterOfRatingFilter
         : true;
 
       const matchesVerificationFilter = verificationFilter
@@ -210,9 +210,9 @@ function Users() {
         ? row.department === departmentFilter
         : true;
 
-      return matchesSearchFilter && matchesUserTypeFilter && matchesVerificationFilter && matchesDepartmentFilter;
+      return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesVerificationFilter && matchesDepartmentFilter;
     });
-  }, [data, searchFilter, userTypeFilter, verificationFilter, departmentFilter]);
+  }, [data, searchFilter, semesterOfRatingFilter, verificationFilter, departmentFilter]);
 
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
@@ -277,12 +277,18 @@ function Users() {
           <div>
             <select
               className="form-select"
-              value={userTypeFilter}
-              onChange={(e) => setUserTypeFilter(e.target.value)}
+              value={semesterOfRatingFilter}
+              onChange={(e) => setSemesterOfRatingFilter(e.target.value)}
             >
-              <option value="">-- Filter by "User Type" --</option>
-              <option value="TEACHER">TEACHER</option>
-              <option value="STUDENT">STUDENT</option>
+              <option value="">-- Filter by "Semester Of Rating" --</option>
+              <option value="1st">1st sem</option>
+                <option value="2nd">2nd sem</option>
+                <option value="3rd">3rd sem</option>
+                <option value="4th">4th sem</option>
+                <option value="5th">5th sem</option>
+                <option value="6th">6th sem</option>
+                <option value="7th">7th sem</option>
+                <option value="8th">8th sem</option>
             </select>
           </div>
         </div>

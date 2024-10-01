@@ -162,6 +162,39 @@ module.exports = {
                     area_of_improvement_names: 1,
                     additional_comments: 1}}
         ]);
+       
+        if(docs.length>0){
+          for(let i=0; i<docs.length; i++){
+            console.log(docs[i].semester_of_rating)
+            switch (docs[i].semester_of_rating) {
+              case 1:
+                docs[i].semester_of_rating = "1st";
+                break;
+              case 2:
+                docs[i].semester_of_rating = "1st";
+                break;
+              case 3:
+                docs[i].semester_of_rating = "3rd";
+                break;
+              case "4":
+                docs[i].semester_of_rating = "4th";
+                break;
+              case "5":
+                docs[i].semester_of_rating = "5th";
+                break;
+              case "6":
+                docs[i].semester_of_rating = "6th";
+                break;
+              case "7":
+                docs[i].semester_of_rating = "7th";
+                break;
+              case "8":
+                docs[i].semester_of_rating = "8th";
+                break;
+           }
+          } 
+        }
+     
         // if(docs.length>0){
         //     for(let i=0; i<docs.length; i++){
         //         const val = docs[i].is_verified == 1 ?  "Verified": ( docs[i].is_verified == 0 ?  "Not Verified": "Rejected");
