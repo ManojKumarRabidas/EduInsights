@@ -68,7 +68,7 @@ module.exports = {
     studentFeedback: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.month_of_rating || !body.date_of_rating || !body.teacher_code || !body.subject_code || !body.clarity_of_explanation || !body.subject_knowledge || !body.encouragement_of_question || !body.maintains_discipline || !body.fairness_in_treatment || !body.approachability || !body.behaviour_and_attitude || !body.encouragement_and_support || !body.overall_teaching_quality || !body.provide_study_material || !body.explain_with_supportive_analogy || !body.use_of_media || !body.strengths || !body.improvements_area){
+            if (!body.month_of_rating || !body.date_of_rating || !body.teacher_code || !body.subject_code || !body.clarity_of_explanation || !body.subject_knowledge || !body.encouragement_of_question || !body.maintains_discipline || !body.fairness_in_treatment || !body.approachability || !body.behaviour_and_attitude || !body.encouragement_and_support || !body.overall_teaching_quality || !body.provide_study_material || !body.explain_with_supportive_analogy || !body.use_of_media || !body.strengths || !body.areas_of_improvement){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
@@ -106,10 +106,10 @@ module.exports = {
     },
     teachersFeedbackList: async(req, res) =>{
       try {
-        console.log(req.body)
-        let student_id;
+        let matchCondition = {};
         if (req.user.user_type == "STUDENT"){
-          student_id = new ObjectId(req.user.id);
+          const student_id = new ObjectId(req.user.id);
+          matchCondition.student_id = student_id;
         } else{
           //
         }
@@ -118,10 +118,16 @@ module.exports = {
         }
         const startDate = new Date(req.body.startDate)
         const endDate = new Date(req.body.endDate)
-        console.log(startDate, endDate)
+        if (endDate < startDate) {
+          return res.status(400).json({ msg: "End date cannot be before start date" });
+        }
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 6) {
+          return res.status(400).json({ msg: "The date range cannot exceed 6 months" });
+        }
+        matchCondition.date_of_rating = { $gte: startDate, $lte: endDate };
         const docs = await teacherFeedbackModel.aggregate([
-            {$match: {student_id: student_id, date_of_rating: { $gte: startDate, $lte: endDate }}},
-            // {$match: {student_id: student_id}},
+            {$match: matchCondition},
             {$lookup: {from: "users",
                     localField: "teacher_id",
                     foreignField: "_id",
@@ -164,8 +170,8 @@ module.exports = {
                     participation_and_engagement: 1,
                     group_work: 1,
                     overall_student_quality: 1,
-                    strength_names: 1,
-                    area_of_improvement_names: 1,
+                    strengths: 1,
+                    areas_of_improvement: 1,
                     additional_comments: 1}}
         ]);
        
@@ -204,11 +210,10 @@ module.exports = {
            }
           } 
         }
-        console.log(docs)
         res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
-    } catch (err) {
-      console.log(err);
-        res.status(400).json({ msg: err.message });
-    }
+      } catch (err) {
+        console.log(err);
+          res.status(400).json({ msg: err.message });
+      }
     }
 }

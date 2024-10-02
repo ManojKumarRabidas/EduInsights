@@ -10,7 +10,6 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { subMonths } from "date-fns";
-import moment from "moment";
 import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
@@ -18,6 +17,7 @@ const token = sessionStorage.getItem('token');
 
 function Users() {
   const [data, setData] = useState([]);
+  const [userType, setUserType] = useState("")
   const [searchFilter, setSearchFilter] = useState("");
   const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
   const [teacherFilter, setTeacherFilter] = useState("");
@@ -66,13 +66,31 @@ function Users() {
     }
   }
 
+  const getUserType = async (token) => {
+    const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (response){
+      const result = await response.json();
+      if (response.ok){
+        setUserType(result.doc.user_type);
+      } else{
+        toastr.error(result.msg);
+      }
+    } else{
+      toastr.error("We are unable to process now. Please try again later.")
+    }
+  }
   useEffect(() => {
     getData(dateRange[0], dateRange[1]);
+    getUserType(token)
   }, [dateRange]);
 
 
   const columns = useMemo(
-    () => [
+    () => { 
+      const baseColumns = [
       {
         header: "Semester",
         accessorKey: "semester_of_rating",
@@ -91,24 +109,24 @@ function Users() {
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
-      {
-        header: "Student Name",
-        accessorKey: "student",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Student Reg Year",
-        accessorKey: "student_reg_year",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
-      {
-        header: "Department",
-        accessorKey: "department",
-        sortingFn: "alphanumeric",
-        enableSorting: true,
-      },
+      // {
+      //   header: "Student Name",
+      //   accessorKey: "student",
+      //   sortingFn: "alphanumeric",
+      //   enableSorting: true,
+      // },
+      // {
+      //   header: "Student Reg Year",
+      //   accessorKey: "student_reg_year",
+      //   sortingFn: "alphanumeric",
+      //   enableSorting: true,
+      // },
+      // {
+      //   header: "Department",
+      //   accessorKey: "department",
+      //   sortingFn: "alphanumeric",
+      //   enableSorting: true,
+      // },
       {
         header: "Subject Code",
         accessorKey: "subject",
@@ -176,16 +194,16 @@ function Users() {
         enableSorting: true,
       },
       {
-        header: "Strength Names",
-        accessorKey: "strength_names",
+        header: "Strengths",
+        accessorKey: "strengths",
         sortingFn: "alphanumeric",
         enableSorting: true,
         headerClassName: "max-min-300",
         cellClassName: "scroll-hidden max-min-300 text-nowrap"
       },
       {
-        header: "Area Of Improvement",
-        accessorKey: "area_of_improvement_names",
+        header: "Areas Of Improvement",
+        accessorKey: "areas_of_improvement",
         sortingFn: "alphanumeric",
         enableSorting: true,
         headerClassName: "max-min-300",
@@ -197,8 +215,34 @@ function Users() {
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
-    ],
-    [pageIndex, pageSize]
+    ];
+
+    if (userType === "ADMIN") {
+      baseColumns.splice(3, 0, // Insert after the third column
+        {
+          header: "Student Name",
+          accessorKey: "student",
+          sortingFn: "alphanumeric",
+          enableSorting: true,
+        },
+        {
+          header: "Student Reg Year",
+          accessorKey: "student_reg_year",
+          sortingFn: "alphanumeric",
+          enableSorting: true,
+        },
+        {
+          header: "Department",
+          accessorKey: "department",
+          sortingFn: "alphanumeric",
+          enableSorting: true,
+        },
+      );
+    }
+
+    return baseColumns;
+  },
+  [userType, pageIndex, pageSize]
   );
 
   const filteredData = useMemo(() => {
@@ -317,7 +361,7 @@ function Users() {
           endDate={dateRange[1]}
           onChange={(update) => setDateRange(update)}
           dateFormat="yyyy/MM/dd"
-          className="form-control"
+          className="form-control form-select"
         />
         </div>
       </div>
@@ -325,7 +369,7 @@ function Users() {
         <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
           <thead style={{textWrap: "nowrap"}}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="text-center">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}

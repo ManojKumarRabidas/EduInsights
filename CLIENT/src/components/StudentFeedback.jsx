@@ -28,7 +28,7 @@ function Student_feedback() {
   const [subjects, setSubjectsCode] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [strengths, setStrengths] = useState([]);
-  const [improvements_area, setImprovementArea] = useState([]);
+  const [areas_of_improvement, setImprovementArea] = useState([]);
   const [anonymous, setAnonymous] = useState(false);
   const navigate = useNavigate();
 
@@ -143,8 +143,8 @@ function Student_feedback() {
   };
 
   const handleAddCustomImprovement = () => {
-    if (customImprovement && !improvements_area.some(i => i.value === customImprovement)) {
-      setImprovementArea([...improvements_area, { value: customImprovement, label: customImprovement }]);
+    if (customImprovement && !areas_of_improvement.some(i => i.value === customImprovement)) {
+      setImprovementArea([...areas_of_improvement, { value: customImprovement, label: customImprovement }]);
       setCustomAreasForImprovementsOptions([...custom_areas_for_improvements_options, { name: customImprovement, area_for: "TEACHER", active: 1 }]);
       setCustomImprovement("");
     }
@@ -173,17 +173,17 @@ function Student_feedback() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || strengths.length === 0 ||  improvements_area.length === 0){
+      if (!month_of_rating || !date_of_rating || !teacher_code || !subject_code || !clarity_of_explanation || !subject_knowledge || !encouragement_of_question || !maintains_discipline || !fairness_in_treatment || !approachability || !behaviour_and_attitude || !encouragement_and_support || !overall_teaching_quality || !provide_study_material || !explain_with_supportive_analogy || !use_of_media || strengths.length === 0 ||  areas_of_improvement.length === 0){
             toastr.error("Please enter all the required values.");
             return;
         }
 
         const final_strengths = strengths.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
-        const final_AreasForImprovements = improvements_area.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
+        const final_AreasForImprovements = areas_of_improvement.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
 
 
 
-        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, improvements_area:final_AreasForImprovements,  additional_comments};
+        const studentData = { month_of_rating, date_of_rating, teacher_code, subject_code, anonymous, clarity_of_explanation, subject_knowledge, encouragement_of_question, maintains_discipline, fairness_in_treatment, approachability, behaviour_and_attitude, encouragement_and_support, overall_teaching_quality, provide_study_material,explain_with_supportive_analogy, use_of_media, strengths: final_strengths, areas_of_improvement:final_AreasForImprovements,  additional_comments};
         const response = await fetch(`${HOST}:${PORT}/server/student-feedback`, {
           method: "POST",
           body: JSON.stringify(studentData),
@@ -195,9 +195,6 @@ function Student_feedback() {
         if (response){
           const result = await response.json();
           if (response.ok){
-            console.log("custom_strengths_options", custom_strengths_options);
-            console.log("custom_areas_for_improvements_options", custom_areas_for_improvements_options);
-            
             if (custom_strengths_options.length>0) {
               await fetch(`${HOST}:${PORT}/server/strength-create`, {
                 method: "POST",
@@ -450,9 +447,9 @@ function Student_feedback() {
       <div className="mb-3 row">
         <div className="col">
           <label>Areas for Improvement <span className="ei-col-red">*</span></label>
-          <Select isMulti options={areas_for_improvements_options} value={improvements_area} onChange={handleAreasForImprovementChange}/>
+          <Select isMulti options={areas_for_improvements_options} value={areas_of_improvement} onChange={handleAreasForImprovementChange}/>
         </div>
-        {improvements_area.some(a => a.value === "Other") && (
+        {areas_of_improvement.some(a => a.value === "Other") && (
         <div className="col">
           <label htmlFor=""></label>
           <div className="row">

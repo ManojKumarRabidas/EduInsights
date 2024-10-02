@@ -2,6 +2,7 @@ import './App.css';
 import Registration from "./components/Registration";
 import Login from "./components/Login";
 import Unauthorized from "./components/Unauthorized";
+import Error404 from "./components/Error404";
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Home from './components/Home';
@@ -31,6 +32,7 @@ const PORT = import.meta.env.VITE_PORT
 
 let user_type_globle;
 export default function App() {
+  const [userType, setUserType] = useState("");
   toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -54,15 +56,16 @@ export default function App() {
       });
       if (response){
         const result = await response.json();
-        console.log(result);
-        
         if (response.ok){
-          user_type_globle = result.doc.user_type
+          setUserType(result.doc.user_type);
+          user_type_globle = result.doc.user_type;
         } else{
-          setError(result.msg);
+          setUserType("ERROR");
+          user_type_globle = "ERROR";
+          toastr.error(result.msg);
         }
       } else{
-        setError("We are unable to process now. Please try again later.")
+        toastr.error("We are unable to process now. Please try again later.")
       }
     }
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,37 +84,41 @@ export default function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <AppContent isAuthenticated={isAuthenticated} />
+        <AppContent isAuthenticated={(isAuthenticated, userType)} />
       </BrowserRouter>
     </div>
   );
 }
 
-function AppContent({ isAuthenticated }) {
+function AppContent({ isAuthenticated, userType }) {
   const user_type = user_type_globle;
   const location = useLocation();
   const isRegistrationPage = location.pathname === '/registration';
   const isLoginPage = location.pathname === '/login';
-
+  const error404Page = location.pathname === '/error-404';
   if (!isAuthenticated && !isLoginPage && !isRegistrationPage) {
     return <Navigate to='/login' replace />;
   }
 
   if (isAuthenticated && (isLoginPage || isRegistrationPage)) {
-    return <Navigate to='/home' replace />;
+    if (user_type != "ERROR") {
+      return <Navigate to='/home' replace />;
+    } else{
+      return <Navigate to='/error-404' replace />
+    }
   }
-
   return (
     <>
-      {isAuthenticated && !isRegistrationPage && !isLoginPage && <Navbar />}
+      {isAuthenticated && !isRegistrationPage && !isLoginPage && !error404Page && <Navbar />}
       <div className="container-fluid">
-        <div className={`${isRegistrationPage || isLoginPage ? 'row ei-row-unrestricted' : 'row ei-row'}`}>
-          {isAuthenticated && !isRegistrationPage && !isLoginPage && <Sidebar />}
-          <main className={`${isRegistrationPage ? 'col-12 main-section-registration': (isLoginPage ? 'col-12 main-section-log-in': 'col-12 main-section')}`}>
+        <div className={`${isRegistrationPage || isLoginPage || error404Page ? 'row ei-row-unrestricted' : 'row ei-row'}`}>
+          {isAuthenticated && !isRegistrationPage && !isLoginPage && !error404Page && <Sidebar />}
+          <main className={`${isRegistrationPage || error404Page ? 'col-12 main-section-registration': (isLoginPage ? 'col-12 main-section-log-in': 'col-12 main-section')}`}>
             <Routes>
               <Route path='/' element={<Navigate to={isAuthenticated ? '/home' : '/login'} replace />} />
               <Route path='/registration' element={<Registration />} />
               <Route path='/login' element={<Login />} />
+              <Route path='/error-404' element={<Error404 />} />
               <Route path='/home' element={<Home />} />
               <Route path='/admin-dashboard' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AdminDashboard /> : <Unauthorized />} />
               <Route path='/users' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Users /> : <Unauthorized />} />

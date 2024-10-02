@@ -6,7 +6,7 @@ const authorizeRole = (roles) => (req, res, next) => {
   if (!token) return res.status(401).json({status: false, msg: 'Authorization denied' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {console.log("invalid token error", err); return res.status(403).json({status: false, msg: 'Invalid token' });}
+    if (err) {console.log("invalid token error", err); return res.status(403).json({status: false, msg: 'Session expired. Please log in again.' });}
     if (!roles.includes(user.user_type)) {
       return res.status(403).json({ msg: 'Access denied for this role' });
     }

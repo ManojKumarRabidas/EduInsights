@@ -18,14 +18,14 @@ const teacher_feedbackSchema = new mongoose.Schema({
     participation_and_engagement: {type: 'number', required: true},
     group_work: {type: 'number', required: true},
     overall_student_quality: {type: 'number', required: true},
-    strength_names: {type: [String], required: true},
-    area_of_improvement_names: {type: [String], required: true},
+    strengths: {type: [String], required: true},
+    areas_of_improvement: {type: [String], required: true},
     additional_comments: {type: 'string'},
     createdBy: {type: 'ObjectId'},
     updatedBy: {type: 'ObjectId'}
 
 },{timestamps: true});
 
-
+teacher_feedbackSchema.index({ semester_of_rating:1, teacher_id: 1, student_id: 1 }, { unique: true });
 const Teacher_feedback = mongoose.model('teacher_feedback',teacher_feedbackSchema)
 module.exports = Teacher_feedback

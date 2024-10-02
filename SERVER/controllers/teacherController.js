@@ -1,5 +1,5 @@
 const {ObjectId} = require('mongodb')
-const teacherModel = require("../models/teacher_feedback");
+const teacherFeedbackModel = require("../models/teacher_feedback");
 const strengthModel = require ("../models/strength");
 const subjectModel = require ("../models/subject");
 
@@ -9,7 +9,7 @@ module.exports = {
     teacherFeedback: async(req, res)=>{
         try {
             const body = req.body;
-            if (!body.semester_of_rating || !body.date_of_rating || !body.student_name || !body.student_reg_year || !body.department || !body.subject_code || !body.class_participation || !body.homework_or_assignments || !body.quality_of_work || !body.timeliness || !body.problem_solving_skills || !body.behaviour_and_attitude || !body.responsibility || !body.participation_and_engagement || !body.group_work || !body.overall_student_quality || !body.strength_names ||  !body.area_of_improvement_names){
+            if (!body.semester_of_rating || !body.date_of_rating || !body.student_name || !body.student_reg_year || !body.department || !body.subject_code || !body.class_participation || !body.homework_or_assignments || !body.quality_of_work || !body.timeliness || !body.problem_solving_skills || !body.behaviour_and_attitude || !body.responsibility || !body.participation_and_engagement || !body.group_work || !body.overall_student_quality || !body.strengths ||  !body.areas_of_improvement){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
@@ -26,7 +26,7 @@ module.exports = {
             body.problem_solving_skills = Number(body.problem_solving_skills);
             body.behaviour_and_attitude = Number(body.behaviour_and_attitude);
             body.responsibility = Number(body.responsibility);
-            body.participation_and_engagement = Number(!body.participation_and_engagement);
+            body.participation_and_engagement = Number(body.participation_and_engagement);
             body.group_work = Number(body.group_work);
             body.overall_student_quality = Number (body.overall_student_quality);
             
@@ -40,7 +40,7 @@ module.exports = {
             delete body.subject_code
             delete body.department
             delete body.student_name
-            const doc = await teacherModel.create(body)
+            const doc = await teacherFeedbackModel.create(body)
 
             res.status(201).json({ status: true, msg: "Feedback Recorded successfully.", doc: doc });
         } catch (err) {

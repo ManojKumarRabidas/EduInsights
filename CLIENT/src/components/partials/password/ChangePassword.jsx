@@ -24,7 +24,7 @@ export default function ChangePassword(){
         }
         const passwordData = { old_password, new_password};
         if (!old_password || !new_password){
-          toastr.error("Please enter all the required values.");
+          toastr.error("Please enter old and new password.");
           return;
         }
         const response = await fetch(`${HOST}:${PORT}/server/change-password`, {
@@ -38,7 +38,7 @@ export default function ChangePassword(){
         if (response){
           const result = await response.json();
           if (response.ok){
-            toastr.success('Your action was successful!', 'Success');
+            toastr.success("Password changed successfully.");
             toastr.error("");
             setOldPassword("");
             setNewPassword("");

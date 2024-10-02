@@ -162,12 +162,12 @@ module.exports = {
     // });
     res.clearCookie('token').json({ msg: 'Logged out successfully' });
   }, 
-  getUserType:(req, res)=>{
+  getUser:(req, res)=>{
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({status: false, msg: 'Authorization denied' });
   
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) return res.status(403).json({status: false, msg: 'Invalid token' });
+      if (err) {console.log(err); return res.status(403).json({status: false, msg: 'Session expired.' });}
       res.status(200).json({status: true,doc: user });
     });
   },

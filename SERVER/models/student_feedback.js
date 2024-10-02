@@ -19,7 +19,7 @@ const student_feedbackSchema = new mongoose.Schema({
     explain_with_supportive_analogy: {type: 'number', required: true},
     use_of_media: {type: 'number', required: true},
     strengths: {type: [String], required: true},
-    improvements_area: {type: [String], required: true},
+    areas_of_improvement: {type: [String], required: true},
     additional_comments: {type: 'string'},
     anonymous: {type: 'boolean'},
     createdBy: {type: 'ObjectId'},

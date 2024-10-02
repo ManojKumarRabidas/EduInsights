@@ -11,7 +11,7 @@ router.post("/user-create", userController.userCreate);
 router.get("/check-login-id/:login_id", userController.userCheckLoginIdAvailability);
 router.post('/login', userController.userLogin);
 router.post('/logout', userController.userLogout);
-router.get("/auth/user", userController.getUserType);
+router.get("/auth/user", userController.getUser);
 
 router.get("/user-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userList);
 router.put("/user-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userUpdateActive);
