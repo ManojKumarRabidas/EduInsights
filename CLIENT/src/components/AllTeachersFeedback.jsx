@@ -22,6 +22,8 @@ function Users() {
   const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
   const [teacherFilter, setTeacherFilter] = useState("");
   const [teachers, setTeachers] = useState([]); 
+  const [studentFilter, setStudentFilter] = useState("");
+  const [students, setStudents] = useState([]); 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState([]);
@@ -58,6 +60,21 @@ function Users() {
         } else {
           toastr.error(result.msg);
         }
+
+        if (response.ok) {
+          toastr.info("Data retrieved for the mentioned date range.");
+          setData(result.docs);
+          const uniqueStudents = new Set();
+          result.docs.forEach((doc) => {
+          if (doc.student) {
+            uniqueStudents.add(doc.student);
+          }
+      });
+      setStudents(Array.from(uniqueStudents));
+        } else {
+          toastr.error(result.msg);
+        }
+
       } else {
         toastr.error("We are unable to process now. Please try again later.");
       }
@@ -261,7 +278,11 @@ function Users() {
         ? row.teacher === teacherFilter
         : true;
 
-      return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter;
+        const matchesStudentFilter = studentFilter
+        ? row.student === studentFilter
+        : true;  
+
+      return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter && matchesStudentFilter;
     });
   }, [data, searchFilter, semesterOfRatingFilter, teacherFilter]);
 
@@ -354,6 +375,20 @@ function Users() {
             </select>
           </div>
         </div>
+        {(userType !='STUDENT') && (<div className="col">
+          <div>
+            <select
+              className="form-select"
+              value={studentFilter}
+              onChange={(e) => setStudentFilter(e.target.value)}
+            >
+              <option value="">-- Filter by "Student" --</option>
+                {students.map((val) => (
+                  <option value={val}>{val}</option>
+                ))}
+            </select>
+          </div>
+        </div>)}
         <div className="col">
         <DatePicker
           selectsRange
