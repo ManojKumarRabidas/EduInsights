@@ -284,7 +284,7 @@ function Users() {
 
       return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter && matchesStudentFilter;
     });
-  }, [data, searchFilter, semesterOfRatingFilter, teacherFilter]);
+  }, [data, searchFilter, semesterOfRatingFilter, teacherFilter, studentFilter]);
 
   const sortedData = useMemo(() => {
     if (!sorting.length) return filteredData;
@@ -330,6 +330,26 @@ function Users() {
     getSortedRowModel: getSortedRowModel(),
     manualPagination: true,
   });
+
+const calculateVisibleAverages = (rows, columns) => {
+  const averages = {};
+  const approvedElements = ["class_participation", "homework_or_assignments","quality_of_work","timeliness", "problem_solving_skills", "behaviour_and_attitude" ,"responsibility", "participation_and_engagement" ,"group_work" ,"overall_student_quality"]
+  columns.forEach((column) => {
+    if (approvedElements.indexOf(column.id) !== -1) {
+        const total = rows.reduce((sum, row) => {
+        const cellValue = row.getValue(column.id);
+        return sum + (parseFloat(cellValue) || 0);
+      }, 0);
+      averages[column.id] = (total / rows.length).toFixed(2);
+    } else {
+      averages[column.id] = "--";
+    }
+  });
+  return averages;
+};
+
+const visibleRows = table.getRowModel().rows;
+const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColumns());
 
   return (
     <div className="container my-2">
@@ -400,82 +420,69 @@ function Users() {
         />
         </div>
       </div>
+
       <div className="scroll-hidden">
         <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
-          <thead style={{textWrap: "nowrap"}}>
+          <thead style={{ textWrap: "nowrap" }}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="text-center">
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className={header.column.columnDef.headerClassName}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: " 🔼",
-                      desc: " 🔽",
-                    }[header.column.getIsSorted()] ?? null}
-                  </th>
-                ))}
-              </tr>
+              <>
+                <tr key={headerGroup.id} className="text-center">
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={header.column.columnDef.headerClassName}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {{
+                        asc: " 🔼",
+                        desc: " 🔽",
+                      }[header.column.getIsSorted()] ?? null}
+                    </th>
+                  ))}
+                </tr>
+
+                {visibleRows.length > 0 && (
+                <tr style={{ backgroundColor: "#f2f4f5" }} className="text-center">
+                  {table.getVisibleFlatColumns().map((column, colIndex) => (
+                    <td key={colIndex} className={column.cellClassName}>
+                      {colIndex === 0 ? (
+                        <strong>Averages</strong>
+                      ) : (
+                        averages.hasOwnProperty(column.id) ? averages[column.id] : ''
+                      )}
+                    </td>
+                  ))}
+                </tr>
+                )}
+              </>
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="text-center">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className={cell.column.columnDef.cellClassName}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-            {table.getRowModel().rows.length === 0 && (
-              <tr>
-                <td colSpan="20" className="text-center">
-                  No data available
+          {visibleRows.map((row) => (
+            <tr key={row.id} className="text-center">
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className={cell.column.columnDef.cellClassName}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
-              </tr>
-            )}
-          </tbody>
+              ))}
+            </tr>
+          ))}
+          {visibleRows.length === 0 && (
+            <tr><td colSpan="20" className="text-center"> No data available</td></tr>
+          )}
+        </tbody>
         </table>
-      </div>        
+      </div>
 
       <div className="d-flex justify-content-between mb-3">
-        <select
-          className="form-select mx-2"
-          style={{maxWidth: "fit-content"}}
-          value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
-        >
-          {[10, 20, 30, 40, 50].map((size) => (
-            <option key={size} value={size}>
-              Show {size}
-            </option>
-          ))}
+        <select className="form-select mx-2" style={{maxWidth: "fit-content"}} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
+          {[10, 20, 30, 40, 50].map((size) => (<option key={size} value={size}>Show {size}</option>))}
         </select>
-        <span className="text-nowrap mx-2 text-center">
-          Page{" "}
-          <strong>
-            {pageIndex + 1} of {table.getPageCount()}
-          </strong>
-        </span>
+        <span className="text-nowrap mx-2 text-center">Page{" "}<strong>{pageIndex + 1} of {table.getPageCount()}</strong></span>
         <div className="btn-group mx-2">
-          <button
-            className="btn btn-secondary"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </button>
-          <button
-            className="btn btn-secondary"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </button>
+          <button className="btn btn-secondary" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Previous</button>
+          <button className="btn btn-secondary" onClick={() => table.nextPage()}disabled={!table.getCanNextPage()}>Next</button>
         </div>
       </div>
     </div>
