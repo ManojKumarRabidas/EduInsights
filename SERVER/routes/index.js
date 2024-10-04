@@ -18,7 +18,7 @@ router.put("/user-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), admin
 
 router.post("/change-password", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), userController.changePassword);
 
-router.get("/get-profile-details",userController.verifyToken, userController.profileDetails);
+router.get("/get-profile-details",authorizeRole(['SUPPORT', 'TEACHER', 'STUDENT']), userController.profileDetails);
 
 router.get("/pending-verification-user-list", adminController.userPendingVerificationList);
 router.put("/user-update-verificaton/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userUpdateVerificationStatus);

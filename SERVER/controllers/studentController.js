@@ -190,19 +190,19 @@ module.exports = {
               case 3:
                 ref.semester_of_rating = "3rd";
                 break;
-              case "4":
+              case 4:
                 ref.semester_of_rating = "4th";
                 break;
-              case "5":
+              case 5:
                 ref.semester_of_rating = "5th";
                 break;
-              case "6":
+              case 6:
                 ref.semester_of_rating = "6th";
                 break;
-              case "7":
+              case 7:
                 ref.semester_of_rating = "7th";
                 break;
-              case "8":
+              case 8:
                 ref.semester_of_rating = "8th";
                 break;
               default:

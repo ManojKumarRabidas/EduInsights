@@ -3,6 +3,7 @@ const userModel = require("../models/user");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 module.exports = {
   ensureAuthenticated: (req, res, next) => {
@@ -173,17 +174,11 @@ module.exports = {
   },
   profileDetails: async(req, res) =>{
     try {
-      var userId = req.headers.authorization?.split(' ')[1];
+      var userId = req.user.id
       if (!userId) {
         return res.status(400).json({ msg: 'User ID is missing' });
       }
       userId = new ObjectId(userId);
-      // var userId;
-      // if(req.session.user && req.session.user._id){
-      //   userId = new ObjectId(req.session.user._id);
-      // } else {
-      //   userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
-      // }
         const docs = await userModel.aggregate([
           {$match: {_id: userId}},
           {$lookup: {from: "authentications",
@@ -220,9 +215,12 @@ module.exports = {
           return new Intl.DateTimeFormat("en-IN", options).format(new Date(date)).replace(",", " -");
         };
         const doc = docs[0]
-        doc.createdAt= formatDate(doc.createdAt),
-        doc.last_log_in= formatDate(doc.last_log_in),
-        doc.registration_year= formatDate(doc.registration_year),
+        doc.createdAt= moment(doc.createdAt).format('DD/MM/YYYY - hh:mm A');
+        doc.last_log_in= moment(doc.last_log_in).format('DD/MM/YYYY - hh:mm A');
+        // doc.registration_year= moment(doc.registration_year).format('DD/MM/YYYY');
+        // doc.createdAt= formatDate(doc.createdAt),
+        // doc.last_log_in= formatDate(doc.last_log_in),
+        // doc.registration_year= formatDate(doc.registration_year),
         doc.active= doc.active === 1 ? "Active" : "Inactive",
         doc.is_verified= doc.is_verified === 1 ? "Verified" : (doc.is_verified === -1 ? "Rejected" : "Not Verified"),
         res.status(200).json({ doc: doc });
