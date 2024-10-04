@@ -16,6 +16,7 @@ import Subject from './components/Subject';
 import TeacherFeedback from './components/TeacherFeedback';
 import StudentFeedback from './components/StudentFeedback';
 import AllTeachersFeedback from './components/AllTeachersFeedback';
+import AllStudentsFeedback from './components/AllStudentsFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
@@ -131,6 +132,7 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/teacher-feedback' element={user_type === 'TEACHER' ? <TeacherFeedback /> : <Unauthorized />} />
               <Route path='/student-feedback' element={user_type === 'STUDENT' ? <StudentFeedback /> : <Unauthorized />} />
               <Route path='/all-teachers-feedback' element={user_type != 'TEACHER' ? <AllTeachersFeedback /> : <Unauthorized />} />
+              <Route path='/all-students-feedback' element={user_type != 'STUDENT' ? <AllStudentsFeedback /> : <Unauthorized />} />
               <Route path='/profile' element={user_type != 'ADMIN' ? <Profile /> : <Unauthorized />} />
               <Route path='/user-manual' element={<UserManual/>} />
               <Route path='/password/*' element={<Password/>} />

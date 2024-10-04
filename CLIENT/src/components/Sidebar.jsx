@@ -39,6 +39,7 @@ function Sidebar() {
         {(userType == "TEACHER") && <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher Feedback</NavLink>}
         {(userType == "STUDENT") && <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Student Feedback</NavLink>}
         {(userType != "TEACHER") && <NavLink to="/all-teachers-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All Teachers Feedback</NavLink>}
+        {(userType != "STUDENT") && <NavLink to="/all-students-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All Students Feedback</NavLink>}
     </div>
   );
 }

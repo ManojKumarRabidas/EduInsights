@@ -1,7 +1,9 @@
 const {ObjectId} = require('mongodb')
+const moment = require('moment');
 const teacherFeedbackModel = require("../models/teacher_feedback");
 const strengthModel = require ("../models/strength");
 const subjectModel = require ("../models/subject");
+const studentFeedbackModel = require("../models/student_feedback");
 
 const areaOfImprovementModel = require('../models/areaofimprovement');
 
@@ -52,7 +54,84 @@ module.exports = {
         }
     },
     studentsFeedbackList: async(req, res)=>{
-
+      try {
+        let matchCondition = {};
+        if (req.user.user_type == "TEACHER"){
+          const teacher_id = new ObjectId(req.user.id);
+          matchCondition.teacher_id = teacher_id;
+        } else{
+          //
+        }
+        if (!req.body || !req.body.startDate || !req.body.endDate){
+          res.status(500).json({ msg: "Date of ratting is mandetory" });
+        }
+        const startDate = new Date(req.body.startDate)
+        const endDate = new Date(req.body.endDate)
+        if (endDate < startDate) {
+          return res.status(400).json({ msg: "End date cannot be before start date" });
+        }
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 6) {
+          return res.status(400).json({ msg: "The date range cannot exceed 6 months" });
+        }
+        matchCondition.date_of_rating = { $gte: startDate, $lte: endDate };
+        const docs = await studentFeedbackModel.aggregate([
+            {$match: matchCondition},
+            {$lookup: {from: "users",
+                    localField: "teacher_id",
+                    foreignField: "_id",
+                    as: "teacher"}},
+            {$unwind: "$teacher"}, 
+            
+           
+            
+            {$lookup: {from: "users",
+                    localField: "student_id",
+                    foreignField: "_id",
+                    as: "student"}},
+            {$unwind: "$student"}, 
+            
+            {$lookup: {from: "subjects",
+                    localField: "subject_id",
+                    foreignField: "_id",
+                    as: "subject"}},
+            {$unwind: "$subject"}, 
+            
+            {$project: { 
+                    month_of_rating: 1,
+                    date_of_rating: 1,
+                    teacher: "$teacher.name",
+                    subject: "$subject.subject_code",
+                    student: "$student.name",
+                    clarity_of_explanation: 1, 
+                    subject_knowledge: 1,
+                    encouragement_of_question: 1,
+                    maintains_discipline: 1,
+                    fairness_in_treatment: 1,
+                    approachability: 1,
+                    behaviour_and_attitude: 1,
+                    encouragement_and_support: 1,
+                    overall_teaching_quality: 1,
+                    provide_study_material: 1,
+                    explain_with_supportive_analogy: 1,
+                    use_of_media: 1,
+                    strengths: 1,
+                    areas_of_improvement: 1,
+                    additional_comments: 1}}
+        ]);
+       
+        if(docs.length>0){
+          for(let i=0; i<docs.length; i++){
+            const ref = docs[i];
+            ref.date_of_rating = moment(ref.date_of_rating).format('DD/MM/YYYY');
+          } 
+        }
+        res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
+      } catch (err) {
+        console.log(err);
+          res.status(400).json({ msg: err.message });
+      }
+    
     },
     getStudentStrenghts: async(req, res)=>{
         try {

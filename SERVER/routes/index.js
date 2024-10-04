@@ -61,7 +61,9 @@ router.put("/area-of-improvement-update-active/:id", authorizeRole(['ADMIN', 'SU
 
 //--------------------------Teacher Profile---------------------------------------
 router.post("/teacher-feedback",authorizeRole(['TEACHER']), teacherController.teacherFeedback);
-router.patch("/students-feedback-list", teacherController.studentsFeedbackList);
+// router.patch("/students-feedback-list", teacherController.studentsFeedbackList);
+router.patch("/students-feedback-list",authorizeRole(['TEACHER', 'ADMIN', 'SUPPORT']),  teacherController.studentsFeedbackList);
+
 
 // router.get("/get-departments", adminController.getDepartments);
 router.patch("/get-conditional-subjects", adminController.getSubjects);

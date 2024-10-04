@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import {
   useReactTable,
@@ -43,7 +42,7 @@ function Users() {
         body: JSON.stringify({ startDate, endDate })
       });
 
-      if (response) {
+      if (response) { 
         const result = await response.json();
         if (response.ok) {
           toastr.info("Data retrieved for the mentioned date range.");
