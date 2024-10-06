@@ -123,30 +123,30 @@ function Users () {
                 sortingFn: "alphanumeric",
                 enableSorting: true,
             },
-            // {
-            //     header: "Subject Code",
-            //     accessorKey: "subject",
-            //     sortingFn: "alphanumeric",
-            //     enableSorting: true,
-            // },
-            // {
-            //   header: "Student Name",
-            //   accessorKey: "student",
-            //   sortingFn: "alphanumeric",
-            //   enableSorting: true,
-            // },
-            // {
-            //   header: "Student Reg Year",
-            //   accessorKey: "student_reg_year",
-            //   sortingFn: "alphanumeric",
-            //   enableSorting: true,
-            // },
-            // {
-            //   header: "Department",
-            //   accessorKey: "department",
-            //   sortingFn: "alphanumeric",
-            //   enableSorting: true,
-            // },
+            {
+                header: "Subject Code",
+                accessorKey: "subject",
+                sortingFn: "alphanumeric",
+                enableSorting: true,
+            },
+            {
+              header: "Student Name",
+              accessorKey: "student",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
+              header: "Student Reg Year",
+              accessorKey: "student_reg_year",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
+              header: "Department",
+              accessorKey: "department",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
             {
                 header: "Clarity Of Explanation",
                 accessorKey: "clarity_of_explanation",
@@ -250,24 +250,24 @@ function Users () {
                 sortingFn: "alphanumeric",
                 enableSorting: true,
               },
-              {
-                header: "Student Name",
-                accessorKey: "student",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-              },
-              {
-                header: "Student Reg Year",
-                accessorKey: "student_reg_year",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-              },
-              {
-                header: "Department",
-                accessorKey: "department",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-              },
+              // {
+              //   header: "Student Name",
+              //   accessorKey: "student",
+              //   sortingFn: "alphanumeric",
+              //   enableSorting: true,
+              // },
+              // {
+              //   header: "Student Reg Year",
+              //   accessorKey: "student_reg_year",
+              //   sortingFn: "alphanumeric",
+              //   enableSorting: true,
+              // },
+              // {
+              //   header: "Department",
+              //   accessorKey: "department",
+              //   sortingFn: "alphanumeric",
+              //   enableSorting: true,
+              // },
             );
           }
           return baseColumns;
