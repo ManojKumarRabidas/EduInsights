@@ -2,10 +2,15 @@ import LineChartComponent from './partials/chartcomponents/LineChartComponent';
 import BarChartComponent from './partials/chartcomponents/BarChartComponent';
 import MultiBarChartComponent from './partials/chartcomponents/MultiBarChartComponent';
 import React, { useEffect, useState } from "react";
+import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
 function Home() {
+
+  const [userType, setUserType] = useState('');
+  const [names, setNames] = useState([]);
+  const [selectedName, setSelectedName] = useState('');
   // const [chartData, setChartData] = useState(null);
   //   useEffect(() => {
   //       const fetchData = async () => {
@@ -37,6 +42,67 @@ function Home() {
         values3: [20, 30, 40, 50, 60],
     },
 });
+
+useEffect(() => {
+  const fetchNames = async (userType) => {
+      try {
+        const response = await fetch(`${HOST}:${PORT}/server/get-conditional-user-list`, {
+          method: "PATCH",
+          body: JSON.stringify({userType: userType}),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (response) {
+          const result = await response.json();
+          console.log(result.docs);
+          if (response.ok) {
+            setNames(result.docs);
+          } else {
+            toastr.error(result.msg);
+          }
+        } else {
+          toastr.error("We are unable to process now. Please try again later.");
+        }
+      } catch (error) {
+        toastr.error('Error fetching names:', error);
+      }
+  };
+
+  fetchNames(userType);
+}, [userType]);
+
+const handleUserTypeChange = (e) => {
+  setUserType(e.target.value);
+  setNames([]); // Clear names when changing user type
+  setSelectedName(''); // Reset the selected name
+};
+
+const handleNameChange = async (_id) => {
+  setSelectedName(_id);
+  try {
+    const response = await fetch(`${HOST}:${PORT}/server/get-user-feedback-details`, {
+      method: "PATCH",
+      body: JSON.stringify({userType: userType, _id: _id}),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response) {
+      const result = await response.json();
+      console.log(result.docs);
+      if (response.ok) {
+        // setNames(result.doc);
+      } else {
+        toastr.error(result.msg);
+      }
+    } else {
+      toastr.error("We are unable to process now. Please try again later.");
+    }
+  } catch (error) {
+    toastr.error('Error fetching names:', error);
+  }
+};
+
+
 
     if (!chartData) {
       return <div>Loading...</div>;
@@ -88,20 +154,35 @@ function Home() {
               <div className=" justify-content-center">
                 <div className="mb-3">
                     <label className="form-label">Select User Type <span className="ei-col-red">*</span></label>
-                    <select name="user_type" className="form-control">
+                    <select name="user_type" className="form-control" onChange={handleUserTypeChange}>
                         <option defaultValue>-- select --</option>
                         <option value="STUDENT">STUDENT</option>
                         <option value="TEACHER">TEACHER</option>
                     </select>
                 </div>
+
                 <div className="mb-3">
+                    <label className="form-label">
+                      Name <span className="ei-col-red">*</span>
+                    </label>
+                    <select name="name" className="form-control" onChange={(e) => handleNameChange(e.target.value)} value={selectedName}>
+                        <option value="">-- select --</option>
+                        {names.map((name) => (
+                          <option key={name._id} value={name._id}>
+                            {name.name}
+                          </option>
+                        ))}
+                    </select>
+            </div>
+
+                {/* <div className="mb-3">
                     <label className="form-label">Name <span className="ei-col-red">*</span></label>
                     <select name="name" className="form-control">
                         <option defaultValue>-- select --</option>
                         <option value="">Priya Bhar</option>
                         <option value="">Disha Khan</option>
                     </select>
-                </div>
+                </div> */}
               </div>
           </section>
           <section className="bg-light py-5 my-2">
