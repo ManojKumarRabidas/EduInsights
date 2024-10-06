@@ -19,6 +19,8 @@ function Users () {
     const [userType, setUserType] = useState("")
     const [searchFilter, setSearchFilter] = useState("");
     const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
+    const [teachers ,setTeachers] = ([]);
+    const [teacherFilter,setTeacherFilter] = useState("");
     const [studentFilter, setStudentFilter] = useState("");
     const [student_name, setStudentName] = useState([]); 
     const [pageIndex, setPageIndex] = useState(0);
@@ -45,14 +47,29 @@ function Users () {
           if (response) { 
             const result = await response.json();
             if (response.ok) {
+              console.log("result.docs", result.docs)
               toastr.info("Data retrieved for the mentioned date range.");
               setData(result.docs);
-              const uniqueStudents= new Set();
+              const uniqueTeachers= new Set();
               result.docs.forEach((doc) => {
-              if (doc.student) {
-                uniqueStudents.add(doc.student);
+              if (doc.teacher) {
+                uniqueTeachers.add(doc.teacher);
               }
           });
+          setTeachers(Array.from(uniqueTeachers));
+        } else {
+          toastr.error(result.msg);
+        }
+
+        if (response.ok) {
+          toastr.info("Data retrieved for the mentioned date range.");
+          setData(result.docs);
+          const uniqueStudents = new Set();
+          result.docs.forEach((doc) => {
+          if (doc.student) {
+            uniqueStudents.add(doc.student);
+          }
+      });
           setStudentName(Array.from(uniqueStudents));
             } else {
               toastr.error(result.msg);
@@ -65,26 +82,7 @@ function Users () {
         }
       }
     
-      // const getUserType = async (token) => {
-      //   const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
-      //     method: 'GET',
-      //     headers: { Authorization: `Bearer1 ${token}` },
-      //   });
-      //   console.log("response",response)
-      //   if (response){
-      //     const result = await response.json();
-      //     console.log(result)
-      //     if (response.ok){
-      //       setUserType(result.doc.user_type);
-      //     } else{
-      //       toastr.error(result.msg);
-      //     }
-      //   } else{
-      //     toastr.error("We are unable to process now. Please try again later.")
-      //   }
-      // }
-
-
+       
 
       const getUserType = async (token) => {
         const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
@@ -124,22 +122,28 @@ function Users () {
                 enableSorting: true,
             },
             {
-                header: "Teacher Code",
-                accessorKey: "teacher",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-            },
-            {
                 header: "Subject Code",
                 accessorKey: "subject",
                 sortingFn: "alphanumeric",
                 enableSorting: true,
             },
             {
-                header: "Student Name",
-                accessorKey: "student",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
+              header: "Student Name",
+              accessorKey: "student",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
+              header: "Student Reg Year",
+              accessorKey: "student_reg_year",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
+              header: "Department",
+              accessorKey: "department",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
             },
             {
                 header: "Clarity Of Explanation",
@@ -194,7 +198,7 @@ function Users () {
                 accessorKey: "overall_teaching_quality",
                 sortingFn: "alphanumeric",
                 enableSorting: true,
-            },
+            }, 
             {
                 header: "Provide Study Material",
                 accessorKey: "provide_study_material",
@@ -236,30 +240,19 @@ function Users () {
                 enableSorting: true,
             },
         ];
-        if (userType === "ADMIN") {
+        if (userType != "TEACHER") {
             baseColumns.splice(3, 0, // Insert after the third column
               {
-                header: "Student Name",
-                accessorKey: "student",
+                header: "Teacher Name",
+                accessorKey: "teacher",
                 sortingFn: "alphanumeric",
                 enableSorting: true,
-              },
-              {
-                header: "Student Reg Year",
-                accessorKey: "student_reg_year",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-              },
-              {
-                header: "Department",
-                accessorKey: "department",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-              },
+              }
             );
           }
           return baseColumns;
         },
+        [userType, pageIndex, pageSize]
     );
     const filteredData = useMemo(() => {
         return data.filter((row) => {
@@ -272,14 +265,18 @@ function Users () {
           const matchesSemesterOfRatingFilter = semesterOfRatingFilter
             ? row.semester_of_rating === semesterOfRatingFilter
             : true;
+
+            const matchesTeacherFilter = teacherFilter
+            ? row.teacher === teacherFilter
+            : true;
     
           const matchesStudentFilter = studentFilter
             ? row.student === studentFilter
             : true;
     
-          return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesStudentFilter;
+          return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter && matchesStudentFilter;
         });
-      }, [data, searchFilter, semesterOfRatingFilter, studentFilter]);
+      }, [data, searchFilter, semesterOfRatingFilter,teacherFilter, studentFilter]);
     
       const sortedData = useMemo(() => {
         if (!sorting.length) return filteredData;
@@ -369,6 +366,22 @@ function Users () {
                 </select>
               </div>
             </div>
+
+            {(userType !='TEACHER') && (<div className="col">
+          <div>
+            <select
+              className="form-select"
+              value={teacherFilter}
+              onChange={(e) => setTeacherFilter(e.target.value)}
+            >
+              <option value="">-- Filter by "TEACHER" --</option>
+                {teachers.map((val) => (
+                  <option value={val}>{val}</option>
+                ))}
+            </select>
+          </div>
+        </div>)}
+
             <div className="col">
             <DatePicker
               selectsRange
