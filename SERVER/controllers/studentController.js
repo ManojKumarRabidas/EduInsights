@@ -48,7 +48,7 @@ module.exports = {
     },
 
     getStrengthName: async(req, res)=>{
-        try {
+        try { 
             const docs = await strengthModel.find({active: 1, strength_for:"TEACHER"}).sort({name: 1});
             res.status(200).json({ docs: docs });
           } catch (error) {

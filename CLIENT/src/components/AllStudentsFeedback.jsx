@@ -18,11 +18,11 @@ function Users () {
     const [data, setData] = useState([]);
     const [userType, setUserType] = useState("")
     const [searchFilter, setSearchFilter] = useState("");
-    const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
-    const [teachers ,setTeachers] = ([]);
+    // const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
     const [teacherFilter,setTeacherFilter] = useState("");
+    const [teachers ,setTeachers] = useState([]);
     const [studentFilter, setStudentFilter] = useState("");
-    const [student_name, setStudentName] = useState([]); 
+    const [students, setStudentName] = useState([]); 
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState([]);
@@ -64,11 +64,13 @@ function Users () {
         if (response.ok) {
           toastr.info("Data retrieved for the mentioned date range.");
           setData(result.docs);
+          console.log("result",result.docs)
           const uniqueStudents = new Set();
           result.docs.forEach((doc) => {
           if (doc.student) {
             uniqueStudents.add(doc.student);
           }
+          console.log("result",result.docs)
       });
           setStudentName(Array.from(uniqueStudents));
             } else {
@@ -121,30 +123,30 @@ function Users () {
                 sortingFn: "alphanumeric",
                 enableSorting: true,
             },
-            {
-                header: "Subject Code",
-                accessorKey: "subject",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-            },
-            {
-              header: "Student Name",
-              accessorKey: "student",
-              sortingFn: "alphanumeric",
-              enableSorting: true,
-            },
-            {
-              header: "Student Reg Year",
-              accessorKey: "student_reg_year",
-              sortingFn: "alphanumeric",
-              enableSorting: true,
-            },
-            {
-              header: "Department",
-              accessorKey: "department",
-              sortingFn: "alphanumeric",
-              enableSorting: true,
-            },
+            // {
+            //     header: "Subject Code",
+            //     accessorKey: "subject",
+            //     sortingFn: "alphanumeric",
+            //     enableSorting: true,
+            // },
+            // {
+            //   header: "Student Name",
+            //   accessorKey: "student",
+            //   sortingFn: "alphanumeric",
+            //   enableSorting: true,
+            // },
+            // {
+            //   header: "Student Reg Year",
+            //   accessorKey: "student_reg_year",
+            //   sortingFn: "alphanumeric",
+            //   enableSorting: true,
+            // },
+            // {
+            //   header: "Department",
+            //   accessorKey: "department",
+            //   sortingFn: "alphanumeric",
+            //   enableSorting: true,
+            // },
             {
                 header: "Clarity Of Explanation",
                 accessorKey: "clarity_of_explanation",
@@ -247,7 +249,25 @@ function Users () {
                 accessorKey: "teacher",
                 sortingFn: "alphanumeric",
                 enableSorting: true,
-              }
+              },
+              {
+                header: "Student Name",
+                accessorKey: "student",
+                sortingFn: "alphanumeric",
+                enableSorting: true,
+              },
+              {
+                header: "Student Reg Year",
+                accessorKey: "student_reg_year",
+                sortingFn: "alphanumeric",
+                enableSorting: true,
+              },
+              {
+                header: "Department",
+                accessorKey: "department",
+                sortingFn: "alphanumeric",
+                enableSorting: true,
+              },
             );
           }
           return baseColumns;
@@ -262,9 +282,9 @@ function Users () {
               )
             : true;
     
-          const matchesSemesterOfRatingFilter = semesterOfRatingFilter
-            ? row.semester_of_rating === semesterOfRatingFilter
-            : true;
+          // const matchesSemesterOfRatingFilter = semesterOfRatingFilter
+          //   ? row.semester_of_rating === semesterOfRatingFilter
+          //   : true;
 
             const matchesTeacherFilter = teacherFilter
             ? row.teacher === teacherFilter
@@ -274,9 +294,9 @@ function Users () {
             ? row.student === studentFilter
             : true;
     
-          return matchesSearchFilter && matchesSemesterOfRatingFilter && matchesTeacherFilter && matchesStudentFilter;
+          return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter;
         });
-      }, [data, searchFilter, semesterOfRatingFilter,teacherFilter, studentFilter]);
+      }, [data, searchFilter, teacherFilter, studentFilter]);
     
       const sortedData = useMemo(() => {
         if (!sorting.length) return filteredData;
@@ -322,6 +342,29 @@ function Users () {
         getSortedRowModel: getSortedRowModel(),
         manualPagination: true,
       });
+
+      const calculateVisibleAverages = (rows, columns) => {
+        const averages = {};
+        const approvedElements = ["clarity_of_explanation","subject_knowledge","encouragement_of_question","maintains_discipline","fairness_in_treatment","approachability","behaviour_and_attitude","encouragement_and_support","overall_teaching_quality","provide_study_material","explain_with_supportive_analogy","use_of_media"]
+        columns.forEach((column) => {
+          if (approvedElements.indexOf(column.id) !== -1) {
+              const total = rows.reduce((sum, row) => {
+              const cellValue = row.getValue(column.id);
+              return sum + (parseFloat(cellValue) || 0);
+            }, 0);
+            averages[column.id] = (total / rows.length).toFixed(2);
+          } else {
+            averages[column.id] = "--";
+          }
+        });
+        return averages;
+      };
+
+      const visibleRows = table.getRowModel().rows;
+const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColumns());
+
+
+
       return (
         <div className="container my-2">
           <div className="row my-3">
@@ -333,7 +376,7 @@ function Users () {
                 className="form-control"
               />
             </div>
-            <div className="col">
+            {/* <div className="col">
               <div>
                 <select
                   className="form-select"
@@ -351,7 +394,7 @@ function Users () {
                     <option value="8th">8th sem</option>
                 </select>
               </div>
-            </div>
+            </div> */}
             <div className="col">
               <div>
                 <select
@@ -359,8 +402,8 @@ function Users () {
                   value={studentFilter}
                   onChange={(e) => setStudentFilter(e.target.value)}
                 >
-                  <option value="">-- Filter by "Student" --</option>
-                    {student_name.map((val) => (
+                  <option value="">-- Filter by "STUDENT" --</option>
+                    {students.map((val) => (
                       <option value={val}>{val}</option>
                     ))}
                 </select>
@@ -397,6 +440,7 @@ function Users () {
             <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
               <thead style={{textWrap: "nowrap"}}>
                 {table.getHeaderGroups().map((headerGroup) => (
+                  <>
                   <tr key={headerGroup.id} className="text-center">
                     {headerGroup.headers.map((header) => (
                       <th
@@ -412,6 +456,20 @@ function Users () {
                       </th>
                     ))}
                   </tr>
+                  {visibleRows.length > 0 && (
+                <tr style={{ backgroundColor: "#f2f4f5" }} className="text-center">
+                  {table.getVisibleFlatColumns().map((column, colIndex) => (
+                    <td key={colIndex} className={column.cellClassName}>
+                      {colIndex === 0 ? (
+                        <strong>Averages</strong>
+                      ) : (
+                        averages.hasOwnProperty(column.id) ? averages[column.id] : ''
+                      )}
+                    </td>
+                  ))}
+                </tr>
+                )}
+              </>
                 ))}
               </thead>
               <tbody>
