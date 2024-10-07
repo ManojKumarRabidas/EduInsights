@@ -4,6 +4,7 @@ const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
 const teacherController = require ("../controllers/teacherController");
 const studentController = require ("../controllers/studentController");
+const utilController = require ("../controllers/utilController");
 const { authorizeRole } = require('../middleware/authMiddleware');
 
   
@@ -85,6 +86,8 @@ router.get("/get-conditional-subjects-code",authorizeRole(['STUDENT']), studentC
 router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
 
-
+// Dashboard 
+router.patch("/get-conditional-user-list",utilController.getConditionalUserList)
+router.patch("/get-user-feedback-details",utilController.getUserFeedbackDetails)
 
 module.exports = router;
