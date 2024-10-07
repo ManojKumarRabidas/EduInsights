@@ -125,24 +125,6 @@ function Users() {
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
-      // {
-      //   header: "Student Name",
-      //   accessorKey: "student",
-      //   sortingFn: "alphanumeric",
-      //   enableSorting: true,
-      // },
-      // {
-      //   header: "Student Reg Year",
-      //   accessorKey: "student_reg_year",
-      //   sortingFn: "alphanumeric",
-      //   enableSorting: true,
-      // },
-      // {
-      //   header: "Department",
-      //   accessorKey: "department",
-      //   sortingFn: "alphanumeric",
-      //   enableSorting: true,
-      // },
       {
         header: "Subject Code",
         accessorKey: "subject",
@@ -234,7 +216,7 @@ function Users() {
     ];
 
     if (userType === "ADMIN") {
-      baseColumns.splice(3, 0, // Insert after the third column
+      baseColumns.splice(3, 0, 
         {
           header: "Student Name",
           accessorKey: "student",
@@ -408,15 +390,8 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
             </select>
           </div>
         </div>)}
-        <div className="col">
-        <DatePicker
-          selectsRange
-          startDate={dateRange[0]}
-          endDate={dateRange[1]}
-          onChange={(update) => setDateRange(update)}
-          dateFormat="yyyy/MM/dd"
-          className="form-control form-select"
-        />
+        <div className="col date-field-col">
+          <DatePicker selectsRange startDate={dateRange[0]} endDate={dateRange[1]} onChange={(update) => setDateRange(update)} dateFormat="dd/MM/yyyy" className="form-control form-select"/>
         </div>
       </div>
 

@@ -18,11 +18,12 @@ function Users () {
     const [data, setData] = useState([]);
     const [userType, setUserType] = useState("")
     const [searchFilter, setSearchFilter] = useState("");
-    // const [semesterOfRatingFilter, setSemesterOfRatingFilter] = useState("");
+    const [departmentFilter, setDepartmentFilter] = useState("");
     const [teacherFilter,setTeacherFilter] = useState("");
-    const [teachers ,setTeachers] = useState([]);
     const [studentFilter, setStudentFilter] = useState("");
-    const [students, setStudentName] = useState([]); 
+    const [departments, setdepartments] = useState([]); 
+    const [teachers ,setTeachers] = useState([]);
+    const [students, setStudents] = useState([]); 
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState([]);
@@ -47,35 +48,44 @@ function Users () {
           if (response) { 
             const result = await response.json();
             if (response.ok) {
-              console.log("result.docs", result.docs)
               toastr.info("Data retrieved for the mentioned date range.");
               setData(result.docs);
               const uniqueTeachers= new Set();
+              const uniqueDepartments = new Set()
+              const uniqueStudents = new Set()
               result.docs.forEach((doc) => {
-              if (doc.teacher) {
-                uniqueTeachers.add(doc.teacher);
-              }
-          });
-          setTeachers(Array.from(uniqueTeachers));
-        } else {
-          toastr.error(result.msg);
-        }
-
-        if (response.ok) {
-          toastr.info("Data retrieved for the mentioned date range.");
-          setData(result.docs);
-          console.log("result",result.docs)
-          const uniqueStudents = new Set();
-          result.docs.forEach((doc) => {
-          if (doc.student) {
-            uniqueStudents.add(doc.student);
-          }
-          console.log("result",result.docs)
-      });
-          setStudentName(Array.from(uniqueStudents));
+                if (doc.teacher) {
+                  uniqueTeachers.add(doc.teacher);
+                }
+                if (doc.department) {
+                  uniqueDepartments.add(doc.department);
+                }
+                if (doc.teacher) {
+                  uniqueStudents.add(doc.student);
+                }
+              });
+              setTeachers(Array.from(uniqueTeachers));
+              setdepartments(Array.from(uniqueDepartments));
+              setStudents(Array.from(uniqueStudents));
             } else {
               toastr.error(result.msg);
             }
+
+            //   if (response.ok) {
+            //     toastr.info("Data retrieved for the mentioned date range.");
+            //     setData(result.docs);
+            //     console.log("result",result.docs)
+            //     const uniqueStudents = new Set();
+            //     result.docs.forEach((doc) => {
+            //     if (doc.student) {
+            //       uniqueStudents.add(doc.student);
+            //     }
+            //     console.log("result",result.docs)
+            // });
+            //     setStudents(Array.from(uniqueStudents));
+            //       } else {
+            //         toastr.error(result.msg);
+            //       }
           } else {
             toastr.error("We are unable to process now. Please try again later.");
           }
@@ -243,31 +253,13 @@ function Users () {
             },
         ];
         if (userType != "TEACHER") {
-            baseColumns.splice(3, 0, // Insert after the third column
+            baseColumns.splice(3, 0, 
               {
                 header: "Teacher Name",
                 accessorKey: "teacher",
                 sortingFn: "alphanumeric",
                 enableSorting: true,
               },
-              // {
-              //   header: "Student Name",
-              //   accessorKey: "student",
-              //   sortingFn: "alphanumeric",
-              //   enableSorting: true,
-              // },
-              // {
-              //   header: "Student Reg Year",
-              //   accessorKey: "student_reg_year",
-              //   sortingFn: "alphanumeric",
-              //   enableSorting: true,
-              // },
-              // {
-              //   header: "Department",
-              //   accessorKey: "department",
-              //   sortingFn: "alphanumeric",
-              //   enableSorting: true,
-              // },
             );
           }
           return baseColumns;
@@ -281,22 +273,22 @@ function Users () {
                 value?.toString().toLowerCase().includes(searchFilter.toLowerCase())
               )
             : true;
-    
-          // const matchesSemesterOfRatingFilter = semesterOfRatingFilter
-          //   ? row.semester_of_rating === semesterOfRatingFilter
-          //   : true;
 
             const matchesTeacherFilter = teacherFilter
             ? row.teacher === teacherFilter
             : true;
     
-          const matchesStudentFilter = studentFilter
-            ? row.student === studentFilter
-            : true;
+            const matchesStudentFilter = studentFilter
+              ? row.student === studentFilter
+              : true;
+
+            const matchesDepartmentFilter = departmentFilter
+              ? row.department === departmentFilter
+              : true;
     
-          return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter;
+          return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter && matchesDepartmentFilter;
         });
-      }, [data, searchFilter, teacherFilter, studentFilter]);
+      }, [data, searchFilter, teacherFilter, studentFilter, departmentFilter]);
     
       const sortedData = useMemo(() => {
         if (!sorting.length) return filteredData;
@@ -376,25 +368,6 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
                 className="form-control"
               />
             </div>
-            {/* <div className="col">
-              <div>
-                <select
-                  className="form-select"
-                  value={semesterOfRatingFilter}
-                  onChange={(e) => setSemesterOfRatingFilter(e.target.value)}
-                >
-                  <option value="">-- Filter by "Semester" --</option>
-                  <option value="1st">1st sem</option>
-                    <option value="2nd">2nd sem</option>
-                    <option value="3rd">3rd sem</option>
-                    <option value="4th">4th sem</option>
-                    <option value="5th">5th sem</option>
-                    <option value="6th">6th sem</option>
-                    <option value="7th">7th sem</option>
-                    <option value="8th">8th sem</option>
-                </select>
-              </div>
-            </div> */}
             <div className="col">
               <div>
                 <select
@@ -402,7 +375,7 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
                   value={studentFilter}
                   onChange={(e) => setStudentFilter(e.target.value)}
                 >
-                  <option value="">-- Filter by "STUDENT" --</option>
+                  <option value="">-- Filter by "Student" --</option>
                     {students.map((val) => (
                       <option value={val}>{val}</option>
                     ))}
@@ -411,29 +384,31 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
             </div>
 
             {(userType !='TEACHER') && (<div className="col">
-          <div>
-            <select
-              className="form-select"
-              value={teacherFilter}
-              onChange={(e) => setTeacherFilter(e.target.value)}
-            >
-              <option value="">-- Filter by "TEACHER" --</option>
-                {teachers.map((val) => (
-                  <option value={val}>{val}</option>
-                ))}
-            </select>
-          </div>
-        </div>)}
-
+              <div>
+                <select
+                  className="form-select"
+                  value={teacherFilter}
+                  onChange={(e) => setTeacherFilter(e.target.value)}
+                >
+                  <option value="">-- Filter by "Teacher" --</option>
+                    {teachers.map((val) => (
+                      <option value={val}>{val}</option>
+                    ))}
+                </select>
+              </div>
+            </div>)}
             <div className="col">
-            <DatePicker
-              selectsRange
-              startDate={dateRange[0]}
-              endDate={dateRange[1]}
-              onChange={(update) => setDateRange(update)}
-              dateFormat="yyyy/MM/dd"
-              className="form-control form-select"
-            />
+              <div>
+                <select className="form-select" value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}>
+                  <option value="">-- Filter by "Department" --</option>
+                    {departments.map((val) => (
+                      <option value={val}>{val}</option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="col date-field-col">
+              <DatePicker selectsRange startDate={dateRange[0]} endDate={dateRange[1]} onChange={(update) => setDateRange(update)} dateFormat="dd/MM/yyyy" className="form-control form-select"/>
             </div>
           </div>
           <div className="scroll-hidden">

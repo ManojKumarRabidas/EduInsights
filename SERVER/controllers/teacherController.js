@@ -83,15 +83,18 @@ module.exports = {
                     foreignField: "_id",
                     as: "teacher"}},
             {$unwind: "$teacher"}, 
-            
-           
-            
+             
             {$lookup: {from: "users",
-                    localField: "student_id",
-                    foreignField: "_id",
-                    as: "student"}},
-            {$unwind: "$student"}, 
-            
+								let: {student_id: "$student_id"},
+								pipeline: [{$match: {$expr: {$eq: ["$_id", "$$student_id"]}}},
+									{$lookup: {from: "departments",
+											let: {departmentId: "$department"},
+											pipeline: [{$match: {$expr: {$eq: ["$_id", "$$departmentId"]}}},
+												{$project: {dept_id: 1, name: 1, _id: 0}}],
+											as: "department"}},
+                  {$unwind: {path: "$department", preserveNullAndEmptyArrays: true}}],
+								as: "student"}},
+            {$unwind: {path: "$student", preserveNullAndEmptyArrays: true}},
             {$lookup: {from: "subjects",
                     localField: "subject_id",
                     foreignField: "_id",
@@ -104,6 +107,8 @@ module.exports = {
                     teacher: "$teacher.name",
                     subject: "$subject.subject_code",
                     student: "$student.name",
+                    student_reg_year: "$student.registration_year",
+                    department: "$student.department.dept_id",
                     clarity_of_explanation: 1, 
                     subject_knowledge: 1,
                     encouragement_of_question: 1,
@@ -120,7 +125,6 @@ module.exports = {
                     areas_of_improvement: 1,
                     additional_comments: 1}}
         ]);
-       
         if(docs.length>0){
           for(let i=0; i<docs.length; i++){
             const ref = docs[i];
