@@ -268,6 +268,8 @@ module.exports = {
                         values2: [0,0,0,0,0,0,0,0,0,0,0,0],
                         values3: [0,0,0,0,0,0,0,0,0,0,0,0],
                     },
+                    strengths: [],
+                    areas_of_improvement: []
                 }
             }
             res.status(200).json({status: true, doc: graphData, docs: docs });

@@ -263,7 +263,7 @@ const getFeedbackDetails = async (_id, userType) => {
                               <td>
                                 <table className='table table-striped table-bordered webkit-fill-available-class'>
                                   <tbody>
-                                    {graphData.strengths.map((strength) => (
+                                    {graphData.strengths && graphData.strengths.map((strength) => (
                                       <tr>
                                         <td><strong>Strength: </strong>{strength.key}</td> 
                                         <td><strong>Count: </strong>{strength.count}</td>  
@@ -275,7 +275,7 @@ const getFeedbackDetails = async (_id, userType) => {
                               <td>
                                 <table className='table table-striped table-bordered webkit-fill-available-class'>
                                   <tbody>
-                                    {graphData.areas_of_improvement.map((area_of_improvement) => (
+                                    {graphData.areas_of_improvement && graphData.areas_of_improvement.map((area_of_improvement) => (
                                       <tr>
                                         <td><strong>Area of Improvement: </strong>{area_of_improvement.key}</td> 
                                         <td><strong>Count: </strong>{area_of_improvement.count}</td>  
