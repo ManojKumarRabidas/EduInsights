@@ -116,8 +116,11 @@ button, button a{
 .form-control::placeholder {
   color:  #10B981 !important; /* Dark Slate Grey for placeholder text */
 }
-.date-field-col div{
-  width: -webkit-fill-available !important;
+.date-field-col> div:first-child{
+  width: -webkit-fill-available;
+}
+.webkit-fill-available-class{
+  width: -webkit-fill-available;
 }
 /*  Dropdown background color */
 /* Change the hover background color for the entire dropdown */

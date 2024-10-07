@@ -21,9 +21,13 @@ function Users () {
     const [departmentFilter, setDepartmentFilter] = useState("");
     const [teacherFilter,setTeacherFilter] = useState("");
     const [studentFilter, setStudentFilter] = useState("");
+    const [monthOfRatingFilter,setmonthOfRatingFilter] = useState("");
+    const [subjectCodeFilter, setsubjectCodeFilter] = useState("");
     const [departments, setdepartments] = useState([]); 
     const [teachers ,setTeachers] = useState([]);
     const [students, setStudents] = useState([]); 
+    const [monthOfRatings, setMonthOfRating] = useState([]); 
+    const [subjectCodes, setSubjectCodes] = useState([]); 
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState([]);
@@ -53,6 +57,8 @@ function Users () {
               const uniqueTeachers= new Set();
               const uniqueDepartments = new Set()
               const uniqueStudents = new Set()
+              const uniqueMonthsOfRating = new Set()
+              const uniqueSubjectCodes = new Set()
               result.docs.forEach((doc) => {
                 if (doc.teacher) {
                   uniqueTeachers.add(doc.teacher);
@@ -63,29 +69,21 @@ function Users () {
                 if (doc.teacher) {
                   uniqueStudents.add(doc.student);
                 }
+                if (doc.month_of_rating) {
+                  uniqueMonthsOfRating.add(doc.month_of_rating);
+                }
+                if (doc.subject) {
+                  uniqueSubjectCodes.add(doc.subject);
+                }
               });
               setTeachers(Array.from(uniqueTeachers));
               setdepartments(Array.from(uniqueDepartments));
               setStudents(Array.from(uniqueStudents));
+              setMonthOfRating(Array.from(uniqueMonthsOfRating));
+              setSubjectCodes(Array.from(uniqueSubjectCodes));
             } else {
               toastr.error(result.msg);
             }
-
-            //   if (response.ok) {
-            //     toastr.info("Data retrieved for the mentioned date range.");
-            //     setData(result.docs);
-            //     console.log("result",result.docs)
-            //     const uniqueStudents = new Set();
-            //     result.docs.forEach((doc) => {
-            //     if (doc.student) {
-            //       uniqueStudents.add(doc.student);
-            //     }
-            //     console.log("result",result.docs)
-            // });
-            //     setStudents(Array.from(uniqueStudents));
-            //       } else {
-            //         toastr.error(result.msg);
-            //       }
           } else {
             toastr.error("We are unable to process now. Please try again later.");
           }
@@ -140,8 +138,8 @@ function Users () {
                 enableSorting: true,
             },
             {
-              header: "Student Name",
-              accessorKey: "student",
+              header: "Department",
+              accessorKey: "department",
               sortingFn: "alphanumeric",
               enableSorting: true,
             },
@@ -152,8 +150,14 @@ function Users () {
               enableSorting: true,
             },
             {
-              header: "Department",
-              accessorKey: "department",
+              header: "Student Name",
+              accessorKey: "student",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
+              header: "Student Reg Number",
+              accessorKey: "student_reg_number",
               sortingFn: "alphanumeric",
               enableSorting: true,
             },
@@ -274,21 +278,15 @@ function Users () {
               )
             : true;
 
-            const matchesTeacherFilter = teacherFilter
-            ? row.teacher === teacherFilter
-            : true;
-    
-            const matchesStudentFilter = studentFilter
-              ? row.student === studentFilter
-              : true;
-
-            const matchesDepartmentFilter = departmentFilter
-              ? row.department === departmentFilter
-              : true;
-    
-          return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter && matchesDepartmentFilter;
+            const matchesTeacherFilter = teacherFilter ? row.teacher === teacherFilter : true;
+            const matchesStudentFilter = studentFilter ? row.student === studentFilter: true;
+            const matchesDepartmentFilter = departmentFilter ? row.department === departmentFilter: true;
+            const matchesMonthOfRatingFilter = monthOfRatingFilter ? row.month_of_rating === monthOfRatingFilter: true;
+            const matchesSubjectCodeFilter = subjectCodeFilter ? row.subject_code === subjectCodeFilter: true;
+  
+          return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter && matchesDepartmentFilter && matchesMonthOfRatingFilter && matchesSubjectCodeFilter;
         });
-      }, [data, searchFilter, teacherFilter, studentFilter, departmentFilter]);
+      }, [data, searchFilter, teacherFilter, studentFilter, departmentFilter, monthOfRatingFilter, subjectCodeFilter]);
     
       const sortedData = useMemo(() => {
         if (!sorting.length) return filteredData;
@@ -368,20 +366,6 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
                 className="form-control"
               />
             </div>
-            <div className="col">
-              <div>
-                <select
-                  className="form-select"
-                  value={studentFilter}
-                  onChange={(e) => setStudentFilter(e.target.value)}
-                >
-                  <option value="">-- Filter by "Student" --</option>
-                    {students.map((val) => (
-                      <option value={val}>{val}</option>
-                    ))}
-                </select>
-              </div>
-            </div>
 
             {(userType !='TEACHER') && (<div className="col">
               <div>
@@ -409,6 +393,50 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
             </div>
             <div className="col date-field-col">
               <DatePicker selectsRange startDate={dateRange[0]} endDate={dateRange[1]} onChange={(update) => setDateRange(update)} dateFormat="dd/MM/yyyy" className="form-control form-select"/>
+            </div>
+          </div>
+          <div className="row my-3">
+            <div className="col">
+              <div>
+                <select
+                  className="form-select"
+                  value={studentFilter}
+                  onChange={(e) => setStudentFilter(e.target.value)}
+                >
+                  <option value="">-- Filter by "Student" --</option>
+                    {students.map((val) => (
+                      <option value={val}>{val}</option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="col">
+              <div>
+                <select
+                  className="form-select"
+                  value={monthOfRatingFilter}
+                  onChange={(e) => setmonthOfRatingFilter(e.target.value)}
+                >
+                  <option value="">-- Filter by "Month of Ratting" --</option>
+                    {monthOfRatings.map((val) => (
+                      <option value={val}>{val}</option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="col">
+              <div>
+                <select
+                  className="form-select"
+                  value={subjectCodeFilter}
+                  onChange={(e) => setsubjectCodeFilter(e.target.value)}
+                >
+                  <option value="">-- Filter by "Subject Code" --</option>
+                    {subjectCodes.map((val) => (
+                      <option value={val}>{val}</option>
+                    ))}
+                </select>
+              </div>
             </div>
           </div>
           <div className="scroll-hidden">

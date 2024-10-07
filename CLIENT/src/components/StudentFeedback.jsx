@@ -218,7 +218,8 @@ function Student_feedback() {
               });
             }
             toastr.success(result.msg);
-            navigate("/home");
+            // navigate("/home");
+            handleClear();
           } else{
             toastr.error(result.msg);
           }

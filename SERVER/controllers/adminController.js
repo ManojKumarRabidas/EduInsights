@@ -116,7 +116,6 @@ module.exports = {
             const body = req.body;
             body.verifiedBy = new ObjectId(req.user.id);
             body.verifiedAt = new Date();
-            console.log("verification", body);
             
             if (!params || !params.id || !body){
                 res.status(400).json({ msg: "Missing Parameters!" });
@@ -370,7 +369,6 @@ module.exports = {
             const doc = await strengthModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
         } catch (err) {
-            console.log("err", err);
             if(err.code==11000){
                 res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
                 return
@@ -563,7 +561,6 @@ module.exports = {
     areaOfImprovementCreate: async(req, res)=>{
         try {
             const body = req.body;
-            console.log("area", req.user)
             let bodyArray = []
             let bool =  Array.isArray(body);
             if(!bool){
@@ -580,7 +577,6 @@ module.exports = {
                 ref.createdBy = new ObjectId(req.user.id);
                 ref.updatedBy = new ObjectId(req.user.id);
             }
-            console.log("bodyArray", bodyArray);
             
             const doc = await areaOfImprovementModel.insertMany(bodyArray);
             res.status(201).json({ status: true, msg: "Area of improvement created successfully.", doc: doc });
@@ -662,17 +658,14 @@ module.exports = {
             }
             body.department = new ObjectId(body.department);
             const docs = await subjectModel.find({department:body.department, active:1});
-            console.log(docs)
             res.status(200).json({ docs : docs });
           } catch (error) {
-            console.log(error)
             res.status(500).json({ msg: "Failed to retrieve subjects" });
           }
     },
     getStudentNames:async(req, res)=>{
         try {
             const body = req.body;
-            console.log(body)
             if (!body || !body.registration_year || !body.department) {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;

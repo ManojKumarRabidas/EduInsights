@@ -19,7 +19,7 @@ const BarChartComponent = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: 'Bar Dataset',
+        label: 'Last Month Average Feedback',
         data: data.values,
         backgroundColor: 'rgba(153, 102, 255, 0.2)',
         borderColor: 'rgba(153, 102, 255, 1)',

@@ -212,7 +212,6 @@ module.exports = {
         }
         res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
       } catch (err) {
-        console.log(err);
           res.status(400).json({ msg: err.message });
       }
     }

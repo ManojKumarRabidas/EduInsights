@@ -6,7 +6,7 @@ import Error404 from "./components/Error404";
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Home from './components/Home';
-import AdminDashboard from './components/AdminDashboard';
+import Dashboard from './components/Dashboard';
 import Users from './components/Users';
 import SupportUsers from './components/SupportUser';
 import PendingVerifications from './components/PendingVerifications';
@@ -121,7 +121,8 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/login' element={<Login />} />
               <Route path='/error-404' element={<Error404 />} />
               <Route path='/home' element={<Home />} />
-              <Route path='/admin-dashboard' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AdminDashboard /> : <Unauthorized />} />
+              <Route path='/dashboard' element={<Dashboard />} />
+              {/* <Route path='/admin-dashboard' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AdminDashboard /> : <Unauthorized />} /> */}
               <Route path='/users' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Users /> : <Unauthorized />} />
               <Route path='/support-users/*' element={user_type === 'ADMIN' ? <SupportUsers /> : <Unauthorized />} />
               <Route path='/pending-verifications' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <PendingVerifications /> : <Unauthorized />} />

@@ -107,8 +107,10 @@ module.exports = {
                     teacher: "$teacher.name",
                     subject: "$subject.subject_code",
                     student: "$student.name",
-                    student_reg_year: "$student.registration_year",
                     department: "$student.department.dept_id",
+                    student_reg_year: "$student.registration_year",
+                    student_reg_number: "$student.registration_number",
+                    anonymous: 1,
                     clarity_of_explanation: 1, 
                     subject_knowledge: 1,
                     encouragement_of_question: 1,
@@ -129,11 +131,14 @@ module.exports = {
           for(let i=0; i<docs.length; i++){
             const ref = docs[i];
             ref.date_of_rating = moment(ref.date_of_rating).format('DD/MM/YYYY');
+            if (ref.anonymous){
+              ref.student = "Anonymous";
+              ref.student_reg_number = "Anonymous";
+            }
           } 
         }
         res.status(200).json({ status: true, docs: docs, msg: "Data retrieved" });
       } catch (err) {
-        console.log(err);
           res.status(400).json({ msg: err.message });
       }
     

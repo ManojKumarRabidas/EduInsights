@@ -28,7 +28,8 @@ function Sidebar() {
   return (
     <div className="sidebar">
         <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '')} end>Home</NavLink>
-        {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Admin Dashboard</NavLink>}
+        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
+        {/* {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Admin Dashboard</NavLink>} */}
         {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
         {(userType == "ADMIN") &&<NavLink to="/support-users" className={({ isActive }) => (isActive ? 'active' : '')}>Support Users</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')}>Pending Verifications</NavLink>}
@@ -36,8 +37,8 @@ function Sidebar() {
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strengths</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/areas-of-improvement" className={({ isActive }) => (isActive ? 'active' : '')}>Areas of Improvement</NavLink>}
-        {(userType == "TEACHER") && <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Teacher Feedback</NavLink>}
-        {(userType == "STUDENT") && <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Student Feedback</NavLink>}
+        {(userType == "TEACHER") && <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Feedback Form</NavLink>}
+        {(userType == "STUDENT") && <NavLink to="/student-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Feedback Form</NavLink>}
         {(userType != "TEACHER") && <NavLink to="/all-teachers-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All Teachers Feedback</NavLink>}
         {(userType != "STUDENT") && <NavLink to="/all-students-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>All Students Feedback</NavLink>}
     </div>

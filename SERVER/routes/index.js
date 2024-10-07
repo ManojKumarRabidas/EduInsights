@@ -87,7 +87,8 @@ router.get("/get-student-area-of-improvement",teacherController.getAreaForImprov
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
 
 // Dashboard 
-router.patch("/get-conditional-user-list",utilController.getConditionalUserList)
-router.patch("/get-user-feedback-details",utilController.getUserFeedbackDetails)
+router.patch("/get-conditional-user-list",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getConditionalUserList)
+router.patch("/get-user-feedback-details",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getUserFeedbackDetails)
+router.get("/get-top-growths",authorizeRole(['ADMIN', 'SUPPORT']), utilController.getTopGrowths)
 
 module.exports = router;

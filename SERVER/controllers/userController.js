@@ -116,51 +116,12 @@ module.exports = {
 
       const token = jwt.sign({ id: authUser.user_id, user_type: authUser.user_type, name: authUser.name }, process.env.JWT_SECRET, { expiresIn: '2h' });
       res.cookie('token', token, { httpOnly: true }).json({ token, userName:authUser.name, msg: 'Logged in successfully' });
-      // res.json({ token, userName:authUser.name, msg: 'Logged in successfully' });
-
-      // req.session.user = {
-      //   _id: authUser.user_id,
-      //   name: authUser.name,
-      //   user_type: authUser.user_type
-      // };
-      // res.json({ user: req.session.user, msg: 'You are now logged in!' });
-
-      // req.session.save(() => {
-      //   req.session.logged_in = true;
-      //   req.session.user = {
-      //     _id: authUser.user_id,
-      //     name: authUser.name,
-      //     user_type: authUser.user_type
-      //   };
-      //   console.log("Session after login:", req.session);
-      //   res.json({ user: req.session.user, msg: 'You are now logged in!' });
-      // });
-
-      // req.session.regenerate(function (err) {
-      //   if (err) next(err)
-      //   req.session.user = {
-      //         _id: authUser.user_id,
-      //         name: authUser.name,
-      //         user_type: authUser.user_type
-      //       };
-      //   req.session.save(function (err) {
-      //     if (err) return next(err)
-      //       res.json({ user: req.session.user, msg: 'You are now logged in!' });
-      //   })
-      // })
     } catch (err) {
       res.status(500).json({ msg: 'Server error', error: err.message });
     }
   },
 
   userLogout: (req, res) => {
-    // req.session.destroy((err) => {
-    //   if (err) {
-    //     return res.status(500).json({ msg: 'Logout failed', error: err.message });
-    //   }
-    //   res.clearCookie('connect.sid');
-    //   res.json({ msg: 'Logout successful' });
-    // });
     res.clearCookie('token').json({ msg: 'Logged out successfully' });
   }, 
   getUser:(req, res)=>{
