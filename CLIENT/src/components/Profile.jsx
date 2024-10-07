@@ -2,6 +2,7 @@ import "../App.css";
 import React, { useEffect, useState } from "react";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 export default function Profile(){
     const [data, setData] = useState({});
@@ -9,12 +10,11 @@ export default function Profile(){
     const [response, setResponse] = useState("");
     const getUserProfileData = async () => {
         try {
-            const userId = sessionStorage.getItem('eiUserId');
             const response = await fetch(`${HOST}:${PORT}/server/get-profile-details`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userId}`,
+                    'Authorization': `Bearer ${token}`,
                   }
           });
     
@@ -63,20 +63,21 @@ export default function Profile(){
                                 </tr>
                             {/* </thead>
                             <tbody> */}
-                                <tr>
+                            {(data.user_type == "TEACHER") && (<tr>
                                     <th scope="row">Teacher Code</th>
                                     <td scope="row">: {data.teacher_code}</td>
                                     <td scope="row"></td>
                                     <th scope="row">Employee Id</th>
                                     <td scope="row">: {data.employee_id}</td>
-                                </tr>
-                                <tr>
+                                </tr>)}
+                                
+                                {(data.user_type == "STUDENT") && (<tr>
                                     <th scope="row">Registration Year</th>
                                     <td scope="row">: {data.registration_year}</td>
                                     <td scope="row"></td>
                                     <th scope="row">Registration Number</th>
                                     <td scope="row">: {data.registration_number}</td>
-                                </tr>
+                                </tr>)}
                                 <tr>
                                     <th scope="row">Phone</th>
                                     <td scope="row">: {data.phone}</td>
@@ -106,13 +107,13 @@ export default function Profile(){
                                     <th scope="row">Last Log In</th>
                                     <td scope="row">: {data.last_log_in}</td>
                                 </tr>
-                                <tr>
+                                {((data.user_type == "STUDENT") || data.user_type == "TEACHER") && (<tr>
                                     <th scope="row">Total Number of Feedbacks Provide</th>
                                     <td scope="row">: 134</td>
                                     <td scope="row"></td>
                                     <th scope="row">Total Number of Feedbacks Received</th>
                                     <td scope="row">: 745</td>
-                                </tr>
+                                </tr>)}
                             </tbody>
                         </table>
                     </div>

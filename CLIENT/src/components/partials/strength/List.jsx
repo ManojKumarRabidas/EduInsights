@@ -8,15 +8,15 @@ import {
     flexRender
 } from "@tanstack/react-table";
 
+const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
 function List() {
     const [data, setData] = useState([]);
-    const [error, setError] = useState("");
-    const [response, setResponse] = useState("");
-    const [searchFilter, setSearchFilter] = useState("");  // State for search box filter
-    const [userTypeFilter, setUserTypeFilter] = useState("");  // State for user type filter
+    const [searchFilter, setSearchFilter] = useState(""); 
+    const [userTypeFilter, setUserTypeFilter] = useState("");
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(5);
     const [sorting, setSorting] = useState([]);
@@ -26,40 +26,39 @@ function List() {
         const response = await fetch(`${HOST}:${PORT}/server/strength-update-active/${id}`, {
           method: "PUT",
           body: JSON.stringify({ active: isActive ? "1" : "0" }),
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          }
         });
   
         const result = await response.json();
         if (response.ok) {
-          setResponse("Strength status updated successfully");
+          toastr.success("Strength status updated successfully");
           getData();
         } else {
-          setError(result.error);
+          toastr.error(result.error);
         }
       } catch (err) {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
-      setTimeout(() => {
-        setResponse("");
-        setError("");
-      }, 5000);
     };
 
     async function getData() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/strength-list`, {
           method: "GET",
+          headers: { 'authorization': `Bearer ${token}` },
         });
   
         const result = await response.json();
         if (response.ok) {
           setData(result.docs);
-          setError("");
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } catch (err) {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     }
   
@@ -71,22 +70,19 @@ function List() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/strength-delete/${id}`, {
           method: "DELETE",
+          headers: { 'authorization': `Bearer ${token}` },
         });
   
         const result = await response.json();
         if (response.ok) {
-          setResponse("Strength deleted successfully");
+          toastr.success("Strength deleted successfully");
           getData();
         } else {
-          setError(result.error);
+          toastr.error(result.error);
         }
       } catch (err) {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
-      setTimeout(() => {
-        setResponse("");
-        setError("");
-      }, 5000);
     };
   
   // Define table columns with proper accessorKeys
@@ -225,9 +221,6 @@ function List() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
-
       <div className="row my-3">
         <div className="col">
           <input value={searchFilter || ""} onChange={(e) => setSearchFilter(e.target.value)} placeholder="Search by any value of table" className="form-control"/>

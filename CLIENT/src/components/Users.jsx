@@ -6,14 +6,14 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import toastr from 'toastr';
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function Users() {
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
   const [userTypeFilter, setUserTypeFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
@@ -27,6 +27,7 @@ function Users() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/user-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
@@ -39,12 +40,11 @@ function Users() {
         }
       });
       setDepartments(Array.from(uniqueDepartments));
-        setError("");
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   }
 
@@ -57,23 +57,22 @@ function Users() {
       const response = await fetch(`${HOST}:${PORT}/server/user-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${token}`
+        },
       });
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("User status updated successfully");
+        toastr.success("User status updated successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
   };
 
   const columns = useMemo(
@@ -227,8 +226,6 @@ function Users() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
 
       <div className="row my-3">
         <div className="col">

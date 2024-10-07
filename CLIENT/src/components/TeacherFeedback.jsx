@@ -1,13 +1,11 @@
 import '../App.css'
 import React, {useState, useEffect} from "react";
-
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
-
-
-
+import toastr from 'toastr';
+const token = sessionStorage.getItem('token');
 function TeacherFeedback() {
   const [semester_of_rating, setSemesterOfRating] = useState("");
   const [date_of_rating, setDateOfRating] = useState("");
@@ -26,23 +24,24 @@ function TeacherFeedback() {
   const [participation_and_engagement, setParticipationAndEngagement] = useState("");
   const [group_work, setGroupWork] = useState("");
   const [overall_student_quality , setOverallStudentQuality ] = useState("");
-  const [strength_names, setStrengthNames] = useState([]);
-  const [area_of_improvement_names, setAreaOfImprovementNames] = useState([]);
+  const [strengths, setStrengths] = useState([]);
+  const [areas_of_improvement, setImprovementArea] = useState([]);
   const [additional_comments, setAdditionalComments] = useState("");
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const [subject_codes, setSubjectCodes] = useState([]);
-  const [subject_names, setSubjectNames] = useState([]);
+  // const [subject_names, setSubjectNames] = useState([]);
   const [student_names, setStudentNames] = useState([]);
+  const [years, setYears] = useState([]);
   const navigate = useNavigate();
 
-  const [student_strengths, setStudentStrengths]= useState([]);
-  const [areas_for_improvement,setAreasForImprovement] = useState([])
-  const [years, setYears] = useState([]);
-
+  const [strengths_options, setStrengthOptions] = useState([]);
+  const [areas_for_improvements_options, setAreasForImprovementsOptions] = useState([]);
   
-
+  const [customStrength, setCustomStrength] = useState(""); // New state for custom strength
+  const [customImprovement, setCustomImprovement] = useState(""); // New state for custom improvement
+  const [custom_strengths_options, setCustomStrengthOptions] = useState([]);
+  const [custom_areas_for_improvements_options, setCustomAreasForImprovementsOptions] = useState([]);
+  
   
   
 
@@ -53,7 +52,6 @@ function TeacherFeedback() {
       try {
         const response = await fetch(`${HOST}:${PORT}/server/get-departments`);
         const data = await response.json();
-        console.log(data)
         if (response.ok)  {
           setDepartments(data.departments);
         } else {
@@ -64,70 +62,52 @@ function TeacherFeedback() {
       }
     };
 
-    const fetchSubjects = async () => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subjects`);
-        const data = await response.json();
-        if (response.ok) {
-          setSubjectCodes(data.subjects);
-        } else {
-          setError("Failed to load subjects.");
-        }
-      } catch (err) {
-        setError("Failed to load subjects.");
-      }
-    };
-
     const fetchStudentStrengths = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-student-strength`);
+        const response = await fetch(`${HOST}:${PORT}/server/get-strength-name`);
         const data = await response.json();
         if (response.ok) {
-          setStudentStrengths((data.docs).map(item=> ({
-            value:item.name,
-            label:item.name
-          })))
-        } else{
-          setError("Failed to load strengths name.");
+          const options = data.docs.map(item => ({ value: item.name, label: item.name }));
+          setStrengthOptions([...options, { value: 'Other', label: 'Other' }]);
+        } else {
+          toastr.error("Failed to load strengths name.");
         }
-      } catch(err) {
-        setError("Failed to load strengths name.");
+      } catch (err) {
+        toastr.error("Failed to load strengths name.");
       }
     };
 
     const fetchStudentImprovementArea = async () => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-student-area-of-improvement`);
+        const response = await fetch(`${HOST}:${PORT}/server/get-improvement-area`);
         const data = await response.json();
         if (response.ok) {
-          setAreasForImprovement((data.docs).map(area=> ({
-            value:area.name,
-            label:area.name
-          })))
-        } else{
-          setError("Failed to load strengths name.");
+          const options = data.improvementarea.map(item => ({ value: item.name, label: item.name }));
+          setAreasForImprovementsOptions([...options, { value: 'Other', label: 'Other' }]);
+        } else {
+          toastr.error("Failed to load area of improvement.");
         }
-      } catch(err) {
-        setError("Failed to load strengths name.");
+      } catch (err) {
+        toastr.error("Failed to load area of improvement.");
       }
     };
 
-    const fetchSubjectNames =async () => {
-      try {
-        const response = await fetch(`${HOST}:${PORT}/server/get-subject-name`);
-        const data = await response.json();
-        if (response.ok) {
-          setSubjectNames((data.docs).map(subject=> ({
-            value:subject.name,
-            label:subject.name
-          })))
-        } else{
-          setError("Failed to load subjects name.");
-        }
-      } catch(err) {
-        setError("Failed to load subjects name.");
-      }
-    };
+    // const fetchSubjectNames =async () => {
+    //   try {
+    //     const response = await fetch(`${HOST}:${PORT}/server/get-subject-name`);
+    //     const data = await response.json();
+    //     if (response.ok) {
+    //       setSubjectNames((data.docs).map(subject=> ({
+    //         value:subject.name,
+    //         label:subject.name
+    //       })))
+    //     } else{
+    //       setError("Failed to load subjects name.");
+    //     }
+    //   } catch(err) {
+    //     setError("Failed to load subjects name.");
+    //   }
+    // };
 
     const currentYear = new Date().getFullYear();
     const pastFiftyYears = Array.from({ length: 50 }, (_, index) => currentYear - index);
@@ -136,19 +116,21 @@ function TeacherFeedback() {
     setDateOfRating(today);
 
     fetchDepartments();
-    fetchSubjects();
+    // fetchSubjects();
     fetchStudentStrengths();
     fetchStudentImprovementArea();
-    fetchSubjectNames();
+    // fetchSubjectNames();
   }, []);
 
   const handleStrengthChange = (selected) =>{
-    setStrengthNames(selected);
+    setStrengths(selected);
   }
 
   const handleAreaForImprovementChange = (selected) =>{
-    setAreaOfImprovementNames(selected);
+    setImprovementArea(selected);
   }
+  
+
   const fetchStudents = async (student_reg_year, department) => {
     try {
       const payload = {registration_year:student_reg_year, department:department }
@@ -183,6 +165,7 @@ function TeacherFeedback() {
     } else if (type === "DEPARTMENT") {
       newDepartment = value;
       setDepartment(value);
+      fetchSubjects(value);
     }
   
     if (newRegYear && newDepartment) {
@@ -190,66 +173,126 @@ function TeacherFeedback() {
     }
   };
 
-  
+  const fetchSubjects = async (department) => {
+    try {
+      const response = await fetch(`${HOST}:${PORT}/server/get-conditional-subjects`, {
+        method: "PATCH",
+        body: JSON.stringify({department:department}),
+        headers: { "Content-Type": "application/json" },
+      });
 
-  
+      if (response) {
+        const result = await response.json();
+        if (response.ok) {
+          setSubjectCodes(result.docs);
+        } else {
+          setError(result.msg);
+        }
+      } else {
+        setError("We are unable to process now. Please try again later.");
+      }
+      
+    } catch (err) {
+      setError("Failed to load subjects.");
+    }
+  };
 
+  const handleAddCustomStrength = () => {
+    if (customStrength && !strengths.some(s => s.value === customStrength)) {
+      setStrengths([...strengths, { value: customStrength, label: customStrength }]);
+      setCustomStrengthOptions([...custom_strengths_options, { name: customStrength, strength_for: "TEACHER", active: 1 }]);
+      setCustomStrength("");
+    }
+  };
+
+  const handleAddCustomImprovement = () => {
+    if (customImprovement && !areas_of_improvement.some(i => i.value === customImprovement)) {
+      setImprovementArea([...areas_of_improvement, { value: customImprovement, label: customImprovement }]);
+      setCustomAreasForImprovementsOptions([...custom_areas_for_improvements_options, { name: customImprovement, area_for: "TEACHER", active: 1 }]);
+      setCustomImprovement("");
+    }
+  };
+  
+  const handleClear = () => {
+    setSemesterOfRating("");
+    setStudentName("");
+    setStudentRegYear("");
+    setDepartment("");
+    setSubjectCode("");
+    setClassParticipation("");
+    setHomeworkOrAssignments("");
+    setQualityOfWork("");
+    setTimeliness("");
+    setProblemSolvingSkills("");
+    setBehaviourAndAttitude("");
+    setResponsibility("");
+    setParticipationAndEngagement("");
+    setGroupWork("");
+    setOverallStudentQuality("");
+    setStrengths([]);
+    setImprovementArea([]);
+    setAdditionalComments("");
+  }; 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_year || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || !strength_names || !area_of_improvement_names ){
-            setError("Please enter all the required values.");
+      if (!semester_of_rating || !date_of_rating || !teacher_name || !student_name || !student_reg_year || !department || !subject_code || !class_participation || !homework_or_assignments || !quality_of_work || !timeliness || !problem_solving_skills || !behaviour_and_attitude || !responsibility || !participation_and_engagement || !group_work || !overall_student_quality || strengths.length ==0 || areas_of_improvement.length ==0 ){
+        toastr.error("Please enter all the required values.");
             return;
         }
-        const final_strengths = [];
-        for (let i=0; i<(student_strengths).length; i++)
-        {
-          final_strengths.push(student_strengths[i].value)
-        }
+        const final_strengths = strengths.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
+        const final_AreasForImprovements = areas_of_improvement.filter(item => item.value.toLowerCase() !== "other").map(item => item.value);
 
-        const final_improvement = [];
-        for (let i=0; i<(areas_for_improvement).length; i++)
-        {
-          final_improvement.push(areas_for_improvement[i].value)
-        }
-
-        const final_subject_name = [];
-        for (let i=0; i<(subject_names).length; i++){
-          final_subject_name.push(subject_names[i].value)
-        }
-
-        const userId = sessionStorage.getItem("eiUserId")
-        const teacherData = { semester_of_rating, date_of_rating, teacher_name: userId, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strength_names:final_strengths, area_of_improvement_names:final_improvement,  additional_comments,subject_names: final_subject_name };
+        const teacherData = { semester_of_rating, date_of_rating, student_name, student_reg_year,department, subject_code, class_participation, homework_or_assignments, quality_of_work, timeliness, problem_solving_skills, behaviour_and_attitude, responsibility, participation_and_engagement,group_work, overall_student_quality, strengths:final_strengths, areas_of_improvement:final_AreasForImprovements,  additional_comments };
         const response = await fetch(`${HOST}:${PORT}/server/teacher-feedback`, {
           method: "POST",
           body: JSON.stringify(teacherData),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ${token}`,
+          },
         });
         if (response){
           const result = await response.json();
-          console.log(result);
           if (response.ok){
-            setResponse(result.msg);
-            setError("");
-            navigate("/home")
-            // setDeptId("");
-            // setName("");
-            // navigate("/login");
+            if (custom_strengths_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/strength-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_strengths_options),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                },
+              });
+            }
+            
+        
+            if (custom_areas_for_improvements_options.length>0) {
+              await fetch(`${HOST}:${PORT}/server/area-of-improvement-create`, {
+                method: "POST",
+                body: JSON.stringify(custom_areas_for_improvements_options),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': `Bearer ${token}`,
+                }
+              });
+            }
+            toastr.success("Feedback submited successfully.");
+            // navigate("/home");
+            handleClear();
           } else{
-            setError(result.msg);
+            toastr.error(result.msg);
           }
         } else{
-          setError("We are unable to process now. Please try again later.")
+          toastr.error("We are unable to process now. Please try again later.")
         }
-        setTimeout(() => {
-          setResponse("");
-          setError("");
-        }, 3000);
       };
+
+        
+
+
       return(
-        <div className="container my-2">
-          {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-          {response && (<div className="alert alert-success" role="alert">{response}</div>)}
+      <div className="container my-2">
       <form onSubmit={handleSubmit}>
       <h4 className='my-4'>Rate your students here. For guide and more clarity about giving feedback please visit "User Manual".</h4>
       <hr />
@@ -465,8 +508,6 @@ function TeacherFeedback() {
           <label className="form-label">Group Work <span className="ei-col-red">*</span></label>
             <select className="form-select" aria-label="Default select example" name="group_work" value={group_work} onChange={(e) => setGroupWork(e.target.value)}>
                 <option defaultValue>-- Select --</option>
-               
-                <option defaultValue>--Select Group Work--</option>
                 <option value="5" >Always Participates</option>
                 <option value="4" >Oftenly Participates</option>
                 <option value="3" >Sometimes Participates</option>
@@ -493,32 +534,38 @@ function TeacherFeedback() {
         </div>
 
             <hr />
-        <div className="mb-3">
-          <label htmlFor="strength_of_student" className='form-label'>Strengths<span className="ei-col-red">*</span></label>
-          <Select
-              isMulti
-              options={student_strengths}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={handleStrengthChange}
-              value={strength_names}
-              
-            />      
-        <div/>
-        </div>
+            <div className="mb-3 row">
+          <div className="col">
+            <label>Strengths <span className="ei-col-red">*</span></label>
+            <Select isMulti options={strengths_options} value={strengths} onChange={handleStrengthChange}/>
+          </div>
+        {strengths.some(s => s.value === "Other") && (
+          <div className="col">
+            <label htmlFor=""></label>
+            <div className="row">
+              <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom strength" value={customStrength} onChange={(e) => setCustomStrength(e.target.value)}/></div>
+              <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomStrength}>Add </button></div>
+            </div>
+          </div>
+        )}
+      </div>
 
-
-        <div className="mb-3">
-          <label htmlFor="area_of_improvements" className='form-label'>Area Of Improvement<span className="ei-col-red">*</span></label>
-          <Select
-              isMulti
-              options={areas_for_improvement}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={handleAreaForImprovementChange}
-              value={area_of_improvement_names}
-            />
+      {/* Areas for Improvement Section */}
+      <div className="mb-3 row">
+        <div className="col">
+          <label>Areas for Improvement <span className="ei-col-red">*</span></label>
+          <Select isMulti options={areas_for_improvements_options} value={areas_of_improvement} onChange={handleAreaForImprovementChange}/>
         </div>
+        {areas_of_improvement.some(a => a.value === "Other") && (
+        <div className="col">
+          <label htmlFor=""></label>
+          <div className="row">
+            <div className="col-10 d-flex justify-content-start align-items-center"><input type="text" className="form-control" placeholder="Enter custom improvement" value={customImprovement} onChange={(e) => setCustomImprovement(e.target.value)}/></div>
+            <div className="col-2 d-flex justify-content-end align-items-center"><button type="button" className="btn btn-primary" onClick={handleAddCustomImprovement}> Add </button></div>
+          </div>
+        </div>
+        )}
+      </div>
 
 
         <div className="mb-3">
@@ -527,8 +574,7 @@ function TeacherFeedback() {
         </div>
         
         <button type="submit" className="btn btn-primary">Save</button>
-
-         <button type="reset" className="btn btn-primary m-2" onClick={() => clearForm()}>Clear</button>
+        <button type="button" className="btn btn-primary ms-4" onClick={handleClear}>Clear</button>
         </form>
         </div>
         

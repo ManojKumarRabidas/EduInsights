@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
-
+const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 function Update() {
     const [user_type, setUserType] = useState("");
     const [employee_id, setEmployeeId] = useState("");
@@ -11,9 +12,6 @@ function Update() {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [pin, setPin] = useState("");
-    // const [active, setActive] = useState(false);
-    const [error, setError] = useState("");
-    const [response, setResponse] = useState("");
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -21,6 +19,7 @@ function Update() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/support-user-details/${id}`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
       if (response) {
         const result = await response.json();
@@ -34,20 +33,15 @@ function Update() {
             setPin(result.doc.pin);
             // setActive(result.doc.active === 1);
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else {
         log
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     } catch (error) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   useEffect(() => {
@@ -56,53 +50,47 @@ function Update() {
 
   const handleEdit = async (event) => {
     event.preventDefault();
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
     const updateSupportUser  = {user_type, employee_id, name, phone, email, address, pin };
     if (!user_type || !employee_id || !name || !phone || !email || !address || !pin){
-      setError("Please enter all the required values.");
+      toastr.error("Please enter all the required values.");
       return;
     }
     try {
       const response = await fetch(`${HOST}:${PORT}/server/support-user-update/${id}`, {
         method: "PATCH",
         body: JSON.stringify(updateSupportUser),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        },
       });
 
       if (response) {
         const result = await response.json();
         if (response.ok) {
-          setResponse(result.message);
-          setError("");
+          toastr.success("User details updated successfully.");
             navigate("/support-users/support-user-list");
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     } catch (error) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   };
 
   return (
     <div className="container my-2">
-      {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-      {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-
-
       <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="row">
           <div className="col mb-3">
               <label className="form-label">User Type <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="user_type" value={user_type} onChange={(e) => setUserType(e.target.value)}>
-                  <option defaultValue>--Select user type--</option>
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="SUPPORT">SUPPORT</option>
+                  <option>--Select user type--</option>
+                  {/* <option value="ADMIN">ADMIN</option> */}
+                  <option defaultValue value="SUPPORT">SUPPORT</option>
               </select>
           </div>
           <div className="col mb-3">
