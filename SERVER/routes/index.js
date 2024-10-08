@@ -86,6 +86,13 @@ router.get("/get-conditional-subjects-code",authorizeRole(['STUDENT']), studentC
 router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
 
+router.get("/semester-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterList);
+router.post("/semester-create", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), adminController.semesterCreate);
+router.get("/semester-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterDetails);
+router.patch("/semester-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterUpdate);
+router.delete("/semester-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterDelete);
+router.put("/semester-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterUpdateActive);
+
 // Dashboard 
 router.patch("/get-conditional-user-list",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getConditionalUserList)
 router.patch("/get-user-feedback-details",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getUserFeedbackDetails)
