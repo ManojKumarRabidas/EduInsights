@@ -3,11 +3,15 @@ import BarChartComponent from './partials/chartcomponents/BarChartComponent';
 import MultiBarChartComponent from './partials/chartcomponents/MultiBarChartComponent';
 import React, { useEffect, useState } from "react";
 import toastr from 'toastr';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { subMonths } from "date-fns";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 const token = sessionStorage.getItem('token');
 
 function Home() {
+  const [dateRange, setDateRange] = useState([subMonths(new Date(), 13), subMonths(new Date(), 1)]);
   const [logedinUserType, setLogedinUserType] = useState('');
   const [userType, setUserType] = useState('');
   const [names, setNames] = useState([]);
@@ -63,11 +67,9 @@ const getTopGrowths = async (token) =>{
   if (response){
     const result = await response.json();
     if (response.ok){
-      console.log("result.doc", result.doc)
       setGrowthData(result.doc.docs)
       setGrowthDataPrevMonth(result.doc.prevMonthYear)
       setGrowthDataPrevPrevMonth(result.doc.prevPrevMonthYear)
-      console.log("growthData", growthData)
     } else{
       toastr.error(result.msg);
     }
@@ -211,6 +213,10 @@ const getFeedbackDetails = async (_id, userType) => {
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
                     {userType=="STUDENT" && "Current Month Average Overall Performance"}
                     {userType=="TEACHER" && "Current Year Average Overall Teaching Quality"}
+                  </div>
+                  <div className='d-flex justify-content-end'>
+                    <label className='m-2'>Custom Month Range: </label>
+                    <DatePicker selectsRange startDate={dateRange[0]} endDate={dateRange[1]} onChange={(update) => setDateRange(update)} dateFormat="MM/yyyy" maxDate={dateRange[1]} className="form-control form-select"/>
                   </div>
                   {graphData.lineGraphData && <LineChartComponent data={graphData.lineGraphData} />}
                 </div>

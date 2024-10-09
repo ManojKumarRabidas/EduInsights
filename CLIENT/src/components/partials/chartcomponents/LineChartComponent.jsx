@@ -20,7 +20,7 @@ const LineChartComponent = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: 'Dataset 1',
+        label: '2024',
         data: data.values,
         fill: false,
         backgroundColor: 'rgb(75, 192, 192)',

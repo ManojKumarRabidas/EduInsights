@@ -115,7 +115,7 @@ module.exports = {
                 graphData = {
                     lineGraphData: {
                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                        values: [65, 59, 80, 81, 56, 55],
+                        values: [65, 59, 80, 81, 56, 55, 40, 50, 46, 80, 90, 73],
                     },
                     lastMonthOrSemBarData: {
                         labels: ['Clarity of Explanation', 'Subject Knowledge', 'Encouragement of Question', 'Maintains Discipline', 'Fairness in Treatment', 'Approachability', 'Behaviour and Attitude', 'Encouragement and Support', 'Use of Media', 'Provide Study Material', 'Explain with Supportive Analogy', 'Overall Teaching Quality'],
@@ -199,6 +199,7 @@ module.exports = {
                                 }
                             }
                         }
+                        graphData.strengths = graphData.strengths.sort(function(a,b){return b.count - a.count})
                         if (ref.areas_of_improvement.length>0){
                             for(let j=0; j<ref.areas_of_improvement.length; j++){
                                 const innerRef = ref.areas_of_improvement[j];
@@ -211,6 +212,7 @@ module.exports = {
                                 }
                             }
                         }
+                        graphData.areas_of_improvement = graphData.areas_of_improvement.sort(function(a,b){return b.count - a.count})
                     }
                 }
                 for (let j=0; j<graphData.lastMonthOrSemBarData.keyLabels.length; j++){
@@ -227,7 +229,7 @@ module.exports = {
                 graphData = {
                     lineGraphData: {
                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                        values: [65, 59, 80, 81, 56, 55],
+                        values: [65, 59, 80, 81, 56, 55, 40, 50, 46, 80, 90, 73],
                     },
                     lastMonthOrSemBarData: {
                         labels: ['class_participation', 'homework_or_assignments', 'quality_of_work', 'timeliness', 'problem_solving_skills', 'behaviour_and_attitude', 'responsibility', 'participation_and_engagement', 'group_work', 'overall_student_quality'],
