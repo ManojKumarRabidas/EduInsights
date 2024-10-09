@@ -21,6 +21,7 @@ import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
 import Password from './components/Password';
+import Semester from './components/Semester';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -137,6 +138,7 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/profile' element={user_type != 'ADMIN' ? <Profile /> : <Unauthorized />} />
               <Route path='/user-manual' element={<UserManual/>} />
               <Route path='/password/*' element={<Password/>} />
+              <Route path='/semester/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Semester /> : <Unauthorized />} />
             </Routes>
           </main>
         </div>

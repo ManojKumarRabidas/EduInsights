@@ -4,6 +4,7 @@ const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
 const areaOfImprovementModel = require("../models/areaofimprovement");
+const semesterModel = require ("../models/semester");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -691,5 +692,99 @@ module.exports = {
           } catch (error) {
             res.status(500).json({status: false, msg: "Failed to retrieve student names" });
           }
+    },
+
+    semesterCreate: async(req, res)=>{
+        try {
+            const body = req.body;
+            let bodyArray = []
+            let bool =  Array.isArray(body);
+            if(!bool){
+                bodyArray.push(body)
+            } else{
+                bodyArray = body;
+            }
+            for (let i=0; i<bodyArray.length; i++){
+                const ref = bodyArray[i]
+                if (!ref.department || !ref.registration_year || !ref.active){
+                    res.status(400).json({ msg: "Missing Parameters!" });
+                    return;
+                }
+                ref.createdBy = new ObjectId(req.user.id);
+                ref.updatedBy = new ObjectId(req.user.id);
+            }
+            const doc = await semesterModel.insertMany(bodyArray);
+            res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
+        } catch (err) {
+            if(err.code==11000){
+                res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
+                return
+            }
+            res.status(500).json({ status: false, msg: err.message });
+        }
+    },
+    semesterList: async(req, res)=>{
+        try {
+            const docs = await semesterModel.find();
+            res.status(200).json({ docs: docs });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    semesterDetails: async(req, res)=>{
+        try {
+            const params = req.params
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await semesterModel.findById({ _id: params.id });
+            res.status(200).json({ doc: doc });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    semesterUpdate: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await semesterModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "semester updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
+    },
+    semesterDelete: async(req, res)=>{
+        try {
+            const params = req.params;
+            if (!params || !params.id){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            await semesterModel.findByIdAndDelete({ _id: params.id });
+            res.status(200).json({ message: "semester deleted successfully" });
+        } catch (err) {
+            res.status(400).json({ msg: err.message });
+        }
+    },
+    semesterUpdateActive: async(req, res)=>{
+        try {
+            const params = req.params;
+            const body = req.body;
+            body.updatedBy = new ObjectId(req.user.id);
+            if (!params || !params.id || !body){
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const doc = await semesterModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "Updated successfully", doc: doc });
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
+        }
     },
 }
