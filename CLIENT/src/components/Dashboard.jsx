@@ -12,6 +12,9 @@ function Home() {
   const [userType, setUserType] = useState('');
   const [names, setNames] = useState([]);
   const [selectedName, setSelectedName] = useState('');
+  const [growthData, setGrowthData] = useState([]);
+  const [growthDataPrevMonth, setGrowthDataPrevMonth] = useState('');
+  const [growthDataPrevPrevMonth, setGrowthDataPrevPrevMonth] = useState('');
   const [graphData, setGraphData] = useState({});
   const [chartData] = useState({
     lineGraphData: {
@@ -61,6 +64,10 @@ const getTopGrowths = async (token) =>{
     const result = await response.json();
     if (response.ok){
       console.log("result.doc", result.doc)
+      setGrowthData(result.doc.docs)
+      setGrowthDataPrevMonth(result.doc.prevMonthYear)
+      setGrowthDataPrevPrevMonth(result.doc.prevPrevMonthYear)
+      console.log("growthData", growthData)
     } else{
       toastr.error(result.msg);
     }
@@ -150,35 +157,21 @@ const getFeedbackDetails = async (_id, userType) => {
                   <table className="table table-striped table-bordered">
                       <thead>
                           <tr>
-                              <th scope="row">Teacher Code</th>
                               <th scope="row">Teacher Name</th>
-                              <th scope="row">Feedback Of Month Before Previous Month</th>
-                              <th scope="row">Feedback Of Previous Month</th>
+                              <th scope="row">Average Feedback {growthDataPrevPrevMonth}</th>
+                              <th scope="row">Average Feedback {growthDataPrevMonth}</th>
                               <th scope="row">Improvement Percentage</th>
                           </tr>
                       </thead>
                       <tbody>
-                          <tr>
-                              <td>SS1</td>
-                              <td>Subrata Saha</td>
-                              <td className="text-end">2.75</td>
-                              <td className="text-end">2</td>
-                              <td className="text-end">-27.27</td>
-                          </tr>
-                          <tr>
-                              <td>SS1</td>
-                              <td>Subrata Saha</td>
-                              <td className="text-end">2.75</td>
-                              <td className="text-end">2</td>
-                              <td className="text-end">-27.27</td>
-                          </tr>
-                          <tr>
-                              <td>SS1</td>
-                              <td>Subrata Saha</td>
-                              <td className="text-end">2.75</td>
-                              <td className="text-end">2</td>
-                              <td className="text-end">-27.27</td>
-                          </tr>
+                          {growthData.map((doc) => (
+                            <tr>
+                              <td>{doc.name}</td>
+                              <td className="text-end">{doc.prevPrevMonthAvg}</td>
+                              <td className="text-end">{doc.prevMonthAvg}</td>
+                              <td className="text-end">{doc.avgGrowth} %</td>
+                            </tr>
+                          ))}
                       </tbody>
                   </table>
                 </div>

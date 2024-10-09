@@ -29,7 +29,7 @@ function Sidebar() {
     <div className="sidebar">
         <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '')} end>Home</NavLink>
         <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
-        {/* {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/admin-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Admin Dashboard</NavLink>} */}
+        {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Search By Strength</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
         {(userType == "ADMIN") &&<NavLink to="/support-users" className={({ isActive }) => (isActive ? 'active' : '')}>Support Users</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')}>Pending Verifications</NavLink>}

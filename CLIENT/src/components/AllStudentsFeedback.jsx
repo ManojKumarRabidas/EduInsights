@@ -282,7 +282,7 @@ function Users () {
             const matchesStudentFilter = studentFilter ? row.student === studentFilter: true;
             const matchesDepartmentFilter = departmentFilter ? row.department === departmentFilter: true;
             const matchesMonthOfRatingFilter = monthOfRatingFilter ? row.month_of_rating === monthOfRatingFilter: true;
-            const matchesSubjectCodeFilter = subjectCodeFilter ? row.subject_code === subjectCodeFilter: true;
+            const matchesSubjectCodeFilter = subjectCodeFilter ? row.subject === subjectCodeFilter: true;
   
           return matchesSearchFilter && matchesTeacherFilter && matchesStudentFilter && matchesDepartmentFilter && matchesMonthOfRatingFilter && matchesSubjectCodeFilter;
         });

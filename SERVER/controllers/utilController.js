@@ -16,7 +16,6 @@ module.exports = {
             const prevPrevYear = date.getFullYear();
             const prevPrevMonthYear = prevPrevMonth.concat(" ", prevPrevYear);
 
-            // const docs = await studentFeedbackModel.find({month_of_rating: {$in: [prevMonthYear, prevPrevMonthYear]}}, {teacher_id:1,month_of_rating:1, date_of_rating:1, overall_teaching_quality:1})
             const docs = await studentFeedbackModel.aggregate([
                 {$match: {month_of_rating: {$in: [prevMonthYear, prevPrevMonthYear]}}}, 
                 {$project: {teacher_id:1,month_of_rating:1, date_of_rating:1, overall_teaching_quality:1}},
@@ -25,75 +24,48 @@ module.exports = {
                     foreignField: "_id",
                     as: "teacher"}},
                 {$unwind: "$teacher"}, 
-                {$project: {teacher:"$teacher.name",month_of_rating:1, date_of_rating:1, overall_teaching_quality:1}},
+                {$project: {teacher:"$teacher.name", teacher_code: "$teacher.teacher_code" ,month_of_rating:1, date_of_rating:1, overall_teaching_quality:1}},
             ])
-            // console.log("docs", docs)
-            const demoDocs = [
-                {
-                  _id: new ObjectId("6703aa05140a07c31f1f1644"),
-                  month_of_rating: 'August 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 3
-                },
-                {
-                  _id: new ObjectId("6703aac9140a07c31f1f165a"),
-                  month_of_rating: 'August 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 5
-                },
-                {
-                  _id: new ObjectId("6703ab8c140a07c31f1f1670"),
-                  month_of_rating: 'August 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 3
-                },
-                {
-                  _id: new ObjectId("6703a972140a07c31f1f1636"),
-                  month_of_rating: 'September 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 4
-                },
-                {
-                  _id: new ObjectId("6703aaf8140a07c31f1f165c"),
-                  month_of_rating: 'September 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 4
-                },
-                {
-                  _id: new ObjectId("6703abb5140a07c31f1f1672"),
-                  month_of_rating: 'September 2024',
-                  date_of_rating: "2024-10-07T00:00:00.000Z",
-                  teacher: 'Subrata Saha',
-                  overall_teaching_quality: 4
-                }
-              ]
-            const growthDocDemo = [
-                {name: "Subrata Saha", prevMonthAvg: 2.3, prevPrevMonthAvg: 4.3, avgGrowth: 80},
-                {name: "Subhendu Saha", prevMonthAvg: 4.2, prevPrevMonthAvg: 4.3, avgGrowth: 10},
-                {name: "Abhijit Ghosh", prevMonthAvg: 2.3, prevPrevMonthAvg: 4.3, avgGrowth: 63},
-                {name: "Dr. Pintu Pal", prevMonthAvg: 2.3, prevPrevMonthAvg: 4.3, avgGrowth: 43},
-                {name: "Tapan Kumar Chatterjee", prevMonthAvg: 2.3, prevPrevMonthAvg: 4.3, avgGrowth: 37},
-            ]
             const growthDoc = [];
             for (let i=0; i<docs.length; i++){
                 const ref = docs[i];
-                const checkExists = _.findIndex(growthDoc, ['name', ref.name]);
+                const refTeacher = ref.teacher_code.concat(" - ", ref.teacher)
+                const checkExists = growthDoc.length>0? _.findIndex(growthDoc, ['name', refTeacher]):-1;
+                let details;
                 if (checkExists == -1){
-                    // const details = {name: ref.name, count: [ref.overall_teaching_quality]}
-                    // growthDoc.push(details)
+                    if (ref.month_of_rating == prevMonthYear){
+                        details = {name: refTeacher, prevMonth: [ref.overall_teaching_quality], prevPrevMonth: [], prevMonthAvg: 0, prevPrevMonthAvg: 0, avgGrowth: 0}
+                    } else {
+                        details = {name: refTeacher, prevMonth: [], prevPrevMonth: [ref.overall_teaching_quality], prevMonthAvg: 0, prevPrevMonthAvg: 0, avgGrowth: 0}
+                    }
+                    growthDoc.push(details)
                 } else{
-                    // growthDoc[checkExists].count.push(ref.overall_teaching_quality)
+                    if(ref.month_of_rating == prevMonthYear){
+                        growthDoc[checkExists].prevMonth.push(ref.overall_teaching_quality)
+                    }else{
+                        growthDoc[checkExists].prevPrevMonth.push(ref.overall_teaching_quality)
+                    }
                 }
             }
-            res.status(200).json({status: true, doc: docs });
+            for (let i=0; i<growthDoc.length;i++){
+                const ref = growthDoc[i];
+                let prevMonthSum=0;
+                let prevPrevMonthSum=0;
+                for(let j=0; j<ref.prevMonth.length; j++){
+                    prevMonthSum=prevMonthSum+ref.prevMonth[j];
+                }
+                ref.prevMonthAvg = ref.prevMonth.length>0?(prevMonthSum/ref.prevMonth.length).toFixed(2):0;
+                for(let j=0; j<ref.prevPrevMonth.length; j++){
+                    prevPrevMonthSum=prevPrevMonthSum+ref.prevPrevMonth[j];
+                }
+                ref.prevPrevMonthAvg = ref.prevPrevMonth.length>0?(prevPrevMonthSum/ref.prevPrevMonth.length).toFixed(2):0;
+                ref.avgGrowth = (((ref.prevMonthAvg-ref.prevPrevMonthAvg)*100)/ref.prevPrevMonthAvg).toFixed(2);
+            }
+            const sortedData = growthDoc.sort(function(a,b){return b.avgGrowth - a.avgGrowth})
+            const doc={prevMonthYear: prevMonthYear,prevPrevMonthYear: prevPrevMonthYear, docs: sortedData}
+            res.status(200).json({status: true, doc: doc});
         } catch(err){
-            console.log(err)
-            res.status(500).json({status: false, msg: "Failed to retrieve top growths" });
+            res.status(500).json({status: false, msg: "Failed to retrieve top growths due to some technical problem. Please try again later." });
         }
     },
     getConditionalUserList: async(req, res)=>{
@@ -107,7 +79,7 @@ module.exports = {
             const docs = await userModel.find({user_type: body.userType}, {name:1 , registration_number:1})
             res.status(200).json({status: true, docs: docs });
           } catch (error) {
-            res.status(500).json({status: false, msg: "Failed to retrieve student names" });
+            res.status(500).json({status: false, msg: "Failed to retrieve student names due to some technical problem. Please try again later." });
           }
     },
     getUserFeedbackDetails:async(req, res) => {
@@ -142,7 +114,7 @@ module.exports = {
             if (userType== "TEACHER"){
                 graphData = {
                     lineGraphData: {
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                         values: [65, 59, 80, 81, 56, 55],
                     },
                     lastMonthOrSemBarData: {
@@ -254,7 +226,7 @@ module.exports = {
             } else if (userType == "STUDENT"){
                 graphData = {
                     lineGraphData: {
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                         values: [65, 59, 80, 81, 56, 55],
                     },
                     lastMonthOrSemBarData: {
@@ -270,12 +242,13 @@ module.exports = {
                     },
                     strengths: [],
                     areas_of_improvement: []
+                    // Incomplete Code
                 }
             }
-            res.status(200).json({status: true, doc: graphData, docs: docs });
+            res.status(200).json({status: true, doc: graphData });
         }
         catch(err){
-            res.status(500).json({status: false, msg: "Failed to retrieve user feedback details" });
+            res.status(500).json({status: false, msg: "Failed to retrieve user feedback details due to some technical problem. Please try again later." });
         }
     }
 
