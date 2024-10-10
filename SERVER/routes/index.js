@@ -97,5 +97,6 @@ router.put("/semester-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), a
 router.patch("/get-conditional-user-list",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getConditionalUserList)
 router.patch("/get-user-feedback-details",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getUserFeedbackDetails)
 router.get("/get-top-growths",authorizeRole(['ADMIN', 'SUPPORT']), utilController.getTopGrowths)
+router.patch("/get-custom-range-user-feedback-details",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getCustomMonthFeedbackDetails)
 
 module.exports = router;

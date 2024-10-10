@@ -82,6 +82,76 @@ module.exports = {
             res.status(500).json({status: false, msg: "Failed to retrieve student names due to some technical problem. Please try again later." });
           }
     },
+    getCustomMonthFeedbackDetails: async(req, res)=>{
+        try{
+            const body = req.body;
+            if (!body || !body._id || !body.userType || !body.monthRange || !body.monthRange[0] || !body.monthRange[1]) {
+                res.status(400).json({ msg: "Missing Parameters!" });
+                return;
+            }
+            const startDate = new Date(body.monthRange[0]);
+            const endDate = new Date(body.monthRange[1])
+            if (endDate > new Date()){
+                return res.status(400).json({ msg: "End month must be maximum current month" });
+            }
+            const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+            if (monthDiff > 13) {
+            return res.status(400).json({ msg: "The month range cannot exceed 12 months" });
+            }
+            let userId;
+            let userType;
+            if (req.user.user_type == ("TEACHER" || "STUDENT")){
+                userId = new ObjectId(req.user.id);
+                userType = req.user.user_type;
+            } else{
+                userType = body.userType;
+                userId = new ObjectId(body._id);
+            }
+            let docs;
+            const monthArray = [];
+            while (startDate <= endDate) {
+                const monthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                monthArray.push(monthYear);
+                startDate.setMonth(startDate.getMonth() + 1);
+            }
+            if(userType === 'STUDENT'){
+                return res.status(400).json({status: false, msg: "Incomplete. Will be complete soon 😊" });
+                // docs = await teacherFeedbackModel.find({student_id: userId, semester_of_rating: { $gte: prev24MonthDate, $lte: currDate }}, {createdBy:0,updatedBy:0})
+            }else if (userType === 'TEACHER'){
+                docs = await studentFeedbackModel.find({teacher_id: userId, month_of_rating: {$in: monthArray}}, {teacher_id:1,month_of_rating:1, date_of_rating:1, overall_teaching_quality:1})
+            }
+            const refDocs= [];
+            for(let i=0; i<monthArray.length; i++){
+                const ref = monthArray[i];
+                refDocs.push({month_of_rating: ref, count:[], avg: 0})
+                for(let j=0; j<docs.length; j++){
+                    const innerRef = docs[j];
+                    if(ref==innerRef.month_of_rating){
+                        refDocs[i].count.push(innerRef.overall_teaching_quality)
+                    }
+                }
+            }
+            let finalDoc= {
+                labels: [],
+                values: [],
+            }
+            for (let i=0; i<refDocs.length;i++){
+                const ref = refDocs[i];
+                let sum=0;
+                for(let j=0; j<ref.count.length; j++){
+                    sum=sum+ref.count[j];
+                }
+                ref.avg = ref.count.length>0?(sum/ref.count.length).toFixed(2):0;
+                finalDoc.labels.push(ref.month_of_rating)
+                finalDoc.values.push(ref.avg)
+
+            }
+            res.status(200).json({status: true, doc: finalDoc });
+        }catch(err){
+            console.log(err)
+            res.status(500).json({status: false, msg: "Failed to retrieve feedback details due to some technical problem. Please try again later." });
+        }
+    },
     getUserFeedbackDetails:async(req, res) => {
         try{
             const body = req.body;

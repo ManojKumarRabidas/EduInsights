@@ -11,7 +11,7 @@ const PORT = import.meta.env.VITE_PORT;
 const token = sessionStorage.getItem('token');
 
 function Home() {
-  const [dateRange, setDateRange] = useState([subMonths(new Date(), 13), subMonths(new Date(), 1)]);
+  const [monthRange, setMonthRange] = useState([subMonths(new Date(), 13), subMonths(new Date(), 1)]);
   const [logedinUserType, setLogedinUserType] = useState('');
   const [userType, setUserType] = useState('');
   const [names, setNames] = useState([]);
@@ -20,22 +20,8 @@ function Home() {
   const [growthDataPrevMonth, setGrowthDataPrevMonth] = useState('');
   const [growthDataPrevPrevMonth, setGrowthDataPrevPrevMonth] = useState('');
   const [graphData, setGraphData] = useState({});
-  const [chartData] = useState({
-    lineGraphData: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        values: [65, 59, 80, 81, 56, 55],
-    },
-    singleBarData: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        values: [12, 19, 3, 5, 2, 3],
-    },
-    threeValuedBarData: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        values1: [10, 20, 30, 40, 50],
-        values2: [15, 25, 35, 45, 55],
-        values3: [20, 30, 40, 50, 60],
-    },
-});
+  const [customMonthGraphData, setCustomMonthGraphData] = useState({});
+
 
 const getUserType = async (token) => {
   const response = await fetch(`${HOST}:${PORT}/server/auth/user`, {
@@ -49,6 +35,7 @@ const getUserType = async (token) => {
       if (result.doc.user_type == "STUDENT" || result.doc.user_type == "TEACHER"){
         setUserType(result.doc.user_type)
         getFeedbackDetails(result.doc.id, result.doc.user_type)
+        getCustomRangeFeedbackDetails(result.doc.id, result.doc.user_type, monthRange)
       } else{
         getTopGrowths(token)
       }
@@ -118,6 +105,7 @@ const handleNameChange = (_id) => {
   if(_id){
     setSelectedName(_id)
     getFeedbackDetails(_id, userType);
+    getCustomRangeFeedbackDetails(_id, userType, monthRange);
   } else{
     setGraphData({})
   }
@@ -149,6 +137,37 @@ const getFeedbackDetails = async (_id, userType) => {
   }
 };
 
+const changeMonthRange = (update)=>{
+  setMonthRange(update)
+  if(update[0] && update[1]){
+    getCustomRangeFeedbackDetails(selectedName, userType, update)
+  }
+}
+const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
+  try {
+    const response = await fetch(`${HOST}:${PORT}/server/get-custom-range-user-feedback-details`, {
+      method: "PATCH",
+      body: JSON.stringify({_id: _id, userType: userType, monthRange: monthRange}),
+      headers: { 
+        "Content-Type": "application/json",
+        'authorization': `Bearer ${token}` 
+      },
+    });
+
+    if (response) {
+      const result = await response.json();
+      if (response.ok) {
+        setCustomMonthGraphData(result.doc)
+      } else {
+        toastr.error(result.msg);
+      }
+    } else {
+      toastr.error("We are unable to process now. Please try again later.");
+    }
+  } catch (error) {
+    toastr.error('Error fetching names:', error);
+  }
+};
     return (
       <div>
         <main className="container my-2">
@@ -212,13 +231,13 @@ const getFeedbackDetails = async (_id, userType) => {
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
                     {userType=="STUDENT" && "Current Month Average Overall Performance"}
-                    {userType=="TEACHER" && "Current Year Average Overall Teaching Quality"}
+                    {userType=="TEACHER" && "Last 12 Months Average Overall Teaching Quality"}
                   </div>
                   <div className='d-flex justify-content-end'>
                     <label className='m-2'>Custom Month Range: </label>
-                    <DatePicker selectsRange startDate={dateRange[0]} endDate={dateRange[1]} onChange={(update) => setDateRange(update)} dateFormat="MM/yyyy" maxDate={dateRange[1]} className="form-control form-select"/>
+                    <DatePicker selectsRange startDate={monthRange[0]} endDate={monthRange[1]} onChange={(update) => changeMonthRange(update)} dateFormat="MM/yyyy" maxDate={monthRange[1]} className="form-control form-select"/>
                   </div>
-                  {graphData.lineGraphData && <LineChartComponent data={graphData.lineGraphData} />}
+                  {graphData.lineGraphData && <LineChartComponent data={customMonthGraphData} />}
                 </div>
               </div>
             </section>
@@ -251,12 +270,6 @@ const getFeedbackDetails = async (_id, userType) => {
                 </div>
                 <div className=" justify-content-center">
                   <table className="table table-striped table-bordered">
-                      {/* <thead>
-                          <tr>
-                              <th scope="row">Strengths</th>
-                              <th scope="row">Areas of Improvement</th>
-                          </tr>
-                      </thead> */}
                       <tbody>
                           <tr>
                               <td>
