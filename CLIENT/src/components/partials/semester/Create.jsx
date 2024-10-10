@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React,{ useState} from "react";
 import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
@@ -6,20 +6,20 @@ import toastr from 'toastr';
 const token = sessionStorage.getItem('token');
 
 function Create() {
-    const [strength_for, setStrengthFor] = useState("");
-    const [name, setName] = useState("");
+    const [registration_year, setStudentRegYear] = useState("");
+    const [department, setDepartment] = useState("");
     const [active, setActive] = useState(false);
     const navigate = useNavigate();
     const handleSubmit = async (event) => {
       event.preventDefault();
-      const strengthData = { strength_for, name, active: active ? "1" : "0" };
-      if (!strength_for || !name ){
+      const reg_yearData = { registration_year, department, active: active ? "1" : "0" };
+      if (!registration_year || !department ){
         toastr.error("Please enter all the required values.");
         return;
       }
-      const response = await fetch(`${HOST}:${PORT}/server/strength-create`, {
+      const response = await fetch(`${HOST}:${PORT}/server/semester-create`, {
         method: "POST",
-        body: JSON.stringify(strengthData),
+        body: JSON.stringify(reg_yearData),
         headers: {
           'Content-Type': 'application/json',
           'authorization': `Bearer ${token}`,
@@ -29,10 +29,10 @@ function Create() {
         const result = await response.json();
         if (response.ok){
           toastr.success(result.msg);
-          setName("");
-          setStrengthFor("");
+          setDepartment("");
+          setStudentRegYear("");
           setActive(false);
-          navigate("/strengths/strength-list");
+          navigate("/semester/semester-create");
         } else{
           toastr.error(result.msg);
         }
@@ -45,16 +45,16 @@ function Create() {
       <div className="container my-2">
         <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
           <div className="mb-3">
-            <label className="form-label">Strength For <span className="ei-col-red">*</span></label>
-            <select className="form-select" aria-label="Default select example" name="strength_for" value={strength_for} onChange={(e) => setStrengthFor(e.target.value)}>
+            <label className="form-label">Registration Year <span className="ei-col-red">*</span></label>
+            <select className="form-select" aria-label="Default select example" name="registration_year" value={registration_year} onChange={(e) => setStrengthFor(e.target.value)}>
                 <option defaultValue>--Select strength for--</option>
                 <option value="TEACHER">TEACHER</option>
                 <option value="STUDENT">STUDENT</option>
             </select>        
           </div>
           <div className="mb-3">
-            <label className="form-label">Name <span className="ei-col-red">*</span></label>
-            <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
+            <label className="form-label">Department <span className="ei-col-red">*</span></label>
+            <input name="department" type="text" className="form-control" aria-describedby="emailHelp" value={department} onChange={(e) => setDepartment(e.target.value)}/>
           </div>
           <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
           <label className="form-label">Active <span className="ei-col-red">*</span></label>

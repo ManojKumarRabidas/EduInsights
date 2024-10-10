@@ -2,8 +2,29 @@ const {ObjectId} = require('mongodb')
 const userModel = require("../models/user");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 module.exports = {
+  ensureAuthenticated: (req, res, next) => {
+    if (req.session && req.session.user) {
+      next(); // Proceed if authenticated
+    } else {
+      res.status(401).json({ msg: 'Unauthorized' });
+    }
+  },
+  verifyToken: (req, res, next) => {
+    const token = req.cookies.token;  // Get token from cookies
+    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify JWT
+        req.user = decoded;  // Attach user info to the request object
+        next();
+    } catch (err) {
+        return res.status(401).json({ msg: 'Token is not valid' });
+    }
+  },
   userCreate: async (req, res) => {
     try {
       const body = req.body;
@@ -93,64 +114,32 @@ module.exports = {
       authUser.last_log_in = new Date();
       await authUser.save();
 
-      // req.session.user = {
-      //   _id: authUser.user_id,
-      //   name: authUser.name,
-      //   user_type: authUser.user_type
-      // };
-      // res.json({ user: req.session.user, msg: 'You are now logged in!' });
-
-      // req.session.save(() => {
-      //   req.session.logged_in = true;
-      //   req.session.user = {
-      //     _id: authUser.user_id,
-      //     name: authUser.name,
-      //     user_type: authUser.user_type
-      //   };
-      //   console.log("Session after login:", req.session);
-      //   res.json({ user: req.session.user, msg: 'You are now logged in!' });
-      // });
-
-      req.session.regenerate(function (err) {
-        if (err) next(err)
-        req.session.user = {
-              _id: authUser.user_id,
-              name: authUser.name,
-              user_type: authUser.user_type
-            };
-        req.session.save(function (err) {
-          if (err) return next(err)
-            res.json({ user: req.session.user, msg: 'You are now logged in!' });
-        })
-      })
+      const token = jwt.sign({ id: authUser.user_id, user_type: authUser.user_type, name: authUser.name }, process.env.JWT_SECRET, { expiresIn: '2h' });
+      res.cookie('token', token, { httpOnly: true }).json({ token, userName:authUser.name, msg: 'Logged in successfully' });
     } catch (err) {
       res.status(500).json({ msg: 'Server error', error: err.message });
     }
   },
 
   userLogout: (req, res) => {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ msg: 'Logout failed', error: err.message });
-      }
-      res.clearCookie('connect.sid');
-      res.json({ msg: 'Logout successful' });
-    });
+    res.clearCookie('token').json({ msg: 'Logged out successfully' });
   }, 
-
+  getUser:(req, res)=>{
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({status: false, msg: 'Authorization denied' });
+  
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {console.log(err); return res.status(403).json({status: false, msg: 'Session expired.' });}
+      res.status(200).json({status: true,doc: user });
+    });
+  },
   profileDetails: async(req, res) =>{
     try {
-      var userId = req.headers.authorization?.split(' ')[1];
+      var userId = req.user.id
       if (!userId) {
         return res.status(400).json({ msg: 'User ID is missing' });
       }
       userId = new ObjectId(userId);
-      // var userId;
-      // if(req.session.user && req.session.user._id){
-      //   userId = new ObjectId(req.session.user._id);
-      // } else {
-      //   userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
-      // }
         const docs = await userModel.aggregate([
           {$match: {_id: userId}},
           {$lookup: {from: "authentications",
@@ -187,9 +176,12 @@ module.exports = {
           return new Intl.DateTimeFormat("en-IN", options).format(new Date(date)).replace(",", " -");
         };
         const doc = docs[0]
-        doc.createdAt= formatDate(doc.createdAt),
-        doc.last_log_in= formatDate(doc.last_log_in),
-        doc.registration_year= formatDate(doc.registration_year),
+        doc.createdAt= moment(doc.createdAt).format('DD/MM/YYYY - hh:mm A');
+        doc.last_log_in= moment(doc.last_log_in).format('DD/MM/YYYY - hh:mm A');
+        // doc.registration_year= moment(doc.registration_year).format('DD/MM/YYYY');
+        // doc.createdAt= formatDate(doc.createdAt),
+        // doc.last_log_in= formatDate(doc.last_log_in),
+        // doc.registration_year= formatDate(doc.registration_year),
         doc.active= doc.active === 1 ? "Active" : "Inactive",
         doc.is_verified= doc.is_verified === 1 ? "Verified" : (doc.is_verified === -1 ? "Rejected" : "Not Verified"),
         res.status(200).json({ doc: doc });
@@ -200,15 +192,15 @@ module.exports = {
 
   changePassword: async (req, res) => {
     try {
+      const tempUser = req.user;
       const body = req.body;
-      console.log(body);
       if ( !body.old_password || !body.new_password) {
         res.status(400).json({ msg: "Missing Parameters!" });
         return;
       }
       var userId;
-      if(req.session.user && req.session.user._id){
-        userId = new ObjectId(req.session.user._id);
+      if(tempUser && tempUser.id){
+        userId = new ObjectId(tempUser.id);
       } else {
         userId = new ObjectId("66da8a1459ec4c0f5b3d0363");
       }
@@ -227,7 +219,6 @@ module.exports = {
 
       res.status(200).json({ status: true, msg: 'Password changed successfully' });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ status: false, msg: "An error occurred while changing the password" });
     }
   },

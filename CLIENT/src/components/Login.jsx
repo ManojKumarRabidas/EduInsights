@@ -25,12 +25,11 @@ function Login() {
       const result = await response.json();
       console.log(result);
       if (response.ok){
-        sessionStorage.setItem('eiUserSession', 'true');
-        sessionStorage.setItem('eiUserName', result.user.name);
-        sessionStorage.setItem('eiUserId', result.user._id);
-        sessionStorage.setItem('eiUserType', result.user.user_type);
+        sessionStorage.setItem('token', result.token);
+        sessionStorage.setItem('eiUserName', result.userName);
         window.dispatchEvent(new Event('storage'));
         navigate("/home");
+        location.reload()
       } else{
         setError(result.msg);
       }

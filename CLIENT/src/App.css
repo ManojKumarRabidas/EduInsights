@@ -10,40 +10,175 @@
 .cursor-pointer{
   cursor: pointer;
 }
+.small-btn{
+  padding: 2px 10px !important;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+table tbody tr{
+  vertical-align:middle;
+}
+.max-min-300{
+  max-width: 300px;
+  min-width: 300px;
+}
+/* Hide scrollbar but keep scroll behavior */
+.scroll-hidden {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+/* For Chrome, Safari, and other WebKit browsers */
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.scroll-hidden {
+  scrollbar-width: none; /* Hide scrollbar */
+}
+
+/* Optional: Ensure elements inside don't break */
+.scroll-hidden td {
+  white-space: nowrap;
+}
+/* Success Toastr Background */
+.toast-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+/* Error Toastr Background */
+.toast-error {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Warning Toastr Background */
+.toast-warning {
+  background-color: #ffc107 !important;
+  color: black !important;
+}
+
+/* Info Toastr Background */
+.toast-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
 /* General styles */
 body {
   /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
   font-family: math !important;
-  background-color: #f8f9fa;
+  /* background-color: #f8f9fa; */
+  background-color: #F0FDF4 !important;
+  color: #333333 !important;
   margin: 0;
   padding: 0;
 }
 a{
   text-decoration: none !important;
-  color: blue;
+  color: rgb(255, 0, 183);
 }
+button, button a{
+  background-color: #10B981 !important;
+  color: white !important;
+}
+/* Override Bootstrap switch color */
+.form-check-input:checked {
+  background-color: #10B981 !important; /* Background color when the switch is checked */
+  border-color: #10B981 !important; /* Border color when the switch is checked */
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem #10B981 !important; /* Focus outline color */
+}
+/* Override Bootstrap dropdown blue color with #10B981 */
+
+/* Change the border and background color of the dropdown when focused */
+.form-control:focus {
+  border-color: #10B981 !important; /* Change border color on focus */
+  box-shadow: 0 0 0 0.2rem rgba(47, 79, 79, 0.25) !important; /* Shadow effect with #10B981 tint */
+}
+
+/* Change the color of the dropdown arrow when focused */
+.form-control:focus-visible {
+  border-color: #10B981 !important; /* Change border color on focus-visible */
+}
+
+/* Change the background color of the selected option in dropdown */
+.form-control option:checked {
+  background-color: #10B981 !important; /* Dark Slate Grey background for selected option */
+  color: white !important; /* White text for selected option */
+}
+
+/* Change the color of the placeholder text */
+.form-control::placeholder {
+  color:  #10B981 !important; /* Dark Slate Grey for placeholder text */
+}
+.date-field-col> div:first-child{
+  width: -webkit-fill-available;
+}
+.webkit-fill-available-class{
+  width: -webkit-fill-available;
+}
+/*  Dropdown background color */
+/* Change the hover background color for the entire dropdown */
+.select-container select {
+  -webkit-appearance: none; /* Remove default styling */
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white; /* Background color of select */
+  color: black; /* Text color */
+  border: 1px solid #dcdcdc;
+  padding: 0.5rem;
+}
+
+/* Change the background color of options when the dropdown is focused */
+.select-container select:focus,
+.select-container select:hover {
+  border-color: #10B981 !important; /* Change border color on hover or focus */
+  outline: none;
+  box-shadow: 0 0 5px #10B981 !important;
+}
+
+.select-container option:checked {
+  background-color: #10B981 !important; /* Custom background color for option */
+  color: white !important; /* Text color for selected option */
+}
+.select-container option:hover {
+  background-color: #10B981 !important; /* Custom background color for option */
+  color: white !important; /* Text color for selected option */
+}
+
 /* Navbar styles */
 .navbar {
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
+  /* background-color: #10B981 !important; */
+  background-color: #10B981 !important;
+  /* background-color: #008659 !important; */
   border-bottom: 1px solid #e7e7e7;
   padding: 0.5rem 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: #1c0808;
 }
 
 .navbar-nav .nav-link {
-  color: #333;
+  /* color: #333; */
+  color: #000;
   margin-right: 1rem;
   font-weight: 500;
 }
 
 .navbar-nav .nav-link:hover {
-  color: #007bff;
+  /* color: #007bff; */
+  color: #181818;
 }
 
 .navbar-toggler {
@@ -65,7 +200,8 @@ a{
 
 .dropdown-item:hover {
   background-color: #f1f1f1;
-  color: #007bff;
+  /* color: #007bff; */
+  color: #10B981;
 }
 
 .ei-row{
@@ -76,6 +212,8 @@ a{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  background-color:  #ceffdc;
+  height: 100vh;
 }
 /* Sidebar styles */
 .sidebar {
@@ -84,7 +222,8 @@ a{
   left: 0;
   height: 100%;
   width: 240px !important;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
+  background-color: #D1FAE5;
   border-right: 1px solid #e7e7e7;
   padding-top: 70px; /* Account for fixed navbar height */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -105,18 +244,21 @@ a{
 }
 
 .sidebar a:hover {
-  background-color: #f1f1f1;
-  color: #007bff;
+  background-color: #bbf2d5;
+  /* color: #007bff; */
+  color: #10B981;
 }
 
 .sidebar a.active {
-  background-color: #007bff;
+  /* background-color: #007bff; */
+  background-color: #10B981;
   color: #fff;
   font-weight: 600;
 }
 
 .inner-navbar .active {
-  background-color: #007bff;
+  /* background-color: #007bff; */
+  background-color: #10B981;
   color: #fff !important;
   font-weight: 600;
   padding: 2px 16px 2px;
@@ -144,7 +286,7 @@ a{
   margin-left: 16vw !important;
 }
 .main-section-log-in {
-  margin-top: 8rem !important;
+  /* margin-top: 8rem !important; */
   max-width: 28rem !important;
 }
 .main-section-registration {
@@ -226,3 +368,15 @@ a{
 .read-the-docs {
   color: #888;
 } */
+
+
+/* home heading */
+
+/* .text-gradient{
+  color: #c02626;
+} */
+
+/* lead {
+  color: #b21b8283;
+  /* font-weight: bold; */
+

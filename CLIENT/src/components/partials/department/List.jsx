@@ -7,14 +7,13 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-
+import toastr from 'toastr';
+const token = sessionStorage.getItem('token');
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
 
 function List() {
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
@@ -24,17 +23,17 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
       if (response.ok) {
         setData(result.docs);
-        setError("");
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   }
 
@@ -46,22 +45,19 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/dept-delete/${id}`, {
         method: "DELETE",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
       if (response.ok) {
-        setResponse("Department deleted successfully");
+        toastr.success("Department deleted successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   const handleActiveChange = async (id, isActive) => {
@@ -69,25 +65,24 @@ function List() {
       const response = await fetch(`${HOST}:${PORT}/server/dept-update-active/${id}`, {
         method: "PUT",
         body: JSON.stringify({ active: isActive ? "1" : "0" }),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        }
       });
 
       const result = await response.json();
       console.log(result);
       
       if (response.ok) {
-        setResponse("Department status updated successfully");
+        toastr.success("Department status updated successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
   };
 
   // Define table columns with proper accessorKeys
@@ -223,9 +218,6 @@ function List() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
-
       <input
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}

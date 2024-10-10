@@ -8,13 +8,13 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 
+import toastr from 'toastr';
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
 
 function List() {
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(6);
@@ -24,17 +24,17 @@ function List() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/pending-verification-user-list`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       const result = await response.json();
       if (response.ok) {
         setData(result.docs);
-        setError("");
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
   }
 
@@ -47,28 +47,24 @@ function List() {
       const response = await fetch(`${HOST}:${PORT}/server/user-update-verificaton/${id}`, {
         method: "PUT",
         body: JSON.stringify({ is_verified: status }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${token}`
+        },
       });
 
       const result = await response.json();
-      console.log(result);
-      
       if (response.ok) {
-        setResponse("User verification status updated successfully");
+        toastr.success("User verification status updated successfully");
         getData();
       } else {
-        setError(result.error);
+        toastr.error(result.error);
       }
     } catch (err) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 5000);
   };
 
-  // Define table columns with proper accessorKeys
   const columns = useMemo(
     () => [
         {
@@ -125,17 +121,15 @@ function List() {
         enableSorting: false,
         headerClassName: "ei-text-center-imp",
         cell: ({ row }) => (
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center"}}>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "1")}
             >Accept </button>
             <button
               type="button"
-              className="btn btn-outline-light m-1"
-              style={{ color: "blue", backgroundColor: "ghostwhite" }}
+              className="btn small-btn btn-outline-light"
               onClick={() => handleVerification(row.original._id, "-1")}
             > Reject</button>
           </div>
@@ -214,9 +208,6 @@ function List() {
 
   return (
     <div className="container my-2">
-      {error && <div className="alert alert-danger">{error}</div>}
-      {response && <div className="alert alert-success">{response}</div>}
-
       <input
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
@@ -224,7 +215,7 @@ function List() {
         className="form-control my-3"
       />
 
-      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+      <table className="table table-striped shadow-sm p-3 mb-5 bg-body-tertiary rounded" style={{ fontSize: "smaller" }}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

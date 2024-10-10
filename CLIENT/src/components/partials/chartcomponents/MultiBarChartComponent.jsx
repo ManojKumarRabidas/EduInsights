@@ -19,21 +19,21 @@ const MultiBarChartComponent = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: 'Dataset 1',
+        label: data.setNames[0],
         data: data.values1,
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
       },
       {
-        label: 'Dataset 2',
+        label: data.setNames[1],
         data: data.values2,
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
       },
       {
-        label: 'Dataset 3',
+        label: data.setNames[2],
         data: data.values3,
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',

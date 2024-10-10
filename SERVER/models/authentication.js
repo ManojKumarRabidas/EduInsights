@@ -35,7 +35,10 @@ const authenticationSchema = new mongoose.Schema({
   is_verified: {
     type: Number,
     default: 0,
-  }
+  },
+  verifiedAt: {type: Date},
+  verifiedBy: {type: mongoose.Schema.Types.ObjectId}
+
 });
 
 const Authentication = mongoose.model('Authentication', authenticationSchema);

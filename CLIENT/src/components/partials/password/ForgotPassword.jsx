@@ -47,8 +47,7 @@ export default function ForgotPassword(){
         <div>
             <main className="container my-4">
                 <section className="">
-                    {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-                    {response && (<div className="alert alert-success" role="alert">{response}</div>)}
+                    <div className="alert alert-danger" role="alert">The functionality of "Forgot Password" is not in working now. </div>
                     <form onSubmit={handleSubmit}>
                         <div className=" justify-content-center">
                           <div className="bg-light shadow-sm p-3 mb-3 bg-body-tertiary rounded">

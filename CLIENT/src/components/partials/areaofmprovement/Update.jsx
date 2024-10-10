@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 
 function Update() {
   const [area_for, setAreaFor] = useState("");
   const [name, setName] = useState("");
   const [active, setActive] = useState(false);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -16,6 +16,7 @@ function Update() {
     try {
       const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-details/${id}`, {
         method: "GET",
+        headers: { 'authorization': `Bearer ${token}` },
       });
 
       if (response) {
@@ -25,19 +26,14 @@ function Update() {
           setName(result.doc.name);
           setActive(result.doc.active === 1);
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     } catch (error) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   useEffect(() => {
@@ -48,54 +44,37 @@ function Update() {
     event.preventDefault();
     const updateAreaOfImprovement = { area_for, name, active: active ? 1 : 0 };
     if ((updateAreaOfImprovement.name=="") || (updateAreaOfImprovement.area_for=="")){
-      setError("Please enter all the required values.");
+      toastr.error("Please enter all the required values.");
       return;
     }
     try {
       const response = await fetch(`${HOST}:${PORT}/server/area-of-improvement-update/${id}`, {
         method: "PATCH",
         body: JSON.stringify(updateAreaOfImprovement),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", 'authorization': `Bearer ${token}` },
       });
 
       if (response) {
         const result = await response.json();
         if (response.ok) {
-          setResponse(result.message);
-          setError("");
+          toastr.success("Area of improvement details updated successfully");
           setName("");
           setAreaFor("");
           setActive(false);
           navigate("/areas-of-improvement/area-of-improvement-list");
         } else {
-          setError(result.msg);
+          toastr.error(result.msg);
         }
       } else {
-        setError("We are unable to process now. Please try again later.");
+        toastr.error("We are unable to process now. Please try again later.");
       }
     } catch (error) {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   return (
     <div className="container my-2">
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
-      {response && (
-        <div className="alert alert-success" role="alert">
-          {response}
-        </div>
-      )}
-
       <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Area For <span className="ei-col-red">*</span></label>

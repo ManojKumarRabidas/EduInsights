@@ -6,17 +6,17 @@ const token = sessionStorage.getItem('token');
 import toastr from 'toastr';
 
 function Update() {
-  const [name, setName] = useState("");
-  const [strength_for, setStrengthFor] = useState("");
+  const [department, setDepartment] = useState("");
+  const [registration_year, setStudentRegYear] = useState("");
   const [active, setActive] = useState(false);
-  const [strengthData, setStrengthData] = useState("");
+  const [semesterData, setSemesterData] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
   
-  const getStrengthData = async () => {
+  const getSemesterData = async () => {
     try {
       const response = await fetch(
-        `${HOST}:${PORT}/server/strength-details/${id}`,{
+        `${HOST}:${PORT}/server/semester-details/${id}`,{
           method: "GET",
           headers: { 'authorization': `Bearer ${token}` },
         }
@@ -24,9 +24,9 @@ function Update() {
       if (response){
         const result = await response.json();
         if (response.ok){
-          setStrengthData(result.doc);
-          setStrengthFor(result.doc.strength_for); 
-          setName(result.doc.name);
+          setSemesterData(result.doc);
+          setStudentRegYear(result.doc.strength_for); 
+          setDepartment(result.doc.name);
           setActive(result.doc.active);
         } else{
           toastr.error(result.msg);
@@ -40,22 +40,22 @@ function Update() {
   };
 
   useEffect(() => {
-    getStrengthData();
+    getSemesterData();
   }, []);
 
   const handleEdit = async (event) => {
     event.preventDefault();
-    const updateStrength = {strength_for, name, active: active ? 1 : 0 };
-    if (!strength_for || !name){
+    const updateSemester = {registration_year, department, active: active ? 1 : 0 };
+    if (!registration_year || !department){
       toastr.error("Please enter all the required values.");
       return;
     }
     try{
       const response = await fetch(
-        `${HOST}:${PORT}/server/strength-update/${id}`,
+        `${HOST}:${PORT}/server/semester-update/${id}`,
         {
           method: "PATCH",
-          body: JSON.stringify(updateStrength),
+          body: JSON.stringify(updateSemester),
           headers: {
             'Content-Type': 'application/json',
             'authorization': `Bearer ${token}`,
@@ -67,10 +67,10 @@ function Update() {
         const result = await response.json();
         if (response.ok){
           toastr.success(result.message);
-          setName("");
-          setStrengthFor("");
+          setDepartment("");
+          setStudentRegYear("");
           setActive(false);
-          navigate("/strengths/strength-list");
+          navigate("/semester/semester-list");
         } else{
           toastr.error(result.msg);
         }
@@ -86,16 +86,16 @@ function Update() {
     <div className="container my-2">
       <form onSubmit={handleEdit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
-          <label className="form-label">Strength For <span className="ei-col-red">*</span></label>
-          <select className="form-select" aria-label="Default select example" name="strength_for" value={strength_for} onChange={(e) => setStrengthFor(e.target.value)}>
-              <option defaultValue>--Select strength for--</option>
+          <label className="form-label">Registration Year <span className="ei-col-red">*</span></label>
+          <select className="form-select" aria-label="Default select example" name="registration_year" value={registration_year} onChange={(e) => setStudentRegYear(e.target.value)}>
+              <option defaultValue>--Select Registration Year--</option>
               <option value="TEACHER">TEACHER</option>
               <option value="STUDENT">STUDENT</option>
           </select>        
         </div>
         <div className="mb-3">
-          <label className="form-label">Name <span className="ei-col-red">*</span></label>
-          <input name="name" type="text" className="form-control" aria-describedby="emailHelp" value={name} onChange={(e) => setName(e.target.value)}/>
+          <label className="form-label">Department <span className="ei-col-red">*</span></label>
+          <input name="department" type="text" className="form-control" aria-describedby="emailHelp" value={department} onChange={(e) => setDepartment(e.target.value)}/>
         </div>
         <div className="mb-3 form-switch" style={{paddingLeft: "0"}}>
           <label className="form-label">Active <span className="ei-col-red">*</span></label>

@@ -23,7 +23,7 @@ function List() {
   
     const handleActiveChange = async (id, isActive) => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-update-active/${id}`, {
+        const response = await fetch(`${HOST}:${PORT}/server/semester-update-active/${id}`, {
           method: "PUT",
           body: JSON.stringify({ active: isActive ? "1" : "0" }),
           headers: {
@@ -46,7 +46,7 @@ function List() {
 
     async function getData() {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-list`, {
+        const response = await fetch(`${HOST}:${PORT}/server/semester-list`, {
           method: "GET",
           headers: { 'authorization': `Bearer ${token}` },
         });
@@ -68,7 +68,7 @@ function List() {
   
     const handleDelete = async (id) => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/strength-delete/${id}`, {
+        const response = await fetch(`${HOST}:${PORT}/server/semester-delete/${id}`, {
           method: "DELETE",
           headers: { 'authorization': `Bearer ${token}` },
         });
@@ -95,14 +95,14 @@ function List() {
         enableSorting: false,
       },
       {
-        header: "Strength For",
-        accessorKey: "strength_for",
+        header: "Registration Year",
+        accessorKey: "registration_year",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
       {
-        header: "Name",
-        accessorKey: "name",
+        header: "Department",
+        accessorKey: "department",
         sortingFn: "alphanumeric",
         enableSorting: true,
       },
@@ -134,7 +134,7 @@ function List() {
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
               <Link
-                to={`/strengths/strength-update/${row.original._id}`}
+                to={`/semester/semester-update/${row.original._id}`}
                 className="card-link m-2"
               >
                 Edit
@@ -164,8 +164,8 @@ function List() {
         : true;
 
       const matchesUserTypeFilter = userTypeFilter
-        ? row.strength_for === userTypeFilter
-        : true;
+        ? row.registration_year === userTypeFilter
+        : true; 
 
       return matchesSearchFilter && matchesUserTypeFilter;
     });
@@ -228,7 +228,7 @@ function List() {
         <div className="col">
           <div className="">
               <select className="form-select" aria-label="Default select example" name="globalFilter" value={userTypeFilter || ""} onChange={(e) => setUserTypeFilter(e.target.value)}>
-                  <option defaultValue value="">-- Filter by "Strength For" --</option>
+                  <option defaultValue value="">-- Filter by "Registration Year" --</option>
                   <option value="TEACHER">TEACHER</option>
                   <option value="STUDENT">STUDENT</option>
               </select>        

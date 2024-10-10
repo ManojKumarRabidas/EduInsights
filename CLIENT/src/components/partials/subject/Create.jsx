@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 const HOST = import.meta.env.VITE_HOST;
 const PORT = import.meta.env.VITE_PORT;
+const token = sessionStorage.getItem('token');
+import toastr from 'toastr';
 
 function Create() {
   const [subject_code, setSubjectCode] = useState("");
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("");
   const [active, setActive] = useState(false);
-  const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [departments, setDepartments] = useState([]);
   const navigate = useNavigate();
 
@@ -22,10 +22,10 @@ function Create() {
         if (response.ok) {
           setDepartments(data.departments);
         } else {
-          setError("Failed to load departments.");
+          toastr.error("Failed to load departments.");
         }
       } catch (err) {
-        setError("Failed to load departments.");
+        toastr.error("Failed to load departments.");
       }
     };
 
@@ -41,42 +41,36 @@ function Create() {
       subjectData.department === "" ||
       subjectData.active === ""
     ) {
-      setError("Please enter all the required values.");
+      toastr.error("Please enter all the required values.");
       return;
     }
     const response = await fetch(`${HOST}:${PORT}/server/subject-create`, {
       method: "POST",
       body: JSON.stringify(subjectData),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
+      }
     });
     if (response) {
       const result = await response.json();
       if (response.ok) {
-        setResponse(result.msg);
-        setError("");
+        toastr.success(result.msg);
         setSubjectCode("");
         setName("");
         setDepartment("");
         setActive(false);
         navigate("/subjects/subject-list");
       } else {
-        setError(result.msg);
+        toastr.error(result.msg);
       }
     } else {
-      setError("We are unable to process now. Please try again later.");
+      toastr.error("We are unable to process now. Please try again later.");
     }
-    setTimeout(() => {
-      setResponse("");
-      setError("");
-    }, 3000);
   };
 
   return (
     <div className="container my-2">
-      {error && (<div className="alert alert-danger" role="alert">{error}</div>)}
-      {response && (<div className="alert alert-success" role="alert">{response}</div>)}
-
-
       <form onSubmit={handleSubmit} className="shadow-sm p-3 my-4 bg-body-tertiary rounded">
         <div className="mb-3">
           <label className="form-label">Subject Code <span className="ei-col-red">*</span></label>
@@ -98,7 +92,7 @@ function Create() {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 select-container">
           <label className="form-label">Department <span className="ei-col-red">*</span></label>
           <select
             name="department"
