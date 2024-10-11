@@ -67,6 +67,7 @@ router.patch("/students-feedback-list",authorizeRole(['TEACHER', 'ADMIN', 'SUPPO
 
 
 // router.get("/get-departments", adminController.getDepartments);
+router.patch("/get-semester-of-rating", adminController.getSemisterOfRating);
 router.patch("/get-conditional-subjects", adminController.getSubjects);
 
 router.patch("/get-student-names", adminController.getStudentNames);
@@ -86,12 +87,12 @@ router.get("/get-conditional-subjects-code",authorizeRole(['STUDENT']), studentC
 router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
 
-router.get("/semester-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterList);
-router.post("/semester-create", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), adminController.semesterCreate);
-router.get("/semester-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterDetails);
-router.patch("/semester-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterUpdate);
-router.delete("/semester-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterDelete);
-router.put("/semester-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.semesterUpdateActive);
+router.get("/session-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionList);
+router.post("/session-create", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), adminController.sessionCreate);
+router.get("/session-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDetails);
+router.patch("/session-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdate);
+router.delete("/session-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDelete);
+router.put("/session-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdateActive);
 
 // Dashboard 
 router.patch("/get-conditional-user-list",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getConditionalUserList)

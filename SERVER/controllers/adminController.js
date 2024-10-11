@@ -4,7 +4,7 @@ const userModel = require("../models/user");
 const strengthModel = require("../models/strength");
 const subjectModel = require("../models/subject");
 const areaOfImprovementModel = require("../models/areaofimprovement");
-const semesterModel = require ("../models/semester");
+const sessionModel = require("../models/session");
 const authModel = require("../models/authentication");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -650,6 +650,31 @@ module.exports = {
         }
     },
 
+    getSemisterOfRating: async(req, res)=>{
+        try{
+            const body = req.body;
+            if (!body || !body.registration_year || !body.department) {
+                res.status(400).json({ msg: "Missing Parameters 1!" });
+                return;
+            }
+            body.department = new ObjectId(body.department);
+            const doc = await sessionModel.findOne({department:body.department, registration_year: body.registration_year, active:1}, {semesters: 1});
+            if(!doc){
+                return res.status(200).json({ status: false, msg: "No semester record found for the selected registration year and department." });
+            }
+            const curDate = new Date();
+            for(let i=0; i<doc.semesters.length; i++){
+                const ref = doc.semesters[i];
+                if(ref.start<= curDate && ref.end>=curDate){
+                    return res.status(200).json({status: true, doc : {semester: ref.sem} });
+                }
+            }
+            res.status(200).json({ status: false, msg: "No semester record found for the selected registration year and department." });
+        }catch(err){
+            console.log(err)
+            res.status(500).json({ status: false, msg: "Failed to get semester of rating" });
+        }
+    },
     getSubjects: async(req, res)=>{
         try {
             const body = req.body;
@@ -694,57 +719,71 @@ module.exports = {
           }
     },
 
-    semesterCreate: async(req, res)=>{
+    sessionCreate: async(req, res)=>{
         try {
+            const userId = req.user;
             const body = req.body;
-            let bodyArray = []
-            let bool =  Array.isArray(body);
-            if(!bool){
-                bodyArray.push(body)
-            } else{
-                bodyArray = body;
+            if (!userId) {
+                res.status(400).json({ msg: "Session Expired!" });
+                return;
             }
-            for (let i=0; i<bodyArray.length; i++){
-                const ref = bodyArray[i]
-                if (!ref.department || !ref.registration_year || !ref.active){
-                    res.status(400).json({ msg: "Missing Parameters!" });
-                    return;
-                }
-                ref.createdBy = new ObjectId(req.user.id);
-                ref.updatedBy = new ObjectId(req.user.id);
+            // if (!body.dept_id || !body.name || !body.active){
+            //     res.status(400).json({ msg: "Missing Parameters!" });
+            //     return;
+            // }
+            const finalBody = {
+                registration_year: body.registration_year,
+                department: body.department,
+                duration: body.duration,
+                semesters: [
+                    {sem: 1, start: body.start_date_1st_sem ? new Date(body.start_date_1st_sem) : null, end: body.end_date_1st_sem? new Date(body.end_date_1st_sem): null},
+                    {sem: 2, start: body.start_date_2nd_sem ?new Date(body.start_date_2nd_sem): null, end: body.end_date_2nd_sem ?new Date(body.end_date_2nd_sem): null},
+                    {sem: 3, start: body.start_date_3rd_sem ?new Date(body.start_date_3rd_sem): null, end: body.end_date_3rd_sem ?new Date(body.end_date_3rd_sem): null},
+                    {sem: 4, start: body.start_date_4th_sem ?new Date(body.start_date_4th_sem): null, end: body.end_date_4th_sem ?new Date(body.end_date_4th_sem): null},
+                    {sem: 5, start: body.start_date_5th_sem ?new Date(body.start_date_5th_sem): null, end: body.end_date_5th_sem ?new Date(body.end_date_5th_sem): null},
+                    {sem: 5, start: body.start_date_5th_sem ?new Date(body.start_date_5th_sem): null, end: body.end_date_5th_sem ?new Date(body.end_date_5th_sem): null},
+                    {sem: 6, start: body.start_date_6th_sem ?new Date(body.start_date_6th_sem): null, end: body.end_date_6th_sem ?new Date(body.end_date_6th_sem): null},
+                    {sem: 7, start: body.start_date_7th_sem ?new Date(body.start_date_7th_sem): null, end: body.end_date_7th_sem ?new Date(body.end_date_7th_sem): null},
+                    {sem: 8, start: body.start_date_8th_sem ?new Date(body.start_date_8th_sem): null, end: body.end_date_8th_sem ?new Date(body.end_date_8th_sem): null},
+                ],
+                active: body.active,
+                createdBy: new ObjectId(req.user.id),
+                updatedBy: new ObjectId(req.user.id),
             }
-            const doc = await semesterModel.insertMany(bodyArray);
-            res.status(201).json({ status: true, msg: "Strength created successfully.", doc: doc });
+            // body.createdBy = new ObjectId(req.user.id);
+            // body.updatedBy = new ObjectId(req.user.id);
+            const doc = await sessionModel.create(finalBody);
+            res.status(201).json({ status: true, msg: "Academic Session created successfully.", doc: doc });
         } catch (err) {
             if(err.code==11000){
-                res.status(500).json({ status: false, msg: "Combination of 'Strength For' and 'Name' must be unique." });
+                res.status(500).json({ status: false, msg: " must be unique." });
                 return
             }
             res.status(500).json({ status: false, msg: err.message });
         }
     },
-    semesterList: async(req, res)=>{
+    sessionList: async(req, res)=>{
         try {
-            const docs = await semesterModel.find();
+            const docs = await sessionModel.find();
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
     },
-    semesterDetails: async(req, res)=>{
+    sessionDetails: async(req, res)=>{
         try {
             const params = req.params
             if (!params || !params.id){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await semesterModel.findById({ _id: params.id });
+            const doc = await sessionModel.findById({ _id: params.id });
             res.status(200).json({ doc: doc });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
     },
-    semesterUpdate: async(req, res)=>{
+    sessionUpdate: async(req, res)=>{
         try {
             const params = req.params;
             const body = req.body;
@@ -753,26 +792,26 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await semesterModel.findByIdAndUpdate(params.id, body, {new: true});
-            res.status(200).json({ message: "semester updated successfully", doc: doc });
+            const doc = await sessionModel.findByIdAndUpdate(params.id, body, {new: true});
+            res.status(200).json({ message: "session updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
     },
-    semesterDelete: async(req, res)=>{
+    sessionDelete: async(req, res)=>{
         try {
             const params = req.params;
             if (!params || !params.id){
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            await semesterModel.findByIdAndDelete({ _id: params.id });
-            res.status(200).json({ message: "semester deleted successfully" });
+            await sessionModel.findByIdAndDelete({ _id: params.id });
+            res.status(200).json({ message: "session deleted successfully" });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
     },
-    semesterUpdateActive: async(req, res)=>{
+    sessionUpdateActive: async(req, res)=>{
         try {
             const params = req.params;
             const body = req.body;
@@ -781,7 +820,7 @@ module.exports = {
                 res.status(400).json({ msg: "Missing Parameters!" });
                 return;
             }
-            const doc = await semesterModel.findByIdAndUpdate(params.id, body, {new: true});
+            const doc = await sessionModel.findByIdAndUpdate(params.id, body, {new: true});
             res.status(200).json({ message: "Updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });

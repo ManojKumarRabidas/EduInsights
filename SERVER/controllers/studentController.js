@@ -185,7 +185,7 @@ module.exports = {
                 ref.semester_of_rating = "1st";
                 break;
               case 2:
-                ref.semester_of_rating = "1st";
+                ref.semester_of_rating = "2nd";
                 break;
               case 3:
                 ref.semester_of_rating = "3rd";

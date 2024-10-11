@@ -21,7 +21,7 @@ import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
 import Password from './components/Password';
-import Semester from './components/Semester';
+import Session from './components/Session';
 // import 'bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -131,6 +131,7 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/strengths/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Strength /> : <Unauthorized />} />
               <Route path='/areas-of-improvement/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <AreaOfImprovement /> : <Unauthorized />} />
               <Route path='/subjects/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Subject /> : <Unauthorized />} />
+              <Route path='/session/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Session /> : <Unauthorized />} />
               <Route path='/teacher-feedback' element={user_type === 'TEACHER' ? <TeacherFeedback /> : <Unauthorized />} />
               <Route path='/student-feedback' element={user_type === 'STUDENT' ? <StudentFeedback /> : <Unauthorized />} />
               <Route path='/all-teachers-feedback' element={user_type != 'TEACHER' ? <AllTeachersFeedback /> : <Unauthorized />} />
@@ -138,7 +139,6 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/profile' element={user_type != 'ADMIN' ? <Profile /> : <Unauthorized />} />
               <Route path='/user-manual' element={<UserManual/>} />
               <Route path='/password/*' element={<Password/>} />
-              <Route path='/semester/*' element={((user_type ==='ADMIN') || (user_type ==='SUPPORT')) ? <Semester /> : <Unauthorized />} />
             </Routes>
           </main>
         </div>
