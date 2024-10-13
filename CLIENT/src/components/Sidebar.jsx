@@ -35,7 +35,7 @@ function Sidebar() {
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')}>Pending Verifications</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/departments" className={({ isActive }) => (isActive ? 'active' : '')}>Departments</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>}
-        {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/session" className={({ isActive }) => (isActive ? 'active' : '')}>Sessions</NavLink>}
+        {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/session" className={({ isActive }) => (isActive ? 'active' : '')}>Academic Sessions</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/strengths" className={({ isActive }) => (isActive ? 'active' : '')}>Strengths</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/areas-of-improvement" className={({ isActive }) => (isActive ? 'active' : '')}>Areas of Improvement</NavLink>}
         {(userType == "TEACHER") && <NavLink to="/teacher-feedback" className={({ isActive }) => (isActive ? 'active' : '')}>Feedback Form</NavLink>}

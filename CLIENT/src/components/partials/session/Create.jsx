@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 const HOST = import.meta.env.VITE_HOST
 const PORT = import.meta.env.VITE_PORT
 import toastr from 'toastr';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const token = sessionStorage.getItem('token');
 
 function Create() {
@@ -11,8 +13,8 @@ function Create() {
     const [registration_year, setRegistrationYear] = useState("");
     const [department, setDepartment] = useState("");
     const [duration, setDuration] = useState("");
-    const [start_date_1st_sem, setStartDate1stSem] = useState("");
-    const [end_date_1st_sem, setEndDate1stSem] = useState("");
+    const [start_date_1st_sem, setStartDate1stSem] = useState(new Date());
+    const [end_date_1st_sem, setEndDate1stSem] = useState(new Date());
     const [start_date_2nd_sem, setStartDate2ndSem] = useState("");
     const [end_date_2nd_sem, setEndDate2ndSem] = useState("");
     const [start_date_3rd_sem, setStartDate3rdSem] = useState("");
@@ -94,7 +96,7 @@ function Create() {
             <div className="mb-3 col">
               <label className="form-label">Department <span className="ei-col-red">*</span></label>
               <select name="department" className="form-control" value={department} onChange={(e) => setDepartment(e.target.value)}>
-                <option value="">--Select Department--</option>
+                <option value="">-- Select --</option>
                 {departments.map((dept) => (
                   <option key={dept._id} value={dept._id}> {dept.name}</option>
                 ))}
@@ -103,26 +105,30 @@ function Create() {
             <div className="mb-3 col">
               <label className="form-label">Duration of Course <span className="ei-col-red">*</span></label>
               <select className="form-select" aria-label="Default select example" name="duration" value={duration} onChange={(e) => setDuration(e.target.value)}>
-                <option defaultValue>--Select duration--</option>
+                <option defaultValue>--Select --</option>
                 <option value="1">1 Year</option>
-                <option value="2">2 Year</option>
-                <option value="3">3 Year</option>
-                <option value="4">4 Year</option>
-                <option value="5">5 Year</option>
+                <option value="2">2 Years</option>
+                <option value="3">3 Years</option>
+                <option value="4">4 Years</option>
+                {/* <option value="5">5 Years</option> */}
               </select>
             </div>
           </div>
           <div className="row mb-3">
             <div className="col">
               <label className="form-label">Start Date Of 1st Semester<span className="ei-col-red">*</span></label>
-              <input type="date" className="form-control" aria-label="Date" name="start_date_1st_sem" value={start_date_1st_sem} onChange={(e) => setStartDate1stSem(e.target.value)}/>
+              <div className="date-field-col">
+                <DatePicker selected={start_date_1st_sem} name="start_date_1st_sem" onChange={(update) => setStartDate1stSem(update)} dateFormat="dd/MM/yyyy" className="form-control form-select"/>
+              </div>
+              {/* <input type="date" className="form-control" aria-label="Date" name="start_date_1st_sem" value={start_date_1st_sem} onChange={(e) => setStartDate1stSem(e.target.value)}/> */}
             </div>
             <div className="col">
               <label className="form-label">End Date Of 1st Semester<span className="ei-col-red">*</span></label>
-              <input type="date" className="form-control" aria-label="Date" name="end_date_1st_sem" value={end_date_1st_sem} onChange={(e) => setEndDate1stSem(e.target.value)}/>
+              <div className="date-field-col">
+                <DatePicker selected={end_date_1st_sem} name="end_date_1st_sem" onChange={(update) => setEndDate1stSem(update)} dateFormat="dd/MM/yyyy" className="form-control form-select"/>
+              </div>
+              {/* <input type="date" className="form-control" aria-label="Date" name="end_date_1st_sem" value={end_date_1st_sem} onChange={(e) => setEndDate1stSem(e.target.value)}/> */}
             </div>
-          </div>
-          <div className="row mb-3">
             <div className="col">
               <label className="form-label">Start Date Of 2nd Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="start_date_2nd_sem" value={start_date_2nd_sem} onChange={(e) => setStartDate2ndSem(e.target.value)}/>
@@ -141,8 +147,6 @@ function Create() {
               <label className="form-label">End Date Of 3rd Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="end_date_3rd_sem" value={end_date_3rd_sem} onChange={(e) => setEndDate3rdSem(e.target.value)}/>
             </div>
-          </div>
-          <div className="row mb-3">
             <div className="col">
               <label className="form-label">Start Date Of 4th Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="start_date_4th_sem" value={start_date_4th_sem} onChange={(e) => setStartDate4thSem(e.target.value)}/>
@@ -161,8 +165,6 @@ function Create() {
               <label className="form-label">End Date Of 5th Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="end_date_5th_sem" value={end_date_5th_sem} onChange={(e) => setEndDate5thSem(e.target.value)}/>
             </div>
-          </div>
-          <div className="row mb-3">
             <div className="col">
               <label className="form-label">Start Date Of 6th Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="start_date_6th_sem" value={start_date_6th_sem} onChange={(e) => setStartDate6thSem(e.target.value)}/>
@@ -181,8 +183,6 @@ function Create() {
               <label className="form-label">End Date Of 7th Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="end_date_7th_sem" value={end_date_7th_sem} onChange={(e) => setEndDate7thSem(e.target.value)}/>
             </div>
-          </div>
-          <div className="row mb-3">
             <div className="col">
               <label className="form-label">Start Date Of 8th Semester<span className="ei-col-red">*</span></label>
               <input type="date" className="form-control" aria-label="Date" name="start_date_8th_sem" value={start_date_8th_sem} onChange={(e) => setStartDate8thSem(e.target.value)}/>

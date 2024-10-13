@@ -18,6 +18,9 @@ router.get("/user-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.us
 router.put("/user-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.userUpdateActive);
 
 router.post("/change-password", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), userController.changePassword);
+router.post("/forgot-password-send-otp", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), utilController.forgotPasswordSendOtp);
+router.post("/forgot-password-check-otp", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), utilController.forgotPasswordCheckOtp);
+router.post("/forgot-password-change-password", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), utilController.forgotPasswordChangePassword);
 
 router.get("/get-profile-details",authorizeRole(['SUPPORT', 'TEACHER', 'STUDENT']), userController.profileDetails);
 

@@ -140,7 +140,6 @@ const handleRegYearAndDeptChange =(value, type)=>{
     }
 
     if (newRegYear && newDepartment) {
-      console.log(newRegYear, newDepartment);
       fetchNames("STUDENT", newRegYear, newDepartment)
     }
 }
@@ -299,7 +298,8 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
             </div>
             </section>
           </div>}
-          {graphData.lineGraphData && <div>
+          {!graphData.totalFeedbackLastMonthSem && <div className='h3 text-center'>No data available</div>}
+          {graphData.totalFeedbackLastMonthSem && <div>
             <section className="bg-light py-5 my-2">
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
@@ -312,7 +312,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                     <DatePicker selectsRange startDate={monthRange[0]} endDate={monthRange[1]} onChange={(update) => changeMonthRange(update)} dateFormat="MM/yyyy" maxDate={monthRange[1]} className="form-control form-select"/>
                   </div>}
                   
-                  {graphData.lineGraphData && <LineChartComponent data={customMonthGraphData} />}
+                  {customMonthGraphData && <LineChartComponent data={customMonthGraphData} />}
                 </div>
               </div>
             </section>
@@ -320,8 +320,11 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
-                    {userType=="STUDENT" && "Last Semester Average Feedback"}
-                    {userType=="TEACHER" && "Last Month Average Feedback"}
+                    {userType=="STUDENT" && "Last Semester Average Feedback "}
+                    {userType=="TEACHER" && "Last Month Average Feedback "}
+                  </div>
+                  <div className='d-flex justify-content-end'>
+                    Result based on total {graphData.totalFeedbackLastMonthSem} feedbacks.
                   </div>
                   {graphData.lastMonthOrSemBarData && <BarChartComponent data={graphData.lastMonthOrSemBarData} />}
                 </div>
@@ -331,8 +334,11 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
-                    {userType=="STUDENT" && "Last Three Semester Average Feedback"}
-                    {userType=="TEACHER" && "Last Three Months Average Feedback"}
+                    {userType=="STUDENT" && "Last Three Semester Average Feedback "}
+                    {userType=="TEACHER" && "Last Three Months Average Feedback "}
+                  </div>
+                  <div className='d-flex justify-content-end'>
+                    Result based on total {graphData.totalFeedbackLastThreeMonthSem} feedbacks.
                   </div>
                   {graphData.lastThreeMonthOrSemBarData && <MultiBarChartComponent data={graphData.lastThreeMonthOrSemBarData} />}
                 </div>
