@@ -20,7 +20,7 @@ const LineChartComponent = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: 'Average of overall teaching quality',
+        label: data.label,
         data: data.values,
         fill: false,
         backgroundColor: 'rgb(75, 192, 192)',

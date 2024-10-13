@@ -23,7 +23,7 @@ function List() {
   
     const handleActiveChange = async (id, isActive) => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/semester-update-active/${id}`, {
+        const response = await fetch(`${HOST}:${PORT}/server/session-update-active/${id}`, {
           method: "PUT",
           body: JSON.stringify({ active: isActive ? "1" : "0" }),
           headers: {
@@ -46,7 +46,7 @@ function List() {
 
     async function getData() {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/semester-list`, {
+        const response = await fetch(`${HOST}:${PORT}/server/session-list`, {
           method: "GET",
           headers: { 'authorization': `Bearer ${token}` },
         });
@@ -68,7 +68,7 @@ function List() {
   
     const handleDelete = async (id) => {
       try {
-        const response = await fetch(`${HOST}:${PORT}/server/semester-delete/${id}`, {
+        const response = await fetch(`${HOST}:${PORT}/server/session-delete/${id}`, {
           method: "DELETE",
           headers: { 'authorization': `Bearer ${token}` },
         });
@@ -134,7 +134,7 @@ function List() {
           <div style={{ textAlign: "center" }}>
             <button type="button" className="btn btn-outline-light m-1" style={{ backgroundColor: "ghostwhite" }}>
               <Link
-                to={`/semester/semester-update/${row.original._id}`}
+                to={`/session/session-update/${row.original._id}`}
                 className="card-link m-2"
               >
                 Edit

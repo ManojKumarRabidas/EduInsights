@@ -261,7 +261,7 @@ function Student_feedback() {
                   <option defaultValue>--Select--</option>
                   {teachers.map((item) => (
                 <option key={item._id} value={item._id}>
-                  {item.teacher_code}
+                  {item.teacher_code} - {item.name}
                 </option>
               ))}
               </select>
