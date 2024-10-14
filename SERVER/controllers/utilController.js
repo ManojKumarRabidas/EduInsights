@@ -10,6 +10,14 @@ const nodemailer = require("nodemailer");
 module.exports = {
     forgotPasswordSendOtp: async(req, res)=>{
         try{
+            const userId = new ObjectId(req.user.id);
+            const newOtp = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+            const otpDetails={otp: newOtp, generateAt: new Date(), expireAt: new Date()}
+            const setOtp = await authModel.findOneAndUpdate({user_id: userId}, {$set: {otpDetails: otpDetails}}, {upsert: true, returnNewDocument: true});
+            if (!setOtp._id){
+                res.status(400).json({ msg: "Fail to generate and set otp! Please try again later." });
+                return;
+            }
             // ----------------------------------------------------
             // -----------------Process 1--------------------------
             // var transport = nodemailer.createTransport({
@@ -70,20 +78,16 @@ module.exports = {
             // .sendMail({
             //     from: sender,
             //     to: recipients,
-            //     subject: "You are awesome!",
-            //     text: "Congrats for sending test email with Mailtrap!",
+            //     subject: "OTP for Forgot Password || EduInsight Support Team",
+            //     text: `Hello ${req.user.name}. 
+            //             Your OTP for verify is: ${newOtp}.
+            //             The above OTP will be valid for next 5 mint.
+            //             Don't share your OTP with anyone.`,
             //     category: "Integration Test",
             //     sandbox: true
             // })
             // .then(console.log, console.error);
-            const userId = new ObjectId(req.user.id);
-            const newOtp = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-            const otpDetails={otp: newOtp, generateAt: new Date(), expireAt: new Date()}
-            const setOtp = await authModel.findOneAndUpdate({user_id: userId}, {$set: {otpDetails: otpDetails}}, {upsert: true, returnNewDocument: true});
-            if (!setOtp._id){
-                res.status(400).json({ msg: "Fail to generate and set otp! Please try again later." });
-                return;
-            }
+            
             res.status(200).json({status: true, msg: `Mail send to your registered email id. Your OTP is ${newOtp}`});
         }catch(err){
             console.log("err", err)
@@ -491,7 +495,6 @@ module.exports = {
                 }
                 graphData.totalFeedbackLastThreeMonthSem = prevMonthOrSemBarDataBool+prevPrevMonthOrSemBarDataBool+prevPrevPrevMonthOrSemBarDataBool
             } else if (userType == "STUDENT"){
-                console.log("docs[0]", docs[0]); 
                 const semDoc = await sessionModel.findOne({department:docs[0].department_id, registration_year: docs[0].student_reg_year, active:1}, {semesters: 1});
                 if(!semDoc){
                     return res.status(200).json({ status: false, msg: "No semester record found for the selected student." });

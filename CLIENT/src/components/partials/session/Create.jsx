@@ -48,8 +48,9 @@ function Create() {
     useEffect(() => {
       fetchDepartments();
       const currentYear = new Date().getFullYear();
-      const pastFiftyYears = Array.from({ length: 50 }, (_, index) => currentYear - index);
-      setYears(pastFiftyYears);
+      const pastTenYear = currentYear-10
+      const pastFuture20Years = Array.from({ length: 21 }, (_, index) => pastTenYear + index);
+      setYears(pastFuture20Years);
     }, []);
 
     const handleSubmit = async (event) => {

@@ -73,7 +73,6 @@ function List() {
       });
 
       const result = await response.json();
-      console.log(result);
       
       if (response.ok) {
         toastr.success("Support User status updated successfully");
