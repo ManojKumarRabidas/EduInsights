@@ -225,7 +225,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
       <div>
         <main className="container my-2">
           {((logedinUserType == "ADMIN") || (logedinUserType == "SUPPORT")) && <div>
-            <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <section className="bg-light shadow-sm p-3 mb-4 bg-body-tertiary rounded">
               <h5 className="mb-3">Top growths in overall teaching quality last month</h5>
                 <div className=" justify-content-center">
                   <table className="table table-striped table-bordered">
@@ -250,7 +250,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                   </table>
                 </div>
             </section>
-            <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <section className="bg-light shadow-sm p-3 mb-4 bg-body-tertiary rounded">
               <h5 className="mb-3">Select user type and user to see his/her details</h5>
                 <div className=" justify-content-center">
                   <div className="row">
@@ -298,9 +298,9 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
             </div>
             </section>
           </div>}
-          {!graphData.totalFeedbackLastMonthSem && <div className='h3 text-center'>No data available</div>}
+          {!graphData.totalFeedbackLastMonthSem && <div className='h3 text-center bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded'>No data available</div>}
           {graphData.totalFeedbackLastMonthSem && <div>
-            <section className="bg-light py-5 my-2">
+            <section className="bg-light py-3 my-4 shadow-sm bg-body-tertiary rounded">
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
@@ -316,7 +316,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                 </div>
               </div>
             </section>
-            <section className="bg-light py-5 my-2">
+            <section className="bg-light py-3 my-4 shadow-sm bg-body-tertiary rounded">
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
@@ -330,7 +330,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                 </div>
               </div>
             </section>
-            <section className="bg-light py-5 my-2">
+            <section className="bg-light py-3 my-4 shadow-sm bg-body-tertiary rounded">
               <div className="container px-5">
                 <div className="row gx-5 justify-content-center">
                   <div className="h4 mb-4 d-flex align-items-center justify-content-center">
@@ -344,7 +344,7 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                 </div>
               </div>
             </section>
-            <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <section className="bg-light p-3 mb-5 shadow-sm bg-body-tertiary rounded">
                 <div className="h4 my-4 d-flex align-items-center justify-content-center">
                   {userType=="STUDENT" && "Top strengths and areas for improvement based on last three semester feedbacks"}
                   {userType=="TEACHER" && "Top strengths and areas for improvement based on last three months feedbacks"}

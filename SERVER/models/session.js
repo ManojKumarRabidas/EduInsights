@@ -4,6 +4,7 @@ const sessionSchema = new mongoose.Schema({
     registration_year: {type: 'number', required: true},
     department: {type: 'ObjectId', required: true},
     duration: {type: 'number', required: true},
+    sessionStartDate: {type: 'date'},
     // start_date_1st_sem: {type: 'date', required: true},
     // end_date_1st_sem: {type: 'date', required: true},
     // start_date_2nd_sem: {type: 'date'},

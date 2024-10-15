@@ -658,9 +658,7 @@ module.exports = {
                 return;
             }
             body.department = new ObjectId(body.department);
-            console.log("body", body)
             const doc = await sessionModel.findOne({department:body.department, registration_year: body.registration_year, active:1}, {semesters: 1});
-            console.log("doc", doc)
             if(!doc){
                 return res.status(200).json({ status: false, msg: "No semester record found for the selected registration year and department." });
             }
@@ -737,6 +735,7 @@ module.exports = {
                 registration_year: body.registration_year,
                 department: body.department,
                 duration: body.duration,
+                sessionStartDate: body.start_date_1st_sem ? new Date(body.start_date_1st_sem) : null,
                 semesters: [
                     {sem: 1, start: body.start_date_1st_sem ? new Date(body.start_date_1st_sem) : null, end: body.end_date_1st_sem? new Date(body.end_date_1st_sem): null},
                     {sem: 2, start: body.start_date_2nd_sem ?new Date(body.start_date_2nd_sem): null, end: body.end_date_2nd_sem ?new Date(body.end_date_2nd_sem): null},
@@ -765,7 +764,7 @@ module.exports = {
     },
     sessionList: async(req, res)=>{
         try {
-            const docs = await sessionModel.find();
+            const docs = await sessionModel.find({}, {registration_year: 1, department:1, semesters: 1,sessionStartDate: 1, active: 1});
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });

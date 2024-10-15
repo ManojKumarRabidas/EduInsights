@@ -23,7 +23,6 @@ function Login() {
     });
     if (response){
       const result = await response.json();
-      console.log(result);
       if (response.ok){
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('eiUserName', result.userName);

@@ -171,7 +171,6 @@ function TeacherFeedback() {
       if (response) {
         const result = await response.json();
         if (response.ok) {
-          console.log(result.doc)
           if(!result.status){
             toastr.warning(result.msg)
           }else{
@@ -204,8 +203,6 @@ function TeacherFeedback() {
     }
 
     if (newRegYear && newDepartment) {
-      console.log(newRegYear, newDepartment);
-      
       getSemesterOfRating(newRegYear, newDepartment);
       fetchStudents(newRegYear, newDepartment);
     }

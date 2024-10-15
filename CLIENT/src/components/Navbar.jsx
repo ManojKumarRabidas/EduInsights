@@ -54,7 +54,7 @@ function Navbar() {
             <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{userName || 'User'}</a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a className="dropdown-item" href="#">Settings</a></li>
+                {/* <li><a className="dropdown-item" href="#">Settings</a></li> */}
                 <li><Link className="dropdown-item" to="/user-manual">User Manual</Link></li>
                 {(userType != "ADMIN") && <li><Link className="dropdown-item" to="/profile">Profile</Link></li>}
                 <li><Link className="dropdown-item" to="/password">Change Password</Link></li>

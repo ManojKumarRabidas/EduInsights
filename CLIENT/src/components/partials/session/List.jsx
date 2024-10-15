@@ -107,6 +107,12 @@ function List() {
         enableSorting: true,
       },
       {
+        header: "Start of session",
+        accessorKey: "sessionStartDate",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
         header: "Active",
         accessorKey: "active",
         enableSorting: false,

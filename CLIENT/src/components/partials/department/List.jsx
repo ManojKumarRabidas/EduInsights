@@ -72,7 +72,6 @@ function List() {
       });
 
       const result = await response.json();
-      console.log(result);
       
       if (response.ok) {
         toastr.success("Department status updated successfully");

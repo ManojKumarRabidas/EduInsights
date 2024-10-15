@@ -39,7 +39,6 @@ export default function ChangePassword(){
           const result = await response.json();
           if (response.ok){
             toastr.success("Password changed successfully.");
-            toastr.error("");
             setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");
