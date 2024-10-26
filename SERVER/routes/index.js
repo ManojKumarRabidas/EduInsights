@@ -50,6 +50,7 @@ router.put("/strength-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), a
 
 router.get("/subject-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.subjectList);
 router.get("/get-departments", adminController.getDepartments);
+
 router.post("/subject-create", authorizeRole(['ADMIN', 'SUPPORT']), adminController.subjectCreate);
 router.get("/subject-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.subjectDetails);
 router.patch("/subject-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.subjectUpdate);
@@ -62,6 +63,13 @@ router.get("/area-of-improvement-details/:id", authorizeRole(['ADMIN', 'SUPPORT'
 router.patch("/area-of-improvement-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.areaOfImprovementUpdate);
 router.delete("/area-of-improvement-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.areaOfImprovementDelete);
 router.put("/area-of-improvement-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.areaOfImprovementUpdateActive);
+
+router.get("/session-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionList);
+router.post("/session-create", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), adminController.sessionCreate);
+router.get("/session-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDetails);
+router.patch("/session-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdate);
+router.delete("/session-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDelete);
+router.put("/session-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdateActive);
 
 //--------------------------Teacher Profile---------------------------------------
 router.post("/teacher-feedback",authorizeRole(['TEACHER']), teacherController.teacherFeedback);
@@ -89,13 +97,6 @@ router.get("/get-conditional-subjects-code",authorizeRole(['STUDENT']), studentC
 
 router.get("/get-student-area-of-improvement",teacherController.getAreaForImprovement);
 router.get("/get-student-strength",teacherController.getStudentStrenghts );
-
-router.get("/session-list", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionList);
-router.post("/session-create", authorizeRole(['ADMIN', 'SUPPORT', 'TEACHER', 'STUDENT']), adminController.sessionCreate);
-router.get("/session-details/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDetails);
-router.patch("/session-update/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdate);
-router.delete("/session-delete/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionDelete);
-router.put("/session-update-active/:id", authorizeRole(['ADMIN', 'SUPPORT']), adminController.sessionUpdateActive);
 
 // Dashboard 
 router.patch("/get-conditional-user-list",authorizeRole(['TEACHER', 'STUDENT', 'ADMIN', 'SUPPORT']), utilController.getConditionalUserList)
