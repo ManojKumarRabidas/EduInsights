@@ -231,15 +231,17 @@ const getCustomRangeFeedbackDetails = async (_id, userType, monthRange) => {
                   <table className="table table-striped table-bordered">
                       <thead>
                           <tr>
-                              <th scope="row">Teacher Name</th>
+                              <th scope="row">Rank</th>
+                              <th scope="row">Teacher Code & Name</th>
                               <th scope="row">Average Feedback {growthDataPrevPrevMonth}</th>
                               <th scope="row">Average Feedback {growthDataPrevMonth}</th>
                               <th scope="row">Improvement Percentage</th>
                           </tr>
                       </thead>
                       <tbody>
-                          {growthData.map((doc) => (
-                            <tr>
+                          {growthData.map((doc, index) => (
+                            <tr key={index}>
+                              <td>{index+1}</td>
                               <td>{doc.name}</td>
                               <td className="text-end">{doc.prevPrevMonthAvg}</td>
                               <td className="text-end">{doc.prevMonthAvg}</td>

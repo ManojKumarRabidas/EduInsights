@@ -16,10 +16,13 @@ const PORT = import.meta.env.VITE_PORT;
 function List() {
     const [data, setData] = useState([]);
     const [searchFilter, setSearchFilter] = useState(""); 
-    const [userTypeFilter, setUserTypeFilter] = useState("");
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(5);
     const [sorting, setSorting] = useState([]);
+    const [registrationYears, setRegistrationYears] = useState([]); 
+    const [departments, setDepartments] = useState([]); 
+    const [registrationYearFilter, setRegistrationYearFilter] = useState("");
+    const [departmentFilter, setDepartmentFilter] = useState("");
   
     const handleActiveChange = async (id, isActive) => {
       try {
@@ -34,7 +37,7 @@ function List() {
   
         const result = await response.json();
         if (response.ok) {
-          toastr.success("Strength status updated successfully");
+          toastr.success("Academic session status updated successfully");
           getData();
         } else {
           toastr.error(result.error);
@@ -54,6 +57,18 @@ function List() {
         const result = await response.json();
         if (response.ok) {
           setData(result.docs);
+          const uniqueRegistrationYears = new Set();
+          const uniqueDepartments = new Set();
+          result.docs.forEach((doc) => {
+            if (doc.registration_year) {
+              uniqueRegistrationYears.add(doc.registration_year);
+            }
+            if (doc.department) {
+              uniqueDepartments.add(doc.department);
+            }
+          });
+          setRegistrationYears(Array.from(uniqueRegistrationYears));
+          setDepartments(Array.from(uniqueDepartments));
         } else {
           toastr.error(result.msg);
         }
@@ -75,7 +90,7 @@ function List() {
   
         const result = await response.json();
         if (response.ok) {
-          toastr.success("Strength deleted successfully");
+          toastr.success("Academic session deleted successfully");
           getData();
         } else {
           toastr.error(result.error);
@@ -107,7 +122,13 @@ function List() {
         enableSorting: true,
       },
       {
-        header: "Start of session",
+        header: "Duration",
+        accessorKey: "duration",
+        sortingFn: "alphanumeric",
+        enableSorting: true,
+      },
+      {
+        header: "Start of Session",
         accessorKey: "sessionStartDate",
         sortingFn: "alphanumeric",
         enableSorting: true,
@@ -169,13 +190,12 @@ function List() {
           )
         : true;
 
-      const matchesUserTypeFilter = userTypeFilter
-        ? row.registration_year === userTypeFilter
-        : true; 
+      const matchesRegistrationYearFilter = registrationYearFilter ? row.registration_year == registrationYearFilter : true; 
+      const matchesDepartmentFilter = departmentFilter ? row.department === departmentFilter : true; 
 
-      return matchesSearchFilter && matchesUserTypeFilter;
+      return matchesSearchFilter && matchesRegistrationYearFilter && matchesDepartmentFilter;
     });
-  }, [data, searchFilter, userTypeFilter]);
+  }, [data, searchFilter, registrationYearFilter, departmentFilter]);
 
 
   // Apply sorting before pagination
@@ -233,10 +253,21 @@ function List() {
         </div>
         <div className="col">
           <div className="">
-              <select className="form-select" aria-label="Default select example" name="globalFilter" value={userTypeFilter || ""} onChange={(e) => setUserTypeFilter(e.target.value)}>
-                  <option defaultValue value="">-- Filter by "Registration Year" --</option>
-                  <option value="TEACHER">TEACHER</option>
-                  <option value="STUDENT">STUDENT</option>
+              <select className="form-select" aria-label="Default select example" value={registrationYearFilter} onChange={(e) => setRegistrationYearFilter(e.target.value)}>
+                <option option value="">-- Filter by "Registration Year" --</option>
+                  {registrationYears.map((val) => (
+                    <option value={val}>{val}</option>
+                  ))}
+              </select>        
+            </div>
+        </div>
+        <div className="col">
+          <div className="">
+              <select className="form-select" aria-label="Default select example" value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}>
+                <option option value="">-- Filter by "Department" --</option>
+                  {departments.map((val) => (
+                    <option value={val}>{val}</option>
+                  ))}
               </select>        
             </div>
         </div>
@@ -276,7 +307,7 @@ function List() {
           ))}
           {table.getRowModel().rows.length === 0 && (
             <tr>
-              <td colSpan="5" className="text-center">
+              <td colSpan="6" className="text-center">
                 No data available
               </td>
             </tr>
