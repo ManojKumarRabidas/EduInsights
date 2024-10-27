@@ -33,13 +33,13 @@ function Users() {
       const result = await response.json();
       if (response.ok) {
         setData(result.docs);
-      const uniqueDepartments = new Set();
-      result.docs.forEach((doc) => {
-        if (doc.department) {
-          uniqueDepartments.add(doc.department);
-        }
-      });
-      setDepartments(Array.from(uniqueDepartments));
+        const uniqueDepartments = new Set();
+        result.docs.forEach((doc) => {
+          if (doc.department) {
+            uniqueDepartments.add(doc.department);
+          }
+        });
+        setDepartments(Array.from(uniqueDepartments));
       } else {
         toastr.error(result.msg);
       }
@@ -323,39 +323,17 @@ function Users() {
       </table>
 
       <div className="d-flex justify-content-between mb-3">
-        <select
-          className="form-select mx-2"
-          style={{maxWidth: "fit-content"}}
-          value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
-        >
+        <select className="form-select mx-2" style={{maxWidth: "fit-content"}} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
           {[10, 20, 30, 40, 50].map((size) => (
-            <option key={size} value={size}>
-              Show {size}
-            </option>
+            <option key={size} value={size}>Show {size}</option>
           ))}
         </select>
         <span className="text-nowrap mx-2 text-center">
-          Page{" "}
-          <strong>
-            {pageIndex + 1} of {table.getPageCount()}
-          </strong>
+          Page{" "}<strong>{pageIndex + 1} of {table.getPageCount()}</strong>
         </span>
         <div className="btn-group mx-2">
-          <button
-            className="btn btn-secondary"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </button>
-          <button
-            className="btn btn-secondary"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </button>
+          <button className="btn btn-secondary" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Previous</button>
+          <button className="btn btn-secondary" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
         </div>
       </div>
     </div>

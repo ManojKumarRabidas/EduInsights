@@ -259,25 +259,19 @@ function List() {
       </table>
 
       {/* Pagination Controls */}
-      <div className="d-flex justify-content-between my-3">
-        <button
-          className="btn btn-primary"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </button>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+      <div className="d-flex justify-content-between mb-3">
+        <select className="form-select mx-2" style={{maxWidth: "fit-content"}} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
+          {[10, 20, 30, 40, 50].map((size) => (
+            <option key={size} value={size}>Show {size}</option>
+          ))}
+        </select>
+        <span className="text-nowrap mx-2 text-center">
+          Page{" "}<strong>{pageIndex + 1} of {table.getPageCount()}</strong>
         </span>
-        <button
-          className="btn btn-primary"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </button>
+        <div className="btn-group mx-2">
+          <button className="btn btn-secondary" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Previous</button>
+          <button className="btn btn-secondary" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</button>
+        </div>
       </div>
     </div>
   );

@@ -48,13 +48,13 @@ export default function UserManual(){
                         <span className="mx-3 d-block">a.	Select parameter and number of months/semesters you want to compare. And you will get a graphical view where all the average of the selested parameter for each month or semester will be show in a comparision view. It will help you to understand the growth rate for any specific parameter for past selected time periods.</span>
                         <span className="mx-3 d-block">b.	This comparision graph will be available in both line chart and bar chart as selected by the user.</span>
                     </div>
-                    {/* <hr />
-                    <div>
-                        <span><strong>7. Dynamic feedback parameters: </strong> There will be a section for create, update, delete parameters for feedback form. All the parameter will be dynamic and admin can add or remove or edit any parameter and it's options as per his/her requrement. Also admin can set the input box type as per requrement like dropdown, input box, multiselect input box, toggle etc. <br /> </span>
-                    </div> */}
                     <hr />
                     <div>
                         <span><strong>7. Edit profile: </strong> In the profile there will a option of 'Edit Info'. User can update his/her information from here. But once a user update his/her information his information will again go to the pending verification section and after admin's verification, he/she can continue his/her jobs.<br /> </span>
+                    </div>
+                    <hr />
+                    <div>
+                        <span><strong>8. User Image: </strong> User can upload his/her image in the time of registration and can also change it from profile. The same will show in the time of user verification. <br /> </span>
                     </div>
                 </div>
             </div>

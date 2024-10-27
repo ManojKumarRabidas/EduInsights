@@ -673,7 +673,6 @@ module.exports = {
             }
             res.status(200).json({ status: false, msg: "Session is complete for the selected combination of registration year and department." });
         }catch(err){
-            console.log(err)
             res.status(500).json({ status: false, msg: "Failed to get semester of rating" });
         }
     },
@@ -729,27 +728,10 @@ module.exports = {
                 res.status(400).json({ msg: "Session Expired!" });
                 return;
             }
-            // if (!body.dept_id || !body.name || !body.active){
-            //     res.status(400).json({ msg: "Missing Parameters!" });
-            //     return;
-            // }
-            console.log(body);
             const finalBody = {
                 registration_year: body.registration_year,
                 department: body.department,
                 duration: body.duration,
-                // sessionStartDate: body.start_date_1st_sem ? new Date(body.start_date_1st_sem) : null,
-                // semesters: [
-                //     {sem: 1, start: body.start_date_1st_sem ? new Date(body.start_date_1st_sem) : null, end: body.end_date_1st_sem? new Date(body.end_date_1st_sem): null},
-                //     {sem: 2, start: body.start_date_2nd_sem ?new Date(body.start_date_2nd_sem): null, end: body.end_date_2nd_sem ?new Date(body.end_date_2nd_sem): null},
-                //     {sem: 3, start: body.start_date_3rd_sem ?new Date(body.start_date_3rd_sem): null, end: body.end_date_3rd_sem ?new Date(body.end_date_3rd_sem): null},
-                //     {sem: 4, start: body.start_date_4th_sem ?new Date(body.start_date_4th_sem): null, end: body.end_date_4th_sem ?new Date(body.end_date_4th_sem): null},
-                //     {sem: 5, start: body.start_date_5th_sem ?new Date(body.start_date_5th_sem): null, end: body.end_date_5th_sem ?new Date(body.end_date_5th_sem): null},
-                //     {sem: 6, start: body.start_date_6th_sem ?new Date(body.start_date_6th_sem): null, end: body.end_date_6th_sem ?new Date(body.end_date_6th_sem): null},
-                //     {sem: 7, start: body.start_date_7th_sem ?new Date(body.start_date_7th_sem): null, end: body.end_date_7th_sem ?new Date(body.end_date_7th_sem): null},
-                //     {sem: 8, start: body.start_date_8th_sem ?new Date(body.start_date_8th_sem): null, end: body.end_date_8th_sem ?new Date(body.end_date_8th_sem): null},
-                // ],
-                // sessionStartDate:body.semesters[0],
                 sessionStartDate: body.semesters[0].start ? new Date(body.semesters[0].start) : null,
                 semesters:body.semesters,
                 active: body.active,
@@ -788,6 +770,7 @@ module.exports = {
                         semesters: 1,
                         department: "$department.name",
                         sessionStartDate: 1,
+                        duration: 1,
                         active: 1}}
             ]);
             if(docs.length>0){
@@ -796,14 +779,12 @@ module.exports = {
                   ref.sessionStartDate = moment(ref.sessionStartDate).format('DD/MM/YYYY');
                 } 
               }
-            console.log(docs);
             res.status(200).json({ docs: docs });
         } catch (err) {
             res.status(400).json({ msg: err.message });
         }
     },
     sessionDetails: async(req, res)=>{
-
         try {
             const params = req.params
             if (!params || !params.id){
@@ -811,7 +792,13 @@ module.exports = {
                 return;
             }
             const doc = await sessionModel.findById({ _id: params.id });
-            console.log("hjhabfkj",doc);
+            const newSemesters = [];
+            for(let i=0; i<doc.semesters.length; i++){
+                if(doc.semesters[i].start != null){
+                    newSemesters.push(doc.semesters[i]);
+                }
+            }
+            doc.semesters = newSemesters;
             res.status(200).json({ doc: doc });
         } catch (err) {
             res.status(400).json({ msg: err.message });
@@ -827,7 +814,7 @@ module.exports = {
                 return;
             }
             const doc = await sessionModel.findByIdAndUpdate(params.id, body, {new: true});
-            res.status(200).json({ message: "session updated successfully", doc: doc });
+            res.status(200).json({ msg: "Academic Session details updated successfully", doc: doc });
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }
