@@ -38,6 +38,7 @@ const getUserType = async (token) => {
       setLogedinUserType(result.doc.user_type);
       if (result.doc.user_type == "STUDENT" || result.doc.user_type == "TEACHER"){
         setUserType(result.doc.user_type)
+        setSelectedName(result.doc.id)
         getFeedbackDetails(result.doc.id, result.doc.user_type)
         getCustomRangeFeedbackDetails(result.doc.id, result.doc.user_type, monthRange)
       } else{

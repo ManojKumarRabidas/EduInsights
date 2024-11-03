@@ -88,7 +88,70 @@ module.exports = {
             // })
             // .then(console.log, console.error);
             
-            res.status(200).json({status: true, msg: `Mail send to your registered email id. Your OTP is ${newOtp}`});
+            // // -----------------Process 3--------------------------
+            // var transport = nodemailer.createTransport({
+            //     service: 'gmail',
+            //     auth: {
+            //         user: 'manojkumarrabidas367@gmail.com',
+            //         pass: '4thxcc0unt11'
+            //     }
+            // });
+            // transport.sendMail({
+            //     from: 'manojkumarrabidas367@gmail.com',
+            //     to: 'manojkumarrabidas00@gmail.com',
+            //     subject: "OTP for Forgot Password || EduInsight Support Team",
+            //     text: `Hello ${req.user.name}. 
+            //             Your OTP for verify is: ${newOtp}.
+            //             The above OTP will be valid for next 5 mint.
+            //             Don't share your OTP with anyone.`,
+            // })
+            // .then(console.log, console.error);
+
+            // -----------------------Process 4-------------------
+            // const { google } = require('googleapis');
+
+            // const CLIENT_ID = '633665464419-i6hq6fckeoukdnfmfs2sdvsvkcmvb7ph.apps.googleusercontent.com';
+            // const CLIENT_SECRET = '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';
+            // const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+            // const REFRESH_TOKEN = 'your-refresh-token';
+
+            // ---------------------Process 5-------------------------
+            const auth = nodemailer.createTransport({
+                service: "gmail",
+                secure : true,
+                port : 465,
+                auth: {
+                    user: "manojkumarrabidas367@gmail.com",
+                    pass: "owdl prwv scof wzdf"
+        
+                }
+            });
+        
+             const user = await userModel.findById(new ObjectId(req.user.id));
+            if(!user || !user.email){
+                res.status(400).json({ msg: "Email Id not found!" });
+            }
+            const receiver = {
+                from : "manojkumarrabidas367@gmail.com",
+                to : user.email,
+                subject : "OTP for Forgot Password || EduInsight Support Team",
+                text : `Hello ${req.user.name}. 
+                           Your OTP for verify is: ${newOtp}.
+                           The above OTP will be valid for next 5 mint.
+                           Don't share your OTP with anyone.
+                           
+                                Team EduInsights`,
+            };
+        
+            auth.sendMail(receiver, (error, emailResponse) => {
+                if(error)
+                    res.status(200).json({status: false, msg: "Fail to send OTP, Please check your email id or try again later"});
+                // throw error;
+                console.log("success!");
+                response.end();
+            });
+        
+            res.status(200).json({status: true, msg: "OTP sent to your registered email id"});
         }catch(err){
             console.log("err", err)
             res.status(500).json({status: false, msg: "Failed to send mail due to some technical problem. Please try again later." });

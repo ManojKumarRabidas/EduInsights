@@ -50,11 +50,15 @@ export default function UserManual(){
                     </div>
                     <hr />
                     <div>
-                        <span><strong>7. Edit profile: </strong> In the profile there will a option of 'Edit Info'. User can update his/her information from here. But once a user update his/her information his information will again go to the pending verification section and after admin's verification, he/she can continue his/her jobs.<br /> </span>
+                        <span><strong>7. Customizable month range to see strength and area of improvement: </strong> In the dashboard now the count of strengths and area of improvement is showing based on last three months or last three semesters feedbacks. There will be a customizable month range or semester range button.  <br /> </span>
                     </div>
                     <hr />
                     <div>
-                        <span><strong>8. User Image: </strong> User can upload his/her image in the time of registration and can also change it from profile. The same will show in the time of user verification. <br /> </span>
+                        <span><strong>8. Edit profile: </strong> In the profile there will a option of 'Edit Info'. User can update his/her information from here. But once a user update his/her information his information will again go to the pending verification section and after admin's verification, he/she can continue his/her jobs.<br /> </span>
+                    </div>
+                    <hr />
+                    <div>
+                        <span><strong>9. User Image: </strong> User can upload his/her image in the time of registration and can also change it from profile. The same will show in the time of user verification. <br /> </span>
                     </div>
                 </div>
             </div>
