@@ -66,6 +66,10 @@ module.exports = {
       res.status(201).json({ status: true, msg: "Registered successfully. Please wait, We are redirecting you to log in page."});
     } catch (err) {
       if (err.code == 11000) {
+        if (err.keyPattern.email && err.keyPattern.email==1){
+          res.status(500).json({ status: false, msg: "Email Id is not available. Please try something else." });
+          return;
+        }
         res.status(500).json({ status: false, msg: "Login Id is not available. Please try something else." });
         return;
       }
