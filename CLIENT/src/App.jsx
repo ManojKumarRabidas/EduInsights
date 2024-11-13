@@ -20,6 +20,7 @@ import AllStudentsFeedback from './components/AllStudentsFeedback';
 import AreaOfImprovement from './components/AreaOfImprovement';
 import Profile from './components/Profile';
 import UserManual from './components/UserManual';
+import Updates from './components/Updates';
 import Password from './components/Password';
 import Session from './components/Session';
 // import 'bootstrap-icons';
@@ -138,6 +139,7 @@ function AppContent({ isAuthenticated, userType }) {
               <Route path='/all-students-feedback' element={user_type != 'STUDENT' ? <AllStudentsFeedback /> : <Unauthorized />} />
               <Route path='/profile' element={user_type != 'ADMIN' ? <Profile /> : <Unauthorized />} />
               <Route path='/user-manual' element={<UserManual/>} />
+              <Route path='/updates' element={<Updates/>} />
               <Route path='/password/*' element={<Password/>} />
             </Routes>
           </main>

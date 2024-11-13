@@ -2,11 +2,11 @@ function Home() {
   return (
     <div>
       <main className="container my-2">
-        <section className="bg-light py-5">
-          <div className="container px-5">
+        <section className="bg-light">
+          <div className="container p-5">
             <div className="row gx-5 justify-content-center">
               <div className="col-xxl-8">
-                <div className="text-center my-5">
+                <div className="text-center my-4">
                   <h2 className="display-5 fw-bolder">
                     <span className="text-gradient d-inline">EduInsights</span>
                   </h2>
@@ -38,6 +38,10 @@ function Home() {
               </div>
             </div>
           </div>
+            <div className="text-center m-3">
+                {/* <div>Please feel free to reach us if you have any opinions or features we should include in the application to make it more usefull for you. Mail us on support@eduinsights.in</div> */}
+                <div>&copy; Copyright 2024 by eduinsights.in || All Rights Reserved</div>
+            </div>
         </section>
       </main>
     </div>
