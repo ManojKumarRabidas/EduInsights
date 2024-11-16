@@ -134,13 +134,17 @@ module.exports = {
             const receiver = {
                 from : "manojkumarrabidas367@gmail.com",
                 to : user.email,
-                subject : "OTP for Forgot Password || EduInsight Support Team",
-                text : `Hello ${req.user.name}. 
-                           Your OTP for verify is: ${newOtp}.
-                           The above OTP will be valid for next 5 mint.
-                           Don't share your OTP with anyone.
-                           
-                                Team EduInsights`,
+                subject : "EduInsights Support Team : OTP for Forgot Password",
+                text : `Dear ${req.user.name}. 
+
+                        Your One Time Password (OTP) for verify is: ${newOtp}.
+
+                        OTP is valid only for 05:00 mins. Do not share this OTP with anyone.
+
+                        If you did not request this OTP, please connect with us immediately at complaint.support@eduinsights.in.
+                        
+                        Regards,
+                        Team EduInsights`,
             };
         
             auth.sendMail(receiver, (error, emailResponse) => {

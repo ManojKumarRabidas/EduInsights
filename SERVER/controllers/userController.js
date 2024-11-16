@@ -167,6 +167,7 @@ module.exports = {
                   email: 1,
                   pin: 1,
                   address: 1,
+                  specialization: 1,
                   department: {$ifNull: ["$department.name", ""]},
                   active: "$auth.active",
                   is_verified: "$auth.is_verified",
@@ -174,18 +175,9 @@ module.exports = {
                   last_log_in: "$auth.last_log_in",
                 }},
         ]);
-        const formatDate = (date) => {
-          if (!date) return "";
-          const options = { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" };
-          return new Intl.DateTimeFormat("en-IN", options).format(new Date(date)).replace(",", " -");
-        };
         const doc = docs[0]
         doc.createdAt= moment(doc.createdAt).format('DD/MM/YYYY - hh:mm A');
         doc.last_log_in= moment(doc.last_log_in).format('DD/MM/YYYY - hh:mm A');
-        // doc.registration_year= moment(doc.registration_year).format('DD/MM/YYYY');
-        // doc.createdAt= formatDate(doc.createdAt),
-        // doc.last_log_in= formatDate(doc.last_log_in),
-        // doc.registration_year= formatDate(doc.registration_year),
         doc.active= doc.active === 1 ? "Active" : "Inactive",
         doc.is_verified= doc.is_verified === 1 ? "Verified" : (doc.is_verified === -1 ? "Rejected" : "Not Verified"),
         res.status(200).json({ doc: doc });
