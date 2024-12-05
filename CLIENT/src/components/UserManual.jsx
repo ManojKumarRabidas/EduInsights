@@ -17,7 +17,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 1:</strong>  This is a introduction video about the application. <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=Y9wx7XYRapo&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=1">EduInsights - 0 | Introduction</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=Y9wx7XYRapo&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=1">EduInsights - 0 | Introduction</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video1Loaded && (
@@ -43,7 +43,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 2:</strong>  The initial flow of admin is discussed here. At first what the admin need to do is discussed in detail here. <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=38AzI1Kxj4I&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=2">EduInsights - 1 | Admin Flow</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=38AzI1Kxj4I&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=2">EduInsights - 1 | Admin Flow</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video2Loaded && (
@@ -69,7 +69,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 3:</strong>  The initial flow of support admin is discussed here. At first what the support admin need to do is discussed in detail here. <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=Gn8swKq7U0I&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=3">EduInsights - 2 | Support User Flow (Initial Flow)</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=Gn8swKq7U0I&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=3">EduInsights - 2 | Support User Flow (Initial Flow)</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video3Loaded && (
@@ -95,7 +95,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 4:</strong>  Here the flow of the teacher is duscussed in details. Including all the features available for teacher is duscussed.  <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=tQf3wRdln_4&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=4">EduInsights - 3 | Teacher Flow</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=tQf3wRdln_4&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=4">EduInsights - 3 | Teacher Flow</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video4Loaded && (
@@ -121,7 +121,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 5:</strong>  Here the flow of the student is duscussed in details. Including all the features available for student is duscussed. <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=B6eJlkwtUZg&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=5">EduInsights - 4 | Student Flow</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=B6eJlkwtUZg&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=5">EduInsights - 4 | Student Flow</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video5Loaded && (
@@ -147,7 +147,7 @@ export default function UserManual(){
                     <div className="d-flex justify-content-between">
                         <div>
                             <span><strong>Video 6:</strong> All the features available for admin and support admin is discussed here. <br /></span> <br />
-                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=V8JjXjUm68M&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=6">EduInsights - 5 | Support User Flow (Final Flow)</a> <br /></span>
+                            <span><strong>Youtube Link:</strong>  <a target="_blank" href="https://www.youtube.com/watch?v=V8JjXjUm68M&list=PLpHN6SEszUDTWEtgSbcO9m3ZHn-Z1tynk&index=6">EduInsights - 5 | Support User Flow (Final Flow)</a> (Please use headphones for better experience)<br /></span>
                         </div>
                         <div style={{ width: "400px", height: "200px", position: "relative" }}>
                             {!video6Loaded && (
