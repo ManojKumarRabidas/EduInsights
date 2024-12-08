@@ -215,7 +215,7 @@ function Users() {
       },
     ];
 
-    if (userType === "ADMIN") {
+    if (userType != "STUDENT") {
       baseColumns.splice(3, 0, 
         {
           header: "Student Name",

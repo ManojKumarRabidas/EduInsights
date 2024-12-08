@@ -132,12 +132,6 @@ function Users () {
                 enableSorting: true,
             },
             {
-                header: "Subject Code",
-                accessorKey: "subject",
-                sortingFn: "alphanumeric",
-                enableSorting: true,
-            },
-            {
               header: "Department",
               accessorKey: "department",
               sortingFn: "alphanumeric",
@@ -150,16 +144,22 @@ function Users () {
               enableSorting: true,
             },
             {
+              header: "Student Reg Number",
+              accessorKey: "student_reg_number",
+              sortingFn: "alphanumeric",
+              enableSorting: true,
+            },
+            {
               header: "Student Name",
               accessorKey: "student",
               sortingFn: "alphanumeric",
               enableSorting: true,
             },
             {
-              header: "Student Reg Number",
-              accessorKey: "student_reg_number",
-              sortingFn: "alphanumeric",
-              enableSorting: true,
+                header: "Subject Code",
+                accessorKey: "subject",
+                sortingFn: "alphanumeric",
+                enableSorting: true,
             },
             {
                 header: "Clarity Of Explanation",
@@ -257,7 +257,7 @@ function Users () {
             },
         ];
         if (userType != "TEACHER") {
-            baseColumns.splice(3, 0, 
+            baseColumns.splice(6, 0, 
               {
                 header: "Teacher Name",
                 accessorKey: "teacher",
@@ -487,7 +487,7 @@ const averages = calculateVisibleAverages(visibleRows, table.getVisibleFlatColum
                 ))}
                 {table.getRowModel().rows.length === 0 && (
                   <tr>
-                    <td colSpan="20" className="text-center">
+                    <td colSpan="22" className="text-center">
                       No data available
                     </td>
                   </tr>

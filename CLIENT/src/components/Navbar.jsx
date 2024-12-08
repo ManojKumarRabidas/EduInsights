@@ -43,8 +43,8 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg fixed-top">
       <div className="container-fluid">
-        <div className="navbar-brand">
-          <Link className="nav-link active" to="/"> <img style={{maxWidth: "2rem", margin: "0rem 0.4rem 0rem 1rem"}} src="../src/assets/images/eduInsights-logo.png" alt="" /> EduInsights</Link>
+        <div className="navbar-brand" style={{padding: "0"}}>
+          <Link className="nav-link active" to="/"> <img style={{maxWidth: "3rem", margin: "0rem -0.5rem 0rem 0rem"}} src="../src/assets/images/eduInsights-logo-2.png" alt="" /> EduInsights</Link>
         </div>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
@@ -56,8 +56,10 @@ function Navbar() {
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 {/* <li><a className="dropdown-item" href="#">Settings</a></li> */}
                 <li><Link className="dropdown-item" to="/user-manual">User Manual</Link></li>
+                <li><Link className="dropdown-item" to="/updates">Updates</Link></li>
+                <li><hr className="dropdown-divider" /></li>
                 {(userType != "ADMIN") && <li><Link className="dropdown-item" to="/profile">Profile</Link></li>}
-                <li><Link className="dropdown-item" to="/password">Change Password</Link></li>
+                <li><Link className="dropdown-item" to="/password">Password</Link></li>
                 <li><hr className="dropdown-divider" /></li>
                 <li><a className="dropdown-item" href="#" onClick={handleLogout}>Sign Out</a></li>
               </ul>

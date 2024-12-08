@@ -49,11 +49,10 @@ export default function Profile(){
             {response && (<div className="alert alert-success" role="alert">{response}</div>)}
             <main className="container my-2">
                 <section className="bg-light shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-                    <h5 className="mb-3">User Profile</h5>
+                    <h4 className="text-center m-2">User Profile</h4>
                     <div className=" justify-content-center">
                         <table className="table table-borderless">
                             <tbody>
-                            {/* <thead> */}
                                 <tr>
                                     <th scope="row">User Type</th>
                                     <td scope="row">: {data.user_type}</td>
@@ -61,22 +60,27 @@ export default function Profile(){
                                     <th scope="row">Name</th>
                                     <td scope="row">: {data.name}</td>
                                 </tr>
-                            {/* </thead>
-                            <tbody> */}
-                            {(data.user_type == "TEACHER") && (<tr>
+                                {(data.user_type == "TEACHER") && (<tr>
                                     <th scope="row">Teacher Code</th>
                                     <td scope="row">: {data.teacher_code}</td>
                                     <td scope="row"></td>
                                     <th scope="row">Employee Id</th>
                                     <td scope="row">: {data.employee_id}</td>
                                 </tr>)}
+                                {(data.user_type == "TEACHER") && (<tr>
+                                    <th scope="row">Department</th>
+                                    <td scope="row">: {data.department}</td>
+                                    <td scope="row"></td>
+                                    <th scope="row">Specialization</th>
+                                    <td scope="row">: {data.specialization}</td>
+                                </tr>)}
                                 
                                 {(data.user_type == "STUDENT") && (<tr>
-                                    <th scope="row">Registration Year</th>
-                                    <td scope="row">: {data.registration_year}</td>
+                                    <th scope="row">Department</th>
+                                    <td scope="row">: {data.department}</td>
                                     <td scope="row"></td>
-                                    <th scope="row">Registration Number</th>
-                                    <td scope="row">: {data.registration_number}</td>
+                                    <th scope="row">Reg Number & Year</th>
+                                    <td scope="row">: {data.registration_number} of {data.registration_year}</td>
                                 </tr>)}
                                 <tr>
                                     <th scope="row">Phone</th>
@@ -107,13 +111,13 @@ export default function Profile(){
                                     <th scope="row">Last Log In</th>
                                     <td scope="row">: {data.last_log_in}</td>
                                 </tr>
-                                {((data.user_type == "STUDENT") || data.user_type == "TEACHER") && (<tr>
+                                {/* {((data.user_type == "STUDENT") || data.user_type == "TEACHER") && (<tr>
                                     <th scope="row">Total Number of Feedbacks Provide</th>
                                     <td scope="row">: 134</td>
                                     <td scope="row"></td>
                                     <th scope="row">Total Number of Feedbacks Received</th>
                                     <td scope="row">: 745</td>
-                                </tr>)}
+                                </tr>)} */}
                             </tbody>
                         </table>
                     </div>
