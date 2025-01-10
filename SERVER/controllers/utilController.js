@@ -54,13 +54,11 @@ module.exports = {
                 if(error)
                     res.status(200).json({status: false, msg: "Fail to send OTP, Please check your email id or try again later"});
                 // throw error;
-                console.log("success!");
                 response.end();
             });
         
             res.status(200).json({status: true, msg: "OTP sent to your registered email id"});
         }catch(err){
-            console.log("err", err)
             res.status(500).json({status: false, msg: "Failed to send mail due to some technical problem. Please try again later." });
         }
     },
@@ -308,7 +306,6 @@ module.exports = {
             }
             res.status(200).json({status: true, doc: finalDoc });
         }catch(err){
-            console.log(err)
             res.status(500).json({status: false, msg: "Failed to retrieve feedback details due to some technical problem. Please try again later." });
         }
     },
@@ -389,7 +386,6 @@ module.exports = {
                     strengths: [],
                     areas_of_improvement: []
                 }
-                console.log("docs in 392 line", docs)
                 for(let i=0; i<docs.length; i++){
                     const ref = docs[i];
                     if (ref.month_of_rating == prevMonthYear){
@@ -587,12 +583,9 @@ module.exports = {
                 }
                 graphData.totalFeedbackLastThreeMonthSem = prevMonthOrSemBarDataBool+prevPrevMonthOrSemBarDataBool+prevPrevPrevMonthOrSemBarDataBool
             }
-            console.log("docs", docs)
-            console.log("graphData", graphData)
             res.status(200).json({status: true, doc: graphData, docs: docs });
         }
         catch(err){
-            console.log(err)
             res.status(500).json({status: false, msg: "Failed to retrieve user feedback details due to some technical problem. Please try again later." });
         }
     }

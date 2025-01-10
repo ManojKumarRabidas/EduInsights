@@ -90,7 +90,7 @@ function Update() {
               <select className="form-select" aria-label="Default select example" name="user_type" value={user_type} onChange={(e) => setUserType(e.target.value)}>
                   <option>--Select user type--</option>
                   {/* <option value="ADMIN">ADMIN</option> */}
-                  <option defaultValue value="SUPPORT">SUPPORT</option>
+                  <option defaultValue value="SUPPORT">SUPPORT ADMIN</option>
               </select>
           </div>
           <div className="col mb-3">

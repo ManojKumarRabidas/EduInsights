@@ -63,7 +63,6 @@ function Registration() {
         setIsLoginIdAvailable(null); // Reset availability state in case of error
       }
     } catch (error) {
-      console.error("Error checking login ID availability:", error);
       setIsLoginIdAvailable(null); // Reset availability state in case of error
     }
   };
