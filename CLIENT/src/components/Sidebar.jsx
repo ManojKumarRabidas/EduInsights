@@ -31,7 +31,7 @@ function Sidebar() {
         <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
         {/* {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Search By Strength</NavLink>} */}
         {((userType == "ADMIN") || (userType == "SUPPORT")) && <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Users</NavLink>}
-        {(userType == "ADMIN") &&<NavLink to="/support-users" className={({ isActive }) => (isActive ? 'active' : '')}>Support Users</NavLink>}
+        {(userType == "ADMIN") &&<NavLink to="/support-users" className={({ isActive }) => (isActive ? 'active' : '')}>Support Admin</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/pending-verifications" className={({ isActive }) => (isActive ? 'active' : '')}>Pending Verifications</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/departments" className={({ isActive }) => (isActive ? 'active' : '')}>Departments</NavLink>}
         {((userType == "ADMIN") || (userType == "SUPPORT")) &&<NavLink to="/subjects" className={({ isActive }) => (isActive ? 'active' : '')}>Subjects</NavLink>}

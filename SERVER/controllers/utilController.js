@@ -18,104 +18,7 @@ module.exports = {
                 res.status(400).json({ msg: "Fail to generate and set otp! Please try again later." });
                 return;
             }
-            // ----------------------------------------------------
-            // -----------------Process 1--------------------------
-            // var transport = nodemailer.createTransport({
-            //     // host: "sandbox.smtp.mailtrap.io",
-            //     // port: 2525,
-            //     // auth: {
-            //     // user: "7489d4bd3a0ecd",
-            //     // pass: "f784d841493174"
-            //     // }
-            //     host: 'smtp.ethereal.email',
-            //     port: 587,
-            //     auth: {
-            //         user: 'natalie.batz52@ethereal.email',
-            //         pass: 'b6nAWpSP2vJdZaY6KC'
-            //     }
-            // });
-
-            // const user = await userModel.findById(new ObjectId(req.user.id));
-            // if(!user || !user.email){
-            //     res.status(400).json({ msg: "Email Id not found!" });
-            // }
-            // const info = await transport.sendMail({
-            //     from: '"EduInsight Support" <support@eduinsight.in>', // sender address
-            //     to: `${user.email}`, // list of receivers
-            //     subject: "Hello ✔", // Subject line
-            //     text: "Hello world?", // plain text body
-            //     html: "<b>Hello world?</b>", // html body
-            //   });
-            
-            //   console.log("Message sent: %s", info.messageId);
-            //   if(!info.messageId){
-            //     res.status(400).json({ msg: "Fail to send mail!" });
-            //   }
-
-            // -------------------------------------------------
-            // --------------------Process 2--------------------
-            // const Nodemailer = require("nodemailer");
-            // const { MailtrapTransport } = require("mailtrap");
-
-            // const TOKEN = "d501ea049eb51d754cb8fd9c260fb43d";
-
-            // const transport = Nodemailer.createTransport(
-            // MailtrapTransport({
-            //     token: TOKEN,
-            //     testInboxId: 3185983,
-            // })
-            // );
-
-            // const sender = {
-            // address: "hello@example.com",
-            // name: "Mailtrap Test",
-            // };
-            // const recipients = [
-            // "manojkumarrabidas00@gmail.com",
-            // ];
-
-            // transport
-            // .sendMail({
-            //     from: sender,
-            //     to: recipients,
-            //     subject: "OTP for Forgot Password || EduInsight Support Team",
-            //     text: `Hello ${req.user.name}. 
-            //             Your OTP for verify is: ${newOtp}.
-            //             The above OTP will be valid for next 5 mint.
-            //             Don't share your OTP with anyone.`,
-            //     category: "Integration Test",
-            //     sandbox: true
-            // })
-            // .then(console.log, console.error);
-            
-            // // -----------------Process 3--------------------------
-            // var transport = nodemailer.createTransport({
-            //     service: 'gmail',
-            //     auth: {
-            //         user: 'manojkumarrabidas367@gmail.com',
-            //         pass: '4thxcc0unt11'
-            //     }
-            // });
-            // transport.sendMail({
-            //     from: 'manojkumarrabidas367@gmail.com',
-            //     to: 'manojkumarrabidas00@gmail.com',
-            //     subject: "OTP for Forgot Password || EduInsight Support Team",
-            //     text: `Hello ${req.user.name}. 
-            //             Your OTP for verify is: ${newOtp}.
-            //             The above OTP will be valid for next 5 mint.
-            //             Don't share your OTP with anyone.`,
-            // })
-            // .then(console.log, console.error);
-
-            // -----------------------Process 4-------------------
-            // const { google } = require('googleapis');
-
-            // const CLIENT_ID = '633665464419-i6hq6fckeoukdnfmfs2sdvsvkcmvb7ph.apps.googleusercontent.com';
-            // const CLIENT_SECRET = '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';
-            // const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-            // const REFRESH_TOKEN = 'your-refresh-token';
-
-            // ---------------------Process 5-------------------------
+          
             const auth = nodemailer.createTransport({
                 service: "gmail",
                 secure : true,
@@ -151,13 +54,11 @@ module.exports = {
                 if(error)
                     res.status(200).json({status: false, msg: "Fail to send OTP, Please check your email id or try again later"});
                 // throw error;
-                console.log("success!");
                 response.end();
             });
         
             res.status(200).json({status: true, msg: "OTP sent to your registered email id"});
         }catch(err){
-            console.log("err", err)
             res.status(500).json({status: false, msg: "Failed to send mail due to some technical problem. Please try again later." });
         }
     },
@@ -405,7 +306,6 @@ module.exports = {
             }
             res.status(200).json({status: true, doc: finalDoc });
         }catch(err){
-            console.log(err)
             res.status(500).json({status: false, msg: "Failed to retrieve feedback details due to some technical problem. Please try again later." });
         }
     },
@@ -496,7 +396,8 @@ module.exports = {
                             graphData.lastMonthOrSemBarData.values[j] = graphData.lastMonthOrSemBarData.values[j]+ref[innerRef]
                         }
                         const lastThreeMonthOrSemBarDataLabel= graphData.lastThreeMonthOrSemBarData.keyLabels;
-                        graphData.lastThreeMonthOrSemBarData.setNames.push(prevMonthYear)
+                        graphData.lastThreeMonthOrSemBarData.setNames[0]=prevMonthYear;
+                        // graphData.lastThreeMonthOrSemBarData.setNames.push(prevMonthYear)
                         for (let j=0; j<lastThreeMonthOrSemBarDataLabel.length; j++){
                             const innerRef = lastThreeMonthOrSemBarDataLabel[j];
                             graphData.lastThreeMonthOrSemBarData.values1[j] = graphData.lastThreeMonthOrSemBarData.values1[j]+ref[innerRef]
@@ -505,7 +406,8 @@ module.exports = {
                     }
                     if (ref.month_of_rating == prevPrevMonthYear){
                         prevPrevMonthOrSemBarDataBool++;
-                        graphData.lastThreeMonthOrSemBarData.setNames.push(prevPrevMonthYear)
+                        graphData.lastThreeMonthOrSemBarData.setNames[1]=prevPrevMonthYear;
+                        // graphData.lastThreeMonthOrSemBarData.setNames.push(prevPrevMonthYear)
                         const lastThreeMonthOrSemBarDataLabel= graphData.lastThreeMonthOrSemBarData.keyLabels;
                         for (let j=0; j<lastThreeMonthOrSemBarDataLabel.length; j++){
                             const innerRef = lastThreeMonthOrSemBarDataLabel[j];
@@ -513,7 +415,8 @@ module.exports = {
                         }
                     }
                     if (ref.month_of_rating == prevPrevPrevMonthYear){
-                        graphData.lastThreeMonthOrSemBarData.setNames.push(prevPrevPrevMonthYear)
+                        // graphData.lastThreeMonthOrSemBarData.setNames.push(prevPrevPrevMonthYear)
+                        graphData.lastThreeMonthOrSemBarData.setNames[2]=prevPrevPrevMonthYear;
                         prevPrevPrevMonthOrSemBarDataBool++;
                         const lastThreeMonthOrSemBarDataLabel= graphData.lastThreeMonthOrSemBarData.keyLabels;
                         for (let j=0; j<lastThreeMonthOrSemBarDataLabel.length; j++){
@@ -683,7 +586,6 @@ module.exports = {
             res.status(200).json({status: true, doc: graphData, docs: docs });
         }
         catch(err){
-            console.log(err)
             res.status(500).json({status: false, msg: "Failed to retrieve user feedback details due to some technical problem. Please try again later." });
         }
     }

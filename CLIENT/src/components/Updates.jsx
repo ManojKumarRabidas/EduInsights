@@ -63,6 +63,10 @@ export default function Updates(){
                     <div>
                         <span><strong>13. Delete multiple users at a time: </strong>  In this student list there must be option to delete multiple records (Ex: all student for particular department and particular reg year). This will help to delete old student records. This must include <i>deleting all recordes from all collection releted to this perticuller student </i>only except the feedbacks given by the student to any teacher. <br /> </span>
                     </div>
+                    <hr />
+                    <div>
+                        <span><strong>14. Retrive Login Id & Password using Email Id: </strong> User can retrive his/her log in id and password by verifying himself/herself with otp using email id from the log in page. <br /> </span>
+                    </div>
                 </div>
             </div>
             <hr />
