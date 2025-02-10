@@ -232,7 +232,7 @@ function Users() {
           <input
             value={searchFilter || ""}
             onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search by any value of table"
+            placeholder="Search by any value from table"
             className="form-control"
           />
         </div>
